@@ -1,0 +1,132 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+<div class="text-center">
+    <!-- #region Poster  Section-->
+    <div style="margin-bottom: -1em; position: relative">
+        <div class="text-start position-absolute" style="left: 5%; top: 25%">
+            <p class="title-medium">
+                Egitimi
+            </p>
+            <p class="title-large text-light">
+                Bulutların Üstüne
+            </p>
+            <p class="title-medium">
+                Taşıyan Bir Deneyim.
+            </p>
+        </div>
+        <img class="w-100" style="z-index: -1" src="~/Images/EduPilot-poster.png" alt="poster" />
+    </div>
+    <!-- #endregion -->
+    <!-- #region EduPilot ile Yapabileceklerin... -->
+    <div class="bg-card position-relative" style=" margin-bottom: -1em">
+        <div>
+            <p class="title-large mt-3">EduPilot ile Yapabileceklerin...</p>
+        </div>
+        @* Cards *@
+        <div class="d-flex flex-row justify-content-around">
+
+            @* Card 1 *@
+            <div class="d-flex flex-column align-items-center position-relative m-3" style="z-index: 2; margin-top: 5rem !important">
+                <!-- Overlapping Mascot -->
+                <img src="~/Images/1.png" alt="Mascot"
+                     class="position-absolute"
+                     style=" top: -5rem; height: 15rem; z-index: 3;" />
+
+                <!-- Card content -->
+                <div class="card-primary position-relative d-flex justify-content-center mt-5 pt-5" style="width: 20rem; height: 20rem">
+                    <div class="w-75 align-content-center mt-5">
+                        <p class="title-regular text-light text-center">
+                            Haftalık Soru Sayını Kaydet.
+                        </p>
+                        <p class="text-light text-center">
+                            Her gün çözdüğün soru sayısını kaydet, haftalık analizlerini karşılaştır.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            @* Card 2 *@
+            <div class="d-flex flex-column align-items-center position-relative m-3" style="z-index: 2; ">
+
+                <!-- Card content -->
+                <div class="card-secondary position-relative d-flex justify-content-center" style="width: 20rem; height: 20rem">
+                    <div class="w-75 align-content-center mb-5">
+                        <p class="title-regular text-light text-center">
+                            Puan Topla, Ödülleri Kap!
+                        </p>
+                        <p class="text-light text-center">
+                            Quizleri çözerek hem kendini dene, hem puan topla. Kazandığın puanları dükkandaki ödülleri almak için harca!
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Overlapping Mascot -->
+                <img src="~/Images/4.png" alt="Mascot"
+                     class="position-absolute"
+                     style=" top: 14rem; height: 15rem; z-index: 3;" />
+            </div>
+
+            @* Card 3 *@
+            <div class="d-flex flex-column align-items-center position-relative m-3" style="z-index: 2; margin-top: 5rem !important">
+                <!-- Overlapping Mascot -->
+                <img src="~/Images/2.png" alt="Mascot"
+                     class="position-absolute"
+                     style=" top: -5rem; height: 15rem; z-index: 3;" />
+
+                <!-- Card content -->
+                <div class="card-primary position-relative d-flex justify-content-center mt-5 pt-5" style="width: 20rem; height: 20rem">
+                    <div class="w-75 align-content-center mt-5">
+                        <p class="title-regular text-light text-center">
+                            Zayıf olduğun konu kalmasın!
+                        </p>
+                        <p class="text-light text-center">
+                            Çözdüğün quizlerin analizleriyle nerede eksik olduğunu gör. Zayıf konularını listele.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            @* Card 4 *@
+            <div class="d-flex flex-column align-items-center position-relative m-3" style="z-index: 2; ">
+
+                <!-- Card content -->
+                <div class="card-secondary position-relative d-flex justify-content-center" style="width: 20rem; height: 20rem">
+                    <div class="w-75 align-content-center mb-5">
+                        <p class="title-regular text-light text-center">
+                            Zamana karşı yarış!
+                        </p>
+                        <p class="text-light text-center">
+                            Simülasyon modülü ile ister çalışma tekniği, ister sınav zamanlayıcısı ile kendini test et!
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Overlapping Mascot -->
+                <img src="~/Images/3.png" alt="Mascot"
+                     class="position-absolute"
+                     style=" top: 14rem; height: 15rem; z-index: 3;" />
+            </div>
+        </div>
+    </div>
+    <!-- #endregion -->
+    
+    
+    <!-- #region name -->
+    <div>
+        <div class="pb-4" style="background-color: var(--primary-accent); height: auto">
+                <p class="title-large text-light pt-5"> Aramıza katılmaya hazır mısın? </p>
+            <div class="d-flex flex-row justify-content-around align-items-center">
+                 <img src="~/Images/students.png" alt="students" />
+                 <p class="title-medium w-50 text-light">
+                    Hedefini bulutların üstünde tutuyorsan, kendini geliştirirken ödüllerin keyfini çıkarmak istiyorsan ve potansiyelini keşfetmek istiyorsan EduPilot tam sana göre!
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- #endregion -->
+
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+</div>

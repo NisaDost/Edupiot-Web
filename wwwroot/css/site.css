@@ -1,0 +1,134 @@
+* {
+    font-family: 'Montserrat', sans-serif;
+    font-style: normal;
+    font-size: 1rem;
+    font-weight: 400;
+}
+
+:root {
+    --primary-color: #2F80ED;
+    --primary-accent: #102A43;
+    --secondary-color: #F0882D;
+    --background-color: #F2F2F2;
+    --background-accent: #B9B9B9;
+    --success-color: #34B439;
+    --danger-color: #CA2B2B;
+}
+
+html {
+    /*font-size: 24px;*/
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    margin-bottom: 60px;
+    background-color: var(--background-accent);
+}
+
+.header-card {
+    position: relative;
+    z-index: 2;
+    background-color: var(--background-color);
+    box-shadow: rgba(0, 0, 0, 0.25);
+    border-bottom-left-radius: 14px;
+    border-bottom-right-radius: 14px;
+    margin-bottom: -1rem;
+}
+
+.footer-card {
+    background-color: var(--primary-accent);
+    box-shadow: rgba(0, 0, 0, 0.25);
+    border-top-left-radius: 14px;
+    border-top-right-radius: 14px;
+    padding: 8px;
+}
+
+.button-primary {
+    background-color: var(--primary-color);
+    padding: 12px;
+    border-radius: 14px;
+    font-weight: 800;
+    color: var(--background-color);
+    border: none;
+}
+
+.button-secondary {
+    background-color: var(--secondary-color);
+    padding: 12px;
+    border-radius: 14px;
+    font-weight: 800;
+    color: var(--background-color);
+    border: none;
+}
+
+.button-primary-accent {
+    background-color: var(--primary-accent);
+    padding: 12px;
+    border-radius: 14px;
+    font-weight: 800;
+    color: var(--background-color);
+    border: none;
+}
+
+.bg-card {
+    padding: 10px;
+    border-radius: 14px;
+    background-color: var(--background-color);
+    box-shadow: rgba(0, 0, 0, 0.25);
+}
+
+.card-primary {
+    padding: 8px;
+    border-radius: 14px;
+    background-color: var(--primary-color);
+    box-shadow: rgba(0, 0, 0, 0.25);
+}
+
+.text-light {
+    color: var(--background-color) !important
+}
+
+.text-dark {
+    color: var(--primary-accent) !important
+}
+
+.card-secondary {
+    padding: 8px;
+    border-radius: 14px;
+    background-color: var(--secondary-color);
+    box-shadow: rgba(0, 0, 0, 0.25);
+}
+
+.title-large {
+    font-size: 3rem;
+    font-weight: 800;
+}
+
+.title-medium {
+    font-size: 2rem;
+    font-weight: 800;
+}
+
+.title-regular {
+    font-size: 1.5rem;
+    font-weight: 400;
+}
+
+.title-small {
+    font-size: .8rem;
+    font-weight: 800;
+}
