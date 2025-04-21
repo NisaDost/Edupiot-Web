@@ -21,9 +21,8 @@ html {
 
 @media (min-width: 768px) {
     html {
-        font-size: 16px;
+        font-size: .9rem;
     }
-}
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
     box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
@@ -35,7 +34,6 @@ html {
 }
 
 body {
-    margin-bottom: 60px;
     background-color: var(--background-accent);
 }
 
@@ -125,7 +123,7 @@ body {
 
 .title-regular {
     font-size: 1.5rem;
-    font-weight: 400;
+    font-weight: 800;
 }
 
 .title-small {
