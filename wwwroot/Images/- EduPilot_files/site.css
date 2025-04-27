@@ -29,13 +29,11 @@ html {
     }
 
     html {
-        height: 100%;
         position: relative;
         min-height: 100%;
     }
 
     body {
-        height: 100%;
         background-color: var(--background-accent);
     }
 
@@ -44,20 +42,22 @@ html {
         z-index: 2;
         background-color: var(--background-color);
         box-shadow: rgba(0, 0, 0, 0.25);
-        border-bottom-left-radius: 0.5rem;
-        border-bottom-right-radius: 0.5rem;
+        border-bottom-left-radius: 14px;
+        border-bottom-right-radius: 14px;
     }
 
     .footer-card {
         background-color: var(--primary-accent);
         box-shadow: rgba(0, 0, 0, 0.25);
-        padding: 1rem;
+        border-top-left-radius: 14px;
+        border-top-right-radius: 14px;
+        padding: 8px;
     }
 
     .button-primary {
         background-color: var(--primary-color);
         padding: 12px;
-        border-radius: 0.5rem;
+        border-radius: 14px;
         font-weight: 800;
         color: var(--background-color);
         border: none;
@@ -66,7 +66,7 @@ html {
     .button-secondary {
         background-color: var(--secondary-color);
         padding: 12px;
-        border-radius: 0.5rem;
+        border-radius: 14px;
         font-weight: 800;
         color: var(--background-color);
         border: none;
@@ -75,36 +75,45 @@ html {
     .button-primary-accent {
         background-color: var(--primary-accent);
         padding: 12px;
-        border-radius: 0.5rem;
+        border-radius: 14px;
         font-weight: 800;
         color: var(--background-color);
         border: none;
     }
 
     .bg-card {
-        padding: 2rem;
-        border-radius: 0.5rem;
+        padding: 10px;
+        border-radius: 14px;
         background-color: var(--background-color);
         box-shadow: rgba(0, 0, 0, 0.25);
     }
 
     .card-primary {
         padding: 10px;
-        border-radius: 0.5rem;
+        border-radius: 14px;
         background-color: var(--primary-color);
         box-shadow: rgba(0, 0, 0, 0.25);
     }
 
     .card-primary-accent {
         padding: 10px;
-        border-radius: 0.5rem;
+        border-radius: 14px;
         background-color: var(--primary-accent);
         box-shadow: rgba(0, 0, 0, 0.25);
     }
 
+    .text-light {
+        color: var(--background-color) !important
+    }
+
+    .text-dark {
+        color: var(--primary-accent) !important
+    }
+
+
     .card-secondary {
         padding: 8px;
-        border-radius: 0.5rem;
+        border-radius: 14px;
         background-color: var(--secondary-color);
         box-shadow: rgba(0, 0, 0, 0.25);
     }
@@ -129,55 +138,11 @@ html {
         font-weight: 800;
     }
 
-    input {
+    input{
         padding: 10px;
         height: 3rem;
         border-color: rgba(0,0,0,0.25);
-        border-radius: 0.5rem;
-    }
-
-    .sidebar {
-        width: 20rem;
-        min-height: 100vh;
-        height:100%;
-        background-color: var(--primary-accent);
-        margin-top: -5rem;/*
-        margin-bottom: -5rem;*/
-        padding-top: 5rem;/*
-        padding-bottom: 5rem;*/
-        box-shadow: rgba(0,0,0,0.25);
-    }
-
-    .content{
-        width:100%;
-        margin: 1rem;
-    }
-
-    .accordion {
-        --bs-accordion-btn-bg: var(--primary-accent);
-        --bs-accordion-btn-focus-box-shadow: none;
-        --bs-accordion-active-bg: var(--primary-color);
-        --bs-accordion-active-color: var(--background-color);
-        --bs-accordion-bg: var(--primary-color);
-        --bs-accordion-color: var(--background-color);
-    }
-
-    .accordion-button::after {
-        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23ffffff'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
-        transition: all 0.5s;
-    }
-    .accordion-button:not(.collapsed)::after {
-        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23ffffff'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
-    }
-
-    .accordion-primary-accent{
-        background-color: var(--primary-accent) !important
-    } 
-    .accordion-primary{
-        background-color: var(--primary-color) !important
-    }
-    .accordion-secondary{
-        background-color: var(--secondary-color) !important;
+        border-radius: 14px;
     }
 
 }

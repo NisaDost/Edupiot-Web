@@ -1,0 +1,50 @@
+﻿@{
+    ViewData["Title"] = "Kurumsal - Kayıt Ol";
+}
+
+<div class="m-3">
+    <div class="d-flex flex-row" style="background-color: var(--primary-accent); border-radius: 20px">
+        
+        <div class="bg-card d-flex justify-content-center align-items-center w-50 p-5">
+            <img src="~/Images/teacher2.png" 
+                 alt="Kayıt Görseli"
+                 style="max-height: 100%; max-width: 50%; object-fit: contain;" />
+        </div>
+
+        <div class="card-primary-accent d-flex flex-column align-items-center justify-content-around w-50">
+            <div class="title-large text-light p-3">Kurumsal Kayıt</div>
+            <div class="w-75">
+                <div class="d-flex flex-column mb-2">
+                    <label for="name" class="text-light title-regular">Kurum Adı</label>
+                    <input type="text" id="name" name="name" placeholder="Atatürk Orta Okulu" />
+                </div>
+
+                <div class="d-flex flex-column mb-2">
+                    <label for="email" class="text-light title-regular">Kurum e-Posta</label>
+                    <input type="email" id="email" name="email" placeholder="okul@ornek.edu.tr" />
+                </div>
+
+                <div class="d-flex flex-column mb-2">
+                    <label for="password" class="text-light title-regular">Parola</label>
+                    <input type="password" id="password" name="password" placeholder="********" />
+                </div>
+
+                <div class="d-flex flex-column mb-2">
+                    <label for="password-2" class="text-light title-regular">Parola (Tekrar)</label>
+                    <input type="password" id="password-2" name="password" placeholder="********" />
+                </div>
+
+                <div class="d-flex flex-row align-items-center">
+                    <input type="checkbox" id="kvkk" name="kvkk" class="me-1"/>
+                    <label for="kvkk" class="text-light">KVKK Metnini okudum, onaylıyorum.</label>
+                </div>
+
+                <div class="d-flex flex-row align-items-center">
+                    <input type="checkbox" id="aydinlatma" name="aydinlatma" class="me-1" />
+                    <label for="aydinlatma" class="text-light">Aydınlatma Metnini okudum, onaylıyorum.</label>
+                </div>
+            </div>
+            <button class="button-secondary title-regular w-75 mb-4">Kayıt Ol</button>
+        </div>
+    </div>
+</div>

@@ -1,25 +1,21 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
+
 <div class="text-center">
-    <!-- #region Poster  Section-->
-    <div style="margin-bottom: -1em; position: relative">
-        <div class="text-start position-absolute" style="left: 5%; top: 25%">
-            <p class="title-medium">
-                Egitimi
-            </p>
-            <p class="title-large text-light">
-                Bulutların Üstüne
-            </p>
-            <p class="title-medium">
-                Taşıyan Bir Deneyim.
-            </p>
+
+    <!-- #region Poster Section -->
+    <section class="position-relative" style="margin-bottom: -1rem; margin-top: -1rem; z-index: -1">
+        <img class="w-100" src="~/Images/EduPilot-poster.png" alt="EduPilot Poster" style="object-fit: cover; height: 70vh;" />
+        <div class="position-absolute text-start" style="top: 20%; left: 3%; color: white;">
+            <h1 class="fw-bold display-4">Eğitimi</h1>
+            <h1 class="fw-bold display-1 text-light">Bulutların Üstüne</h1>
+            <h1 class="fw-bold display-4">Taşıyan Bir Deneyim.</h1>
         </div>
-        <img class="w-100" style="z-index: -1" src="~/Images/EduPilot-poster.png" alt="poster" />
-    </div>
+    </section>
     <!-- #endregion -->
-    <!-- #region EduPilot ile Yapabileceklerin... -->
-    <div class="bg-card position-relative pb-5" style=" margin-bottom: -1em">
+    <!-- #region EduPilot Features Section -->
+    <div class="bg-card position-relative pb-5" style="margin-bottom: -1em">
         <div>
             <p class="title-large mt-3">EduPilot ile Yapabileceklerin...</p>
         </div>
@@ -118,73 +114,56 @@
         </div>
     </div>
     <!-- #endregion -->
-
-    <!-- #region Aramıza Katıl Section -->
-    <div class="pb-4" style="background-color: var(--primary-accent); height: auto; margin-bottom: -2rem">
-        <div>
-            <p class="title-large text-light pt-5"> Aramıza katılmaya hazır mısın? </p>
-            <div class="d-flex flex-row justify-content-around align-items-center">
-                <div class="p-4">
-                    <img src="~/Images/students.png" alt="students" />
-                </div>
-                <div class="d-flex flex-column h-100 justify-content-around align-items-center pe-5">
-                    <p class="title-regular w- text-light text-center">
-                        Hedefini bulutların üstünde tutuyorsan, kendini geliştirirken ödüllerin keyfini çıkarmak istiyorsan ve potansiyelini keşfetmek istiyorsan EduPilot tam sana göre!
-                    </p>
-                    <br />
-                    <button class="button-secondary title-medium">
-                        Başlayalım!
-                    </button>
+    <!-- #region Join Us Section -->
+    <section class="bg-primary-accent py-5 text-light position-relative" style="background-color: var(--primary-accent); margin-bottom: -1rem; margin-top: -1rem; z-index: -1">
+        <div class="container d-flex flex-column flex-lg-row align-items-center justify-content-around">
+            <img src="~/Images/students.png" alt="Students" class="mb-4 mb-lg-0" style="max-height: 500px;" />
+            <div class="text-center text-lg-start">
+                <h2 class="title-large mb-4">Aramıza katılmaya hazır mısın?</h2>
+                <p class="mb-4">Hedefini bulutların üstünde tutuyorsan, EduPilot tam sana göre!</p>
+                <div class="d-flex gap-3 justify-content-center justify-content-lg-start">
+                    <a href="#" class="btn btn-light p-2">
+                        <img src="~/Images/app store.png" alt="App Store" style="height: 3rem;" />
+                    </a>
+                    <a href="#" class="btn btn-light p-2">
+                        <img src="~/Images/play store.png" alt="Play Store" style="height: 3rem;" />
+                    </a>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
     <!-- #endregion -->
+    <!-- #region Discover EduPilot Business Section -->
+    <section class="bg-card py-5" id="EduPilotBusiness">
+        <div class="container">
+            <h2 class="title-large mb-5">EduPilot Business’i Keşfedin</h2>
 
-    <!-- #region Keşfet Section -->
-    <div class="bg-card" style="margin-bottom: -2rem">
-        <div>
-            <p class="title-large mt-3">
-                EduPilot’u Keşfet!
-            </p>
-        </div>
+            <div class="row g-5">
+                <div class="col-md-6">
+                    <div class="card card-primary d-flex flex-row align-items-center justify-content-between h-100 p-3">
+                        <img src="~/Images/author.webp" class="img-fluid w-50" alt="Publisher" />
+                        <div class="ms-4 d-flex flex-column justify-content-between me-5 w-50">
+                            <p class="text-light fs-1 fw-bold">Yayınevi</p>
+                            <button class="button-secondary title-regular my-2" onclick="location.href='@Url.Action("Login", "Publisher")'">Giriş Yap</button>
+                            <button class="button-primary-accent title-regular" onclick="location.href='@Url.Action("Register", "Publisher")'">Kayıt Ol</button>
+                        </div>
+                    </div>
+                </div>
 
-        <div class="d-flex flex-row flex-wrap justify-content-between align-items-center p-5" style="margin-top: -7rem">
-
-            <img class="w-25" src="~/Images/teacher.png" alt="teacher" />
-
-
-            <div class="card-primary d-flex flex-column justify-content-between align-items-center p-4" style="width: 20rem; height: 23rem">
-                <p class="title-large text-light">
-                    Kurumsal
-                </p>
-                <div class="d-flex flex-column w-75">
-                    <button class="button-secondary title-regular">
-                        Giriş Yap
-                    </button>
-                    <br />
-                    <button class="button-primary-accent title-regular">
-                        Üye Ol
-                    </button>
+                <div class="col-md-6">
+                    <div class="card card-secondary d-flex flex-row align-items-center justify-content-between h-100 p-3">
+                        <div class="me-4 d-flex flex-column justify-content-between ms-5 w-50">
+                            <p class="text-light fs-1 fw-bold">Kurumsal</p>
+                            <button class="button-primary title-regular my-2" onclick="location.href='@Url.Action("Login", "Institution")'">Giriş Yap</button>
+                            <button class="button-primary-accent title-regular" onclick="location.href='@Url.Action("Register", "Institution")'">Kayıt Ol</button>
+                        </div>
+                        <img src="~/Images/teacher1.png" class="img-fluid w-50" alt="Institution" />
+                    </div>
                 </div>
             </div>
 
-            <div class="card-secondary d-flex flex-column justify-content-between align-items-center p-4" style="width: 20rem; height: 23rem">
-                <p class="title-large text-light">
-                    Öğrenci / Danışman
-                </p>
-                <div class="d-flex flex-column" style=" width: 12rem">
-                    <img src="~/Images/app store.png" alt="play store" />
-                    <br />
-                    <img src="~/Images/play store.png" alt="app store" />
-                </div>
-            </div>
-
-            <img class="w-25" src="~/Images/student.png" alt="student" />
-
         </div>
-    </div>
-
+    </section>
     <!-- #endregion -->
 
 </div>

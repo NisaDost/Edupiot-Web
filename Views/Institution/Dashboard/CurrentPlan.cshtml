@@ -1,0 +1,97 @@
+﻿@{
+    ViewData["Title"] = "Mevcut Plan";
+}
+
+<div class="d-flex flex-row">
+    <partial name="_InstitutionSidebar" />
+
+    <div class="content">
+        <div class="bg-card">
+
+            <h1 class="fw-bold mb-4">Mevcut Plan Bilgilerim</h1>
+
+            <!-- Current Plan Section -->
+            <div class="card mb-5 shadow-sm position-relative">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <span>Mevcut Planınız</span>
+                    <span class="badge bg-success">Aktif</span>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">EduPilot Demo</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">Ücretsiz / 18 Gün Kaldı</h6>
+                    <p class="card-text mt-3">
+                        - 100 Öğrenci Takibi<br />
+                        - 2 Danışman Hesabı<br />
+                        - Sınırlı Raporlama<br />
+                        - E-posta Desteği
+                    </p>
+                    <button class="btn btn-outline-primary" disabled>Aktif Plan</button>
+                </div>
+            </div>
+
+            <!-- Other Plans Section -->
+            <h2 class="fw-bold mb-4">Diğer Planlar</h2>
+
+            <div class="row g-4">
+                <!-- Plan 1 -->
+                <div class="col-md-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-header bg-success text-white">
+                            EduPilot Standard
+                        </div>
+                        <div class="card-body">
+                            <h6 class="card-subtitle mb-2 text-muted">₺149 / ay</h6>
+                            <p class="card-text mt-3">
+                                - 250 Öğrenciye kadar takip<br />
+                                - 5 Danışman Kullanıcı Hesabı<br />
+                                - Temel Raporlama Özellikleri<br />
+                                - E-posta Desteği
+                            </p>
+
+                            <button class="btn btn-success">Bu Planı Seç</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Plan 2 -->
+                <div class="col-md-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-header bg-warning text-dark">
+                            EduPilot Professional
+                        </div>
+                        <div class="card-body">
+                            <h6 class="card-subtitle mb-2 text-muted">₺499 / ay</h6>
+                            <p class="card-text mt-3">
+                                - 500 Öğrenciye kadar takip<br />
+                                - 10 Danışman Kullanıcı Hesabı<br />
+                                - Gelişmiş Raporlama ve Analitik<br />
+                                - 7/24 Desteği
+                            </p>
+                            <button class="btn btn-warning">Bu Planı Seç</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Plan 3 -->
+                <div class="col-md-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-header bg-danger text-white">
+                            EduPilot Enterprise
+                        </div>
+                        <div class="card-body">
+                            <h6 class="card-subtitle mb-2 text-muted">₺999 / ay</h6>
+                            <p class="card-text mt-3">
+                                - Sınırsız Öğrenci Takibi<br />
+                                - Sınırsız Danışman Hesabı<br />
+                                - Kurumsal Raporlama ve API Erişimi<br />
+                                - Özel Müşteri Temsilcisi
+                            </p>
+                            <button class="btn btn-danger">Bu Planı Seç</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

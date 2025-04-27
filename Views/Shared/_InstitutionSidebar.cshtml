@@ -1,0 +1,82 @@
+﻿<div style="background-color: var(--primary-accent); height: auto;">
+    <div class="sidebar accordion d-flex flex-column justify-content-between" id="sidebarAccordion">
+
+        <!-- Üst Alan -->
+        <div>
+            <div class="text-center my-4">
+                <p class="text-light fs-2 fw-bold mb-0">EduPilot Demo</p>
+            </div>
+
+            <!-- Profil -->
+            <div class="accordion-item bg-transparent border-0">
+                <h2 class="accordion-header" id="profileHeading">
+                    <a href="@Url.Action("Profile", "Institution")" class="accordion-button collapsed bg-transparent text-light fw-semibold text-decoration-none">
+                        Profil
+                    </a>
+                </h2>
+            </div>
+
+            <!-- Öğrenciler -->
+            <div class="accordion-item bg-transparent border-0">
+                <h2 class="accordion-header" id="studentsHeading">
+                    <button class="accordion-button collapsed bg-transparent text-light fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseStudents" aria-expanded="false" aria-controls="collapseStudents">
+                        Öğrenciler
+                    </button>
+                </h2>
+                <div id="collapseStudents" class="accordion-collapse collapse accordion-primary" data-bs-parent="#sidebarAccordion">
+                    <div class="accordion-body d-flex flex-column ps-4">
+                        <a href="@Url.Action("StudentList", "Institution")" class="nav-link text-light mb-2">Öğrenci Listesi</a>
+                        <a href="@Url.Action("UnderDevelopment", "Error")" class="nav-link text-light mb-2">Sınıf Listesi</a>
+                        <a href="@Url.Action("Attendance", "Institution")" class="nav-link text-light mb-2">Yoklama</a>
+                        <a href="@Url.Action("UnderDevelopment", "Error")" class="nav-link text-light">Duygu Analizi</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Öğretmenler -->
+            <div class="accordion-item bg-transparent border-0">
+                <h2 class="accordion-header" id="teachersHeading">
+                    <button class="accordion-button collapsed bg-transparent text-light fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTeachers" aria-expanded="false" aria-controls="collapseTeachers">
+                        Öğretmenler
+                    </button>
+                </h2>
+                <div id="collapseTeachers" class="accordion-collapse collapse accordion-primary" data-bs-parent="#sidebarAccordion">
+                    <div class="accordion-body d-flex flex-column ps-4">
+                        <a href="@Url.Action("TeacherList", "Institution")" class="nav-link text-light">Öğretmen Listesi</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sınıflar -->
+            <div class="accordion-item bg-transparent border-0">
+                <h2 class="accordion-header" id="classesHeading">
+                    <a href="@Url.Action("UnderDevelopment", "Error")" class="accordion-button collapsed bg-transparent text-light fw-semibold text-decoration-none">
+                        Sınıflar
+                    </a>
+                </h2>
+            </div>
+        </div>
+
+        <!-- Alt Alan -->
+        <div class="mt-4">
+            <!-- Mevcut Plan -->
+            <div class="accordion-item card-primary p-0 border-0">
+                <h2 class="accordion-header" id="planHeading">
+                    <a href="@Url.Action("CurrentPlan", "Institution")" class="accordion-button collapsed bg-transparent text-light fw-semibold text-decoration-none">
+                        Mevcut Plan
+                    </a>
+                </h2>
+            </div>
+
+            <!-- Çıkış Yap -->
+            <div class="accordion-item card-secondary p-0 border-0">
+                <h2 class="accordion-header" id="logoutHeading">
+                    <a href="@Url.Action("Index", "Home")" class="accordion-button collapsed bg-transparent text-light fw-semibold text-decoration-none">
+                        Çıkış Yap
+                    </a>
+                </h2>
+            </div>
+        </div>
+
+    </div>
+</div>

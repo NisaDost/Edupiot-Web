@@ -1,0 +1,75 @@
+﻿@{
+    ViewData["Title"] = "Örenci Listesi";
+}
+
+<div class="d-flex flex-row">
+    <partial name="_InstitutionSidebar" />
+
+    <div class="content">
+        <div class="bg-card">
+
+            <h1 class="fw-bold">Öğrenci Listesi </h1>
+            <h3 class="fw-bold">Atatürk Orta Okulu</h3>
+            <h5 class="fw-bold">Dummy List </h5>
+
+            <div class="d-flex flex-row align-items-center justify-content-end">
+
+                <label for="studentmail" class="fs-5 pe-3">Öğrenci E-Posta:</label>
+                <input type="email" id="studentmail" name="name" placeholder="ogrenci@mail.com" class="me-3" style="width: 15rem" />
+                <button class="button-secondary" style="width: 7rem">Ekle</button>
+            </div>
+
+            <div class="table-responsive mt-3">
+                <table class="table table-bordered  table-striped">
+                    <thead class="text-light" style="background-color: var(--primary-accent)">
+                        <tr>
+                            <th scope="col">Ad</th>
+                            <th scope="col">İkinci Ad</th>
+                            <th scope="col">Soyad</th>
+                            <th scope="col">Sınıf</th>
+                            <th scope="col">Danışman</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Ali</td>
+                            <td>Can</td>
+                            <td>Yılmaz</td>
+                            <td>10-A</td>
+                            <td>Ahmet Bey</td>
+                        </tr>
+                        <tr>
+                            <td>Ayşe</td>
+                            <td>Nur</td>
+                            <td>Demir</td>
+                            <td>11-B</td>
+                            <td>Elif Hanım</td>
+                        </tr>
+                        <tr>
+                            <td>Mehmet</td>
+                            <td>Emre</td>
+                            <td>Şahin</td>
+                            <td>9-C</td>
+                            <td>Fatma Hanım</td>
+                        </tr>
+                        <tr>
+                            <td>Selin</td>
+                            <td>Deniz</td>
+                            <td>Kaya</td>
+                            <td>12-D</td>
+                            <td>Mustafa Bey</td>
+                        </tr>
+                        <tr>
+                            <td>Burak</td>
+                            <td>Mert</td>
+                            <td>Çelik</td>
+                            <td>10-B</td>
+                            <td>Ayhan Bey</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+</div>
