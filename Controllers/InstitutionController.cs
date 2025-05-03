@@ -1,16 +1,36 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using EduPilot_Web.Models.DTOs;
+using Microsoft.AspNetCore.Mvc;
 
 namespace EduPilot_Web.Controllers
 {
-    public class InstitutionController : Controller
+    public class InstitutionController : ApiControllerBase
     {
+        [HttpGet]
         public IActionResult Login()
         {
             return View("Auth/Login");
         }
+
+        [HttpGet]
         public IActionResult Register()
         {
             return View("Auth/Register");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RegisterSubmit(InstitutionRegisterDTO model)
+        {
+            if (!ModelState.IsValid) return View("Auth/Register", model);
+
+            var response = await _client.PostAsJsonAsync("/api/institution/register", model);
+            if (response.IsSuccessStatusCode)
+            {
+                return RedirectToAction("Login");
+            }
+
+            var errorContent = await response.Content.ReadAsStringAsync();
+            ModelState.AddModelError(string.Empty, $"API Error: {errorContent}");
+            return View("Auth/Register", model);
         }
 
         public IActionResult Index()

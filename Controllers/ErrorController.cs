@@ -2,7 +2,7 @@
 
 namespace EduPilot_Web.Controllers
 {
-    public class ErrorController : Controller
+    public class ErrorController : ApiControllerBase
     {
         public IActionResult Index()
         {

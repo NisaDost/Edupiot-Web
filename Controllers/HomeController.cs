@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EduPilot_Web.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : ApiControllerBase
     {
         private readonly ILogger<HomeController> _logger;
 

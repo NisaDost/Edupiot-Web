@@ -1,44 +1,52 @@
-﻿@{
+﻿@model EduPilot_Web.Models.DTOs.PublisherRegisterDTO
+
+@{
     ViewData["Title"] = "Yayınevi - Kayıt Ol";
 }
 
 <div class="m-3">
     <div class="d-flex flex-row" style="background-color: var(--primary-color); border-radius: 20px">
-
         <div class="card-primary d-flex flex-column align-items-center justify-content-around w-50">
             <div class="title-large text-dark p-3">Yayınevi Kayıt</div>
-            <div class="w-75">
+
+            <form id="registerForm" class="w-75">
+                @Html.AntiForgeryToken()
+                <!-- Success / Error messages -->
+                <div id="successMessage" class="alert alert-success d-none" role="alert"></div>
+                <div id="errorMessage" class="alert alert-danger d-none" role="alert"></div>
+
                 <div class="d-flex flex-column mb-2">
-                    <label for="name" class="text-dark title-regular">Yayınevi Adı</label>
-                    <input type="text" id="name" name="name" placeholder="Atatürk Orta Okulu" />
+                    <label class="text-dark title-regular">Yayınevi Adı</label>
+                    <input name="name" id="name" class="form-control" required placeholder="EduPilot Yayınları" />
                 </div>
 
                 <div class="d-flex flex-column mb-2">
-                    <label for="email" class="text-dark title-regular">Yayınevi e-Posta</label>
-                    <input type="email" id="email" name="email" placeholder="okul@ornek.edu.tr" />
+                    <label class="text-dark title-regular">E-Posta</label>
+                    <input name="email" id="email" type="email" class="form-control required-field" placeholder="yayinevi@ornek.com" />
                 </div>
 
                 <div class="d-flex flex-column mb-2">
-                    <label for="password" class="text-dark title-regular">Parola</label>
-                    <input type="password" id="password" name="password" placeholder="********" />
+                    <label class="text-dark title-regular">Parola</label>
+                    <input name="password" id="password" type="password" class="form-control required-field" placeholder="********" />
                 </div>
 
                 <div class="d-flex flex-column mb-2">
-                    <label for="password-2" class="text-dark title-regular">Parola (Tekrar)</label>
-                    <input type="password" id="password-2" name="password" placeholder="********" />
+                    <label for="passwordConfirm" class="text-dark title-regular">Parola (Tekrar)</label>
+                    <input type="password" id="passwordConfirm" name="passwordConfirm" class="form-control required-field" placeholder="********" />
                 </div>
 
-                <div class="d-flex flex-row align-items-center">
-                    <input type="checkbox" id="kvkk" name="kvkk" class="me-1"/>
+                <div class="d-flex flex-row align-items-center mb-1">
+                    <input type="checkbox" id="kvkk" name="KvkkApproved" class="me-1 required-checkbox" />
                     <label for="kvkk" class="text-dark">KVKK Metnini okudum, onaylıyorum.</label>
                 </div>
 
-                <div class="d-flex flex-row align-items-center">
-                    <input type="checkbox" id="aydinlatma" name="aydinlatma" class="me-1" />
+                <div class="d-flex flex-row align-items-center mb-3">
+                    <input type="checkbox" id="aydinlatma" name="AydinlatmaApproved" class="me-1 required-checkbox" />
                     <label for="aydinlatma" class="text-dark">Aydınlatma Metnini okudum, onaylıyorum.</label>
                 </div>
-            </div>
-            <button class="button-secondary title-regular w-75 mb-4">Kayıt Ol</button>
+
+                <button type="submit" class="button-secondary title-regular w-100 mb-4">Kayıt Ol</button>
+            </form>
         </div>
 
         <div class="bg-card d-flex justify-content-center align-items-center w-50 p-5">
@@ -48,3 +56,74 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        document.getElementById("registerForm").addEventListener("submit", async function (e) {
+            e.preventDefault();
+
+            // Form verilerini topla
+            const data = {
+                name: document.getElementById("name").value,
+                email: document.getElementById("email").value,
+                password: document.getElementById("password").value,
+                passwordConfirm: document.getElementById("passwordConfirm").value,
+                kvkkApproved: document.getElementById("kvkk").checked,
+                aydinlatmaApproved: document.getElementById("aydinlatma").checked
+            };
+
+            // Temel doğrulama
+            if (!data.name || !data.email || !data.password || !data.passwordConfirm || !data.kvkkApproved || !data.aydinlatmaApproved) {
+                showError("Lütfen tüm alanları doldurun ve onay kutularını işaretleyin.");
+                return;
+            }
+
+            if (data.password !== data.passwordConfirm) {
+                showError("Parolalar eşleşmiyor.");
+                return;
+            }
+
+            try {
+                const response = await fetch("/Publisher/RegisterSubmit", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "RequestVerificationToken": getToken()
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (response.ok && result.success) {
+                    showSuccess(result.message);
+                    setTimeout(() => {
+                        window.location.href = "/Publisher/Login";
+                    }, 2500);
+                } else {
+                    showError(result.message || "Kayıt sırasında bir hata oluştu.");
+                }
+            } catch (err) {
+                showError("Sunucu hatası: " + err.message);
+            }
+        });
+
+        function showError(message) {
+            const errorDiv = document.getElementById("errorMessage");
+            errorDiv.textContent = message;
+            errorDiv.classList.remove("d-none");
+            document.getElementById("successMessage").classList.add("d-none");
+        }
+
+        function showSuccess(message) {
+            const successDiv = document.getElementById("successMessage");
+            successDiv.textContent = message;
+            successDiv.classList.remove("d-none");
+            document.getElementById("errorMessage").classList.add("d-none");
+        }
+
+        function getToken() {
+            return document.querySelector('input[name="__RequestVerificationToken"]').value;
+        }
+    </script>
+}
