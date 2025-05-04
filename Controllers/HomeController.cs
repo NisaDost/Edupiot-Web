@@ -6,12 +6,15 @@ namespace EduPilot_Web.Controllers
 {
     public class HomeController : ApiControllerBase
     {
-        private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
-        {
-            _logger = logger;
-        }
+        private readonly ILogger<HomeController> _logger;
+        public HomeController(IHttpClientFactory httpClientFactory) : base(httpClientFactory) { }
+
+
+        //public HomeController(ILogger<HomeController> logger)
+        //{
+        //    _logger = logger;
+        //}
 
         public IActionResult Index()
         {

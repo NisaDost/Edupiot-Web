@@ -3,37 +3,30 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var apiUsername = builder.Configuration.GetSection("Authorization:Basic:Username");
-var apiPassword = builder.Configuration.GetSection("Authorization:Basic:Password");
+var config = builder.Configuration;
+var apiUsername = config["Authorization:Basic:Username"];
+var apiPassword = config["Authorization:Basic:Password"];
 
-// Add services to the container.
 builder.Services.AddControllersWithViews();
 
-builder.Services.AddHttpClient("EduPilotApi", httpClient =>
+builder.Services.AddHttpClient("EduPilotApi", client =>
 {
-    httpClient.BaseAddress = new Uri("https://localhost:7104/api");
-
-    httpClient.DefaultRequestHeaders.Add(
-        HeaderNames.ContentType, "application/json; charset=UTF-8");
-    httpClient.DefaultRequestHeaders.Add(
-        HeaderNames.Authorization, $"Basic {Convert.ToBase64String(Encoding.UTF8.GetBytes($"{apiUsername}:{apiPassword}"))}");
+    client.BaseAddress = new Uri("https://localhost:7104/api/");
+    client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(
+        "Basic", Convert.ToBase64String(Encoding.UTF8.GetBytes($"{apiUsername}:{apiPassword}")));
 });
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
-
 app.UseAuthorization();
 
 app.MapControllerRoute(

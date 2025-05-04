@@ -5,6 +5,10 @@ namespace EduPilot_Web.Controllers
 {
     public class PublisherController : ApiControllerBase
     {
+        public PublisherController(IHttpClientFactory httpClientFactory) : base(httpClientFactory)
+        {
+        }
+
         public IActionResult Login()
         {
             return View("Auth/Login");
@@ -17,17 +21,16 @@ namespace EduPilot_Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RegisterSubmit([FromBody] PublisherRegisterDTO model)
+        public async Task<IActionResult> RegisterSubmit([FromForm] PublisherRegisterDTO model)
         {
+            //buraya view yönlendirmesi ekle
             if (!ModelState.IsValid)
             {
                 return BadRequest(new { success = false, message = "Lütfen tüm alanları doğru doldurunuz." });
             }
 
-            using var client = new HttpClient();
-            var backendUrl = "https://localhost:7104/api/publisher/register";
-
-            var response = await client.PostAsJsonAsync(backendUrl, model);
+            var client = GetApiClient();
+            var response = await client.PostAsJsonAsync("publisher/register", model);
 
             if (response.IsSuccessStatusCode)
             {
@@ -44,11 +47,12 @@ namespace EduPilot_Web.Controllers
         {
             return View("Dashboard/Profile");
         }
+
         public IActionResult Profile()
         {
             return View("Dashboard/Profile");
         }
-        
+
         public IActionResult AddNewQuestion()
         {
             return View("Dashboard/AddNewQuiz");
