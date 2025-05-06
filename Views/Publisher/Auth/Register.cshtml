@@ -1,49 +1,64 @@
-﻿@model EduPilot_Web.Models.DTOs.PublisherRegisterDTO
+﻿@using EduPilot_Web.Models.DTOs
+@model RegisterDTO
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+@if (TempData["Success"] != null)
+{
+    <div id="success-msg" class="alert alert-success">@TempData["Success"]</div>
+}
 
 @{
     ViewData["Title"] = "Yayınevi - Kayıt Ol";
 }
 
 <div class="m-3">
-    <div class="d-flex flex-row" style="background-color: var(--primary-color); border-radius: 20px">
-        <div class="card-primary d-flex flex-column align-items-center justify-content-around w-50">
-            <div class="title-large text-dark p-3">Yayınevi Kayıt</div>
+    <div class="d-flex flex-row" style="background-color: var(--primary-accent); border-radius: 20px">
+        <div class="card-primary-accent d-flex flex-column align-items-center justify-content-around w-50">
+            <div class="title-large text-light p-3">Yayınevi Kayıt</div>
 
-            <form asp-action="RegisterSubmit" asp-controller="Publisher" method="post" class="w-75">
+            @* Uyarılar için boş div *@
+
+
+            <form asp-action="PublisherRegisterSubmit" asp-controller="Auth" method="post" class="w-75">
                 @Html.AntiForgeryToken()
+
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div id="client-validation-errors"></div>
 
                 <div class="d-flex flex-column mb-2">
-                    <label asp-for="Name" class="text-dark title-regular"></label>
+                    <label asp-for="Name" class="text-light title-regular">Yayınevi Adı</label>
                     <input asp-for="Name" class="form-control" placeholder="EduPilot Yayınları" />
                     <span asp-validation-for="Name" class="text-danger"></span>
                 </div>
 
                 <div class="d-flex flex-column mb-2">
-                    <label asp-for="Email" class="text-dark title-regular"></label>
+                    <label asp-for="Email" class="text-light title-regular">Yayınevi E-Posta</label>
                     <input asp-for="Email" type="email" class="form-control" placeholder="yayinevi@ornek.com" />
                     <span asp-validation-for="Email" class="text-danger"></span>
                 </div>
 
                 <div class="d-flex flex-column mb-2">
-                    <label asp-for="Password" class="text-dark title-regular"></label>
+                    <label asp-for="Password" class="text-light title-regular">Parola</label>
                     <input asp-for="Password" type="password" class="form-control" placeholder="********" />
                     <span asp-validation-for="Password" class="text-danger"></span>
                 </div>
 
                 <div class="d-flex flex-column mb-2">
-                    <label class="text-dark title-regular">Parola (Tekrar)</label>
-                    <input type="password" class="form-control" placeholder="********" />
+                    <label for="PasswordConfirm"  class="text-light title-regular">Parola (Tekrar)</label>
+                    <input name="PasswordConfirm" id="PasswordConfirm" type="password" class="form-control" placeholder="********" />
                 </div>
 
                 <div class="d-flex flex-row align-items-center mb-1">
-                    <input type="checkbox" class="me-1" />
-                    <label class="text-dark">KVKK Metnini okudum, onaylıyorum.</label>
+                    <input name="KvkkAccepted" id="KvkkAccepted" type="checkbox" class="me-1" />
+                    <label for="KvkkAccepted" class="text-light">KVKK Metnini okudum, onaylıyorum.</label>
                 </div>
 
                 <div class="d-flex flex-row align-items-center mb-3">
-                    <input type="checkbox" class="me-1" />
-                    <label class="text-dark">Aydınlatma Metnini okudum, onaylıyorum.</label>
+                    <input name="ClarificationAccepted" id="ClarificationAccepted" type="checkbox" class="me-1" />
+                    <label for="ClarificationAccepted" class="text-light">Aydınlatma Metnini okudum, onaylıyorum.</label>
                 </div>
 
                 <button type="submit" class="button-secondary title-regular w-100 mb-4">Kayıt Ol</button>
@@ -55,3 +70,54 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const form = document.querySelector("form");
+            const errorContainer = document.getElementById("client-validation-errors");
+
+            form.addEventListener("submit", function (e) {
+                errorContainer.innerHTML = "";
+
+                const name = document.querySelector('[name="Name"]').value.trim();
+                const email = document.querySelector('[name="Email"]').value.trim();
+                const password = document.querySelector('[name="Password"]').value.trim();
+                const passwordConfirm = document.querySelector('[name="PasswordConfirm"]').value.trim();
+                const kvkk = document.querySelector('[name="KvkkAccepted"]').checked;
+                const clarification = document.querySelector('[name="ClarificationAccepted"]').checked;
+
+                let messages = [];
+
+                if (!name || !email || !password || !passwordConfirm) {
+                    messages.push("Tüm alanlar doldurulmalıdır.");
+                }
+                if (password !== passwordConfirm) {
+                    messages.push("Parolalar uyuşmuyor.");
+                }
+                if (!kvkk || !clarification) {
+                    messages.push("Sözleşmeler onaylanmalıdır.");
+                }
+
+                if (messages.length > 0) {
+                    e.preventDefault();
+
+                    let html = `<div class="alert alert-danger">`;
+                    messages.forEach(msg => {
+                        html += `<div>${msg}</div>`;
+                    });
+                    html += `</div>`;
+
+                    errorContainer.innerHTML = html;
+                }
+            });
+
+            const success = document.getElementById("success-msg");
+            if (success) {
+                setTimeout(() => {
+                    window.location.href = "/Publisher/Login";
+                }, 2000);
+            }
+        });
+    </script>
+}

@@ -1,50 +1,123 @@
-﻿@{
+﻿@using EduPilot_Web.Models.DTOs
+@model RegisterDTO
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+@if (TempData["Success"] != null)
+{
+    <div id="success-msg" class="alert alert-success">@TempData["Success"]</div>
+}
+
+@{
     ViewData["Title"] = "Kurumsal - Kayıt Ol";
 }
 
 <div class="m-3">
     <div class="d-flex flex-row" style="background-color: var(--primary-accent); border-radius: 20px">
-        
-        <div class="bg-card d-flex justify-content-center align-items-center w-50 p-5">
-            <img src="~/Images/teacher2.png" 
-                 alt="Kayıt Görseli"
-                 style="max-height: 100%; max-width: 50%; object-fit: contain;" />
+        <div class="card-primary-accent d-flex flex-column align-items-center justify-content-around w-50">
+            <div class="title-large text-light p-3">Yayınevi Kayıt</div>
+
+            @* Uyarılar için boş div *@
+
+
+            <form asp-action="InstitutionRegisterSubmit" asp-controller="Auth" method="post" class="w-75">
+                @Html.AntiForgeryToken()
+
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div id="client-validation-errors"></div>
+
+                <div class="d-flex flex-column mb-2">
+                    <label asp-for="Name" class="text-light title-regular">Kurum Adı</label>
+                    <input asp-for="Name" class="form-control" placeholder="EduPilot Okulları" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+
+                <div class="d-flex flex-column mb-2">
+                    <label asp-for="Email" class="text-light title-regular">Kurumsal E-Posta</label>
+                    <input asp-for="Email" type="email" class="form-control" placeholder="kurum@ornek.com" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+
+                <div class="d-flex flex-column mb-2">
+                    <label asp-for="Password" class="text-light title-regular">Parola</label>
+                    <input asp-for="Password" type="password" class="form-control" placeholder="********" />
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+
+                <div class="d-flex flex-column mb-2">
+                    <label for="PasswordConfirm" class="text-light title-regular">Parola (Tekrar)</label>
+                    <input name="PasswordConfirm" id="PasswordConfirm" type="password" class="form-control" placeholder="********" />
+                </div>
+
+                <div class="d-flex flex-row align-items-center mb-1">
+                    <input name="KvkkAccepted" id="KvkkAccepted" type="checkbox" class="me-1" />
+                    <label for="KvkkAccepted" class="text-light">KVKK Metnini okudum, onaylıyorum.</label>
+                </div>
+
+                <div class="d-flex flex-row align-items-center mb-3">
+                    <input name="ClarificationAccepted" id="ClarificationAccepted" type="checkbox" class="me-1" />
+                    <label for="ClarificationAccepted" class="text-light">Aydınlatma Metnini okudum, onaylıyorum.</label>
+                </div>
+
+                <button type="submit" class="button-secondary title-regular w-100 mb-4">Kayıt Ol</button>
+            </form>
         </div>
 
-        <div class="card-primary-accent d-flex flex-column align-items-center justify-content-around w-50">
-            <div class="title-large text-light p-3">Kurumsal Kayıt</div>
-            <div class="w-75">
-                <div class="d-flex flex-column mb-2">
-                    <label for="name" class="text-light title-regular">Kurum Adı</label>
-                    <input type="text" id="name" name="name" placeholder="Atatürk Orta Okulu" />
-                </div>
-
-                <div class="d-flex flex-column mb-2">
-                    <label for="email" class="text-light title-regular">Kurum e-Posta</label>
-                    <input type="email" id="email" name="email" placeholder="okul@ornek.edu.tr" />
-                </div>
-
-                <div class="d-flex flex-column mb-2">
-                    <label for="password" class="text-light title-regular">Parola</label>
-                    <input type="password" id="password" name="password" placeholder="********" />
-                </div>
-
-                <div class="d-flex flex-column mb-2">
-                    <label for="password-2" class="text-light title-regular">Parola (Tekrar)</label>
-                    <input type="password" id="password-2" name="password" placeholder="********" />
-                </div>
-
-                <div class="d-flex flex-row align-items-center">
-                    <input type="checkbox" id="kvkk" name="kvkk" class="me-1"/>
-                    <label for="kvkk" class="text-light">KVKK Metnini okudum, onaylıyorum.</label>
-                </div>
-
-                <div class="d-flex flex-row align-items-center">
-                    <input type="checkbox" id="aydinlatma" name="aydinlatma" class="me-1" />
-                    <label for="aydinlatma" class="text-light">Aydınlatma Metnini okudum, onaylıyorum.</label>
-                </div>
-            </div>
-            <button class="button-secondary title-regular w-75 mb-4">Kayıt Ol</button>
+        <div class="bg-card d-flex justify-content-center align-items-center w-50 p-5">
+            <img src="~/Images/author1.png" alt="Kayıt Görseli" style="max-height: 100%; max-width: 50%; object-fit: contain;" />
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const form = document.querySelector("form");
+            const errorContainer = document.getElementById("client-validation-errors");
+
+            form.addEventListener("submit", function (e) {
+                errorContainer.innerHTML = "";
+
+                const name = document.querySelector('[name="Name"]').value.trim();
+                const email = document.querySelector('[name="Email"]').value.trim();
+                const password = document.querySelector('[name="Password"]').value.trim();
+                const passwordConfirm = document.querySelector('[name="PasswordConfirm"]').value.trim();
+                const kvkk = document.querySelector('[name="KvkkAccepted"]').checked;
+                const clarification = document.querySelector('[name="ClarificationAccepted"]').checked;
+
+                let messages = [];
+
+                if (!name || !email || !password || !passwordConfirm) {
+                    messages.push("Tüm alanlar doldurulmalıdır.");
+                }
+                if (password !== passwordConfirm) {
+                    messages.push("Parolalar uyuşmuyor.");
+                }
+                if (!kvkk || !clarification) {
+                    messages.push("Sözleşmeler onaylanmalıdır.");
+                }
+
+                if (messages.length > 0) {
+                    e.preventDefault();
+
+                    let html = `<div class="alert alert-danger">`;
+                    messages.forEach(msg => {
+                        html += `<div>${msg}</div>`;
+                    });
+                    html += `</div>`;
+
+                    errorContainer.innerHTML = html;
+                }
+            });
+
+            const success = document.getElementById("success-msg");
+            if (success) {
+                setTimeout(() => {
+                    window.location.href = "/Institution/Login";
+                }, 2000);
+            }
+        });
+    </script>
+}

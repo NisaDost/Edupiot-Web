@@ -1,6 +1,6 @@
 ﻿namespace EduPilot_Web.Models.DTOs
 {
-    public class PublisherRegisterDTO
+    public class RegisterDTO
     {
         public string Name { get; set; }
         public string Email { get; set; }

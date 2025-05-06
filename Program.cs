@@ -4,8 +4,8 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 var config = builder.Configuration;
-var apiUsername = config["Authorization:Basic:Username"];
-var apiPassword = config["Authorization:Basic:Password"];
+var apiUsername = "admin"; /*config["Authorization:Basic:admin"];*/
+var apiPassword = "password"; /*config["Authorization:Basic:password"];*/
 
 builder.Services.AddControllersWithViews();
 
@@ -13,7 +13,7 @@ builder.Services.AddHttpClient("EduPilotApi", client =>
 {
     client.BaseAddress = new Uri("https://localhost:7104/api/");
     client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(
-        "Basic", Convert.ToBase64String(Encoding.UTF8.GetBytes($"{apiUsername}:{apiPassword}")));
+        "Basic", Convert.ToBase64String(Encoding.UTF8.GetBytes(apiUsername + ":" + apiPassword)));
 });
 
 var app = builder.Build();
