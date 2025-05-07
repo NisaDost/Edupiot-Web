@@ -9,40 +9,11 @@ namespace EduPilot_Web.Controllers
         public PublisherController(IHttpClientFactory httpClientFactory) : base(httpClientFactory){}
 
         [HttpGet]
-public IActionResult CreateQuiz()
-{
-    return View("Dashboard/AddQuiz", new QuizViewModel());
-}
-
-[HttpPost]
-public async Task<IActionResult> CreateQuiz(QuizViewModel model, string action)
-{
-    var client = GetApiClient();
-
-    if (action == "grade")
-    {
-        var response = await client.GetAsync($"/api/lessons/{model.SelectedGrade}");
-        model.Lessons = response.IsSuccessStatusCode
-            ? await response.Content.ReadFromJsonAsync<List<LessonsByGradeDTO>>()
-            : new List<LessonsByGradeDTO>();
-    }
-
-    if (action == "lesson")
-    {
-        var response = await client.GetAsync($"/api/lessons/{model.SelectedLessonId}/subjects");
-        model.Subjects = response.IsSuccessStatusCode
-            ? await response.Content.ReadFromJsonAsync<List<SubjectDTO>>()
-            : new List<SubjectDTO>();
-
-        // Dersleri yeniden yüklemek için sınıf bilgisi de korunmalı
-        var lessonRes = await client.GetAsync($"/api/lessons/{model.SelectedGrade}");
-        model.Lessons = lessonRes.IsSuccessStatusCode
-            ? await lessonRes.Content.ReadFromJsonAsync<List<LessonsByGradeDTO>>()
-            : new List<LessonsByGradeDTO>();
-    }
-
-    return View("Dashboard/AddQuiz", model);
-}
+        public IActionResult CreateQuiz()
+        {
+            
+            return View("Dashboard/AddQuiz");
+        }
 
         [HttpPost]
         public async Task<IActionResult> LoadLessons(int grade)
@@ -68,6 +39,25 @@ public async Task<IActionResult> CreateQuiz(QuizViewModel model, string action)
 
             var subjects = await response.Content.ReadFromJsonAsync<List<SubjectDTO>>();
             return PartialView("_SubjectDropdown", subjects);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateQuiz(QuizViewModel model)
+        {
+            var client = GetApiClient();
+            var quizDto = new QuizDTO
+            {
+                SubjectId = model.SubjectId,
+                Difficulty = model.Difficulty,
+                Questions = new List<QuestionDTO>() // boş başlangıç
+            };
+            var res = await client.PostAsJsonAsync("/api/publisher/addquiz", quizDto);
+            if (!res.IsSuccessStatusCode) return BadRequest();
+
+            TempData["QuizId"] = await res.Content.ReadAsStringAsync();
+            TempData["QuizActive"] = model.IsActive;
+
+            return RedirectToAction("AddQuestions");
         }
 
         public IActionResult AddQuestions()
