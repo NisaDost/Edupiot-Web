@@ -20,7 +20,7 @@
         <div class="card-secondary d-flex flex-column align-items-center justify-content-around w-50" style="min-height: auto">
             <div class="title-large text-light p-3">Yayınevi Giriş</div>
 
-            <form asp-action="LoginSubmit" asp-controller="Publisher" method="post" class="w-75">
+            <form asp-action="PublisherLoginSubmit" asp-controller="Auth" method="post" class="w-75">
                 @Html.AntiForgeryToken()
 
                 <div id="client-validation-errors"></div>

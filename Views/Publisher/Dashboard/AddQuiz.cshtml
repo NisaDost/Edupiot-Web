@@ -1,0 +1,38 @@
+﻿@using EduPilot_Web.Models.DTOs;
+@{
+    ViewBag.Title = "Yeni Quiz Oluştur";
+    List<int> grades = Enumerable.Range(1, 12).ToList();
+}
+
+<div class="d-flex flex-row">
+    <partial name="_PublisherSidebar" />
+
+    <div class="content">
+        <div class="bg-card">
+            <h2 class="mb-4 text-center">Yeni Quiz Oluştur</h2>
+
+            <!-- Sınıf Seçimi -->
+            <form asp-action="LoadLessons" method="post">
+                <label for="grade" class="form-label">Sınıf Seçiniz</label>
+                <select name="grade" class="form-select" onchange="this.form.submit()">
+                    <option selected disabled>Seçiniz</option>
+                    @foreach (var grade in grades)
+                    {
+                        <option value="@grade">@grade. Sınıf</option>
+                    }
+                </select>
+            </form>
+
+            <!-- Ders Dropdown Partial -->
+            <div id="lesson-dropdown">
+                <partial name="_LessonDropdown" model="new List<LessonsByGradeDTO>()" />
+            </div>
+
+            <!-- Konu Dropdown Partial -->
+            <div id="subject-dropdown">
+                <partial name="_SubjectDropdown" model="new List<SubjectDTO>()" />
+            </div>
+        </div>
+    </div>
+
+</div>

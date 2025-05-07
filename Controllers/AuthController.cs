@@ -6,8 +6,6 @@ namespace EduPilot_Web.Controllers
     public class AuthController : ApiControllerBase
     {
         public AuthController(IHttpClientFactory httpClientFactory) : base(httpClientFactory) { }
-        public PublisherController PublisherController;
-        public InstitutionController InstitutionController;
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -16,7 +14,7 @@ namespace EduPilot_Web.Controllers
             if (!ModelState.IsValid)
             {
                 TempData["Error"] = "Lütfen tüm alanları eksiksiz doldurun.";
-                //return PublisherController.login;
+                return RedirectToAction("Register", "Publisher");
             }
 
             var client = GetApiClient();
@@ -25,13 +23,13 @@ namespace EduPilot_Web.Controllers
             if (response.IsSuccessStatusCode)
             {
                 //TempData["Success"] = "Kayıt başarılı. Giriş sayfasına yönlendiriliyorsunuz.";
-                return PublisherController.RedirectToAction("Login");
+                return RedirectToAction("Login", "Publisher");
             }
             else
             {
                 var errorContent = await response.Content.ReadAsStringAsync();
                 TempData["Error"] = "Kayıt başarısız: " + errorContent;
-                return PublisherController.RedirectToAction("Register");
+                return RedirectToAction("Register", "Publisher");
             }
         }
 
@@ -42,7 +40,7 @@ namespace EduPilot_Web.Controllers
             if (!ModelState.IsValid)
             {
                 TempData["Error"] = "Lütfen geçerli bilgi girin.";
-                return PublisherController.RedirectToAction("Login");
+                return RedirectToAction("Login", "Publisher");
             }
 
             var client = GetApiClient();
@@ -50,13 +48,13 @@ namespace EduPilot_Web.Controllers
 
             if (response.IsSuccessStatusCode)
             {
-                return PublisherController.RedirectToAction("Profile");
+                return RedirectToAction("Profile", "Publisher");
             }
             else
             {
                 var content = await response.Content.ReadAsStringAsync();
                 TempData["Error"] = $"Giriş başarısız: {content}";
-                return PublisherController.RedirectToAction("Login");
+                return RedirectToAction("Login", "Publisher");
             }
         }
 
@@ -67,7 +65,7 @@ namespace EduPilot_Web.Controllers
             if (!ModelState.IsValid)
             {
                 TempData["Error"] = "Lütfen tüm alanları eksiksiz doldurun.";
-                return InstitutionController.RedirectToAction("Register");
+                return RedirectToAction("Register", "Institution");
             }
 
             var client = GetApiClient();
@@ -76,13 +74,13 @@ namespace EduPilot_Web.Controllers
             if (response.IsSuccessStatusCode)
             {
                 //TempData["Success"] = "Kayıt başarılı. Giriş sayfasına yönlendiriliyorsunuz.";
-                return InstitutionController.RedirectToAction("Login");
+                return RedirectToAction("Login", "Institution");
             }
             else
             {
                 var errorContent = await response.Content.ReadAsStringAsync();
                 TempData["Error"] = "Kayıt başarısız: " + errorContent;
-                return InstitutionController.RedirectToAction("Register");
+                return RedirectToAction("Register", "Institution");
             }
         }
 
@@ -94,7 +92,7 @@ namespace EduPilot_Web.Controllers
             if (!ModelState.IsValid)
             {
                 TempData["Error"] = "Lütfen geçerli bilgi girin.";
-                return InstitutionController.RedirectToAction("Login");
+                return RedirectToAction("Login", "Institution");
             }
 
             var client = GetApiClient();
@@ -102,13 +100,13 @@ namespace EduPilot_Web.Controllers
 
             if (response.IsSuccessStatusCode)
             {
-                return InstitutionController.RedirectToAction("Profile");
+                return RedirectToAction("Profile", "Institution");
             }
             else
             {
                 var content = await response.Content.ReadAsStringAsync();
                 TempData["Error"] = $"Giriş başarısız: {content}";
-                return InstitutionController.RedirectToAction("Login");
+                return RedirectToAction("Login", "Institution");
             }
         }
 

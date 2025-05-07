@@ -14,9 +14,4 @@
     <None Include="wwwroot\Images\students.png" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Models\DTOs\Institution\" />
-    <Folder Include="Models\DTOs\Publisher\" />
-  </ItemGroup>
-
 </Project>
