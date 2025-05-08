@@ -1,12 +1,12 @@
 ﻿@{
     ViewData["Title"] = "Profil";
+    var publisher = ViewBag.Publisher as EduPilot_Web.Models.DTOs.PublisherDTO;
 }
 
 <div class="d-flex flex-row">
-
     <partial name="_PublisherSidebar" />
 
-    <div class="content p-4">
+    <div class="content">
 
         <!-- Publisher Profil Kartı -->
         <div class="bg-card p-4 mb-4">
@@ -15,34 +15,32 @@
                 <!-- Yayıncı Bilgileri -->
                 <div class="w-100 w-md-75">
                     <div class="d-flex align-items-center mb-4">
-                        <h1 class="fw-bold mb-0">İthaki Yayınları</h1>
-                        <button class="btn btn-link p-0 ms-2"><i class="material-icons text-secondary">edit_square</i></button>
+                        <h1 class="fw-bold mb-0" id="publisher-name">@publisher?.Name</h1>
+                        <button class="btn btn-link p-0 ms-2" data-bs-toggle="modal" data-bs-target="#editProfileModal">
+                            <i class="material-icons text-secondary">edit_square</i>
+                        </button>
                     </div>
 
                     <div class="row g-3">
 
                         <div class="col-12 col-md-6">
-                            <label for="publisher-email" class="form-label fs-5">E-Posta</label>
-                            <div class="input-group">
-                                <input type="email" id="publisher-email" class="form-control" placeholder="publisher@example.com">
-                                <button class="btn btn-outline-secondary"><i class="material-icons">edit_square</i></button>
-                            </div>
+                            <label class="form-label fs-5">E-Posta</label>
+                            <p class="form-control-plaintext">@publisher?.Email</p>
                         </div>
 
                         <div class="col-12 col-md-6">
-                            <label for="publisher-password" class="form-label fs-5">Parola</label>
-                            <div class="input-group">
-                                <input type="password" id="publisher-password" class="form-control" placeholder="********">
-                                <button class="btn btn-outline-secondary"><i class="material-icons">edit_square</i></button>
-                            </div>
+                            <label class="form-label fs-5">Parola</label>
+                            <p class="form-control-plaintext">********</p>
                         </div>
 
                         <div class="col-12">
-                            <label for="publisher-address" class="form-label fs-5">Adres</label>
-                            <div class="input-group">
-                                <input type="text" id="publisher-address" class="form-control" placeholder="Yayıncı adresi giriniz...">
-                                <button class="btn btn-outline-secondary"><i class="material-icons">edit_square</i></button>
-                            </div>
+                            <label class="form-label fs-5">Web Sitesi</label>
+                            <p class="form-control-plaintext">@publisher?.Website</p>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label fs-5">Adres</label>
+                            <p class="form-control-plaintext">@publisher?.Address</p>
                         </div>
 
                     </div>
@@ -50,10 +48,7 @@
 
                 <!-- Logo Bölümü -->
                 <div class="text-center mt-4 mt-md-0 w-100 w-md-25">
-                    <img src="~/Images/publisher-logo.png" alt="Publisher Logo" class="img-fluid mb-2" style="max-width: 10rem;">
-                    <div>
-                        <button class="btn btn-outline-secondary"><i class="material-icons">edit_square</i></button>
-                    </div>
+                    <img src="@publisher?.Logo" alt="Publisher Logo" class="img-fluid mb-2" style="max-width: 10rem;">
                 </div>
 
             </div>
@@ -77,3 +72,63 @@
 
     </div>
 </div>
+
+<!-- Edit Profile Modal -->
+<div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editProfileLabel">Profili Düzenle</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editProfileForm">
+                    <input type="hidden" name="Id" value="@publisher?.Id" />
+                    <div class="mb-3">
+                        <label class="form-label">Ad</label>
+                        <input type="text" name="Name" class="form-control" value="@publisher?.Name" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">E-Posta</label>
+                        <input type="email" name="Email" class="form-control" value="@publisher?.Email" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Web Sitesi</label>
+                        <input type="text" name="Website" class="form-control" value="@publisher?.Website" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Adres</label>
+                        <input type="text" name="Address" class="form-control" value="@publisher?.Address" />
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Kaydet</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $("#editProfileForm").on("submit", function (e) {
+            e.preventDefault();
+            const formData = Object.fromEntries(new FormData(this).entries());
+                console.log("Gönderilecek veri:", formData);
+                formData.Id = formData.Id.toString();
+            $.ajax({
+                url: "/Publisher/UpdateProfile",
+                type: "PUT",
+                contentType: "application/json",
+                data: JSON.stringify(formData),
+                success: function () {
+                    alert("Profil başarıyla güncellendi.");
+                    location.reload();
+                },
+                error: function () {
+                    alert("Güncelleme sırasında hata oluştu.");
+                }
+            });
+        });
+    </script>
+}

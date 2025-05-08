@@ -6,12 +6,49 @@ namespace EduPilot_Web.Controllers
 {
     public class PublisherController : ApiControllerBase
     {
-        public PublisherController(IHttpClientFactory httpClientFactory) : base(httpClientFactory){}
+        public PublisherController(IHttpClientFactory httpClientFactory) : base(httpClientFactory) { }
+
+        public string GetLoggedinPublisherId()
+        {
+            var publisherId = HttpContext.Session.GetString("PublisherId")?.Trim('"');
+
+            if (publisherId != null)
+            {
+                return publisherId;
+            }
+            return string.Empty;
+        }
+
+        public IActionResult Profile()
+        {
+            var publisherId = GetLoggedinPublisherId();
+
+            var client = GetApiClient();
+            var response = client.GetAsync($"publisher/{publisherId}").Result;
+
+            if (!response.IsSuccessStatusCode) return View("Dashboard/Profile");
+
+            var publisher = response.Content.ReadFromJsonAsync<PublisherDTO>().Result;
+            ViewBag.Publisher = publisher;
+            return View("Dashboard/Profile");
+        }
+
+
+        [HttpPut]
+        public async Task<IActionResult> UpdateProfile([FromBody] PublisherDTO model)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest("Geçersiz veri");
+
+            var client = GetApiClient();
+            var response = await client.PutAsJsonAsync($"/publisher/{model.Id}", model);
+            return response.IsSuccessStatusCode ? Ok() : BadRequest("API başarısız");
+        }
 
         [HttpGet]
         public IActionResult CreateQuiz()
         {
-            
+
             return View("Dashboard/AddQuiz");
         }
 
@@ -43,24 +80,19 @@ namespace EduPilot_Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateQuiz(QuizViewModel model)
+        public async Task<IActionResult> CreateQuiz([FromBody] QuizDTO quizDto)
         {
+            var publisherId = GetLoggedinPublisherId();
             var client = GetApiClient();
-            var quizDto = new QuizDTO
-            {
-                SubjectId = model.SelectedSubjectId,
-                Difficulty = model.Difficulty,
-                Questions = new List<QuestionDTO>()
-            };
-            var res = await client.PostAsJsonAsync("publisher/addquiz", quizDto);
-            if (!res.IsSuccessStatusCode) return BadRequest();
+
+            var res = await client.PostAsJsonAsync($"publisher/{publisherId}/add/quiz", quizDto);
+            if (!res.IsSuccessStatusCode)
+                return BadRequest("Quiz oluşturulamadı.");
 
             var quizId = await res.Content.ReadAsStringAsync();
-            TempData["QuizId"] = quizId;
-            TempData["QuizActive"] = model.IsActive;
-
             return Json(new { success = true, quizId });
         }
+
 
         [HttpPost]
         public async Task<IActionResult> AddQuestion(Guid quizId, QuestionDTO question)
@@ -92,12 +124,6 @@ namespace EduPilot_Web.Controllers
         {
             return View("Dashboard/Profile");
         }
-
-        public IActionResult Profile()
-        {
-            return View("Dashboard/Profile");
-        }
-
         public IActionResult AddQuiz()
         {
             return View("Dashboard/AddQuiz");

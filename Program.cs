@@ -4,8 +4,8 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 var config = builder.Configuration;
-var apiUsername = "admin"; /*config["Authorization:Basic:admin"];*/
-var apiPassword = "password"; /*config["Authorization:Basic:password"];*/
+var apiUsername = "admin";
+var apiPassword = "password";
 
 builder.Services.AddControllersWithViews();
 
@@ -16,6 +16,8 @@ builder.Services.AddHttpClient("EduPilotApi", client =>
         "Basic", Convert.ToBase64String(Encoding.UTF8.GetBytes(apiUsername + ":" + apiPassword)));
 });
 
+builder.Services.AddSession();
+
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
@@ -24,6 +26,8 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+
+app.UseSession();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();

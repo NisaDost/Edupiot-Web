@@ -1,5 +1,6 @@
 ﻿using EduPilot_Web.Models.DTOs;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 namespace EduPilot_Web.Controllers
 {
@@ -48,7 +49,18 @@ namespace EduPilot_Web.Controllers
 
             if (response.IsSuccessStatusCode)
             {
-                return RedirectToAction("Profile", "Publisher");
+                var publisherId = await response.Content.ReadAsStringAsync();
+                try
+                {
+
+                    HttpContext.Session.SetString("PublisherId", publisherId.ToString());
+                    return RedirectToAction("Profile", "Publisher");
+                }
+                catch (Exception ex)
+                {
+                    TempData["Error"] = "Hata: " + ex.Message;
+                    return RedirectToAction("Login", "Publisher");
+                }
             }
             else
             {
