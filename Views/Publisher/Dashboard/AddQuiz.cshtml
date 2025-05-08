@@ -12,27 +12,199 @@
             <h2 class="mb-4 text-center">Yeni Quiz Oluştur</h2>
 
             <!-- Sınıf Seçimi -->
-            <form asp-action="LoadLessons" method="post">
-                <label for="grade" class="form-label">Sınıf Seçiniz</label>
-                <select name="grade" class="form-select" onchange="this.form.submit()">
-                    <option selected disabled>Seçiniz</option>
-                    @foreach (var grade in grades)
-                    {
-                        <option value="@grade">@grade. Sınıf</option>
-                    }
-                </select>
-            </form>
+            <label for="grade" class="form-label">Sınıf Seçiniz</label>
+            <select id="grade" class="form-select">
+                <option selected disabled>Seçiniz</option>
+                @foreach (var grade in grades)
+                {
+                    <option value="@grade">@grade. Sınıf</option>
+                }
+            </select>
 
-            <!-- Ders Dropdown Partial -->
-            <div id="lesson-dropdown">
-                <partial name="_LessonDropdown" model="new List<LessonsByGradeDTO>()" />
+            <!-- Ders Dropdown -->
+            <label class="form-label mt-3">Ders Seçiniz</label>
+            <select id="lesson" class="form-select" disabled></select>
+
+            <!-- Konu Dropdown -->
+            <label class="form-label mt-3">Konu Seçiniz</label>
+            <select id="subject" class="form-select" disabled></select>
+
+            <!-- Zorluk Dropdown -->
+            <label class="form-label mt-3">Zorluk Seviyesi</label>
+            <select id="difficulty" class="form-select">
+                <option value="">Seçiniz</option>
+                <option value="Kolay">Kolay</option>
+                <option value="Orta">Orta</option>
+                <option value="Zor">Zor</option>
+            </select>
+
+            <!-- Quiz Aktif mi -->
+            <div class="form-check mt-3">
+                <input class="form-check-input" type="checkbox" id="quizActive">
+                <label class="form-check-label" for="quizActive">Quiz Aktif Olsun</label>
             </div>
 
-            <!-- Konu Dropdown Partial -->
-            <div id="subject-dropdown">
-                <partial name="_SubjectDropdown" model="new List<SubjectDTO>()" />
+            <div class="d-grid mt-4">
+                <button id="addQuestionBtn" class="btn btn-success" disabled>Soru Ekle</button>
+            </div>
+
+            <!-- Soru Ekleme Formu -->
+            <div id="questionFormContainer" class="mt-5" style="display: none;"></div>
+
+            <div class="d-grid mt-3">
+                <button id="saveQuizBtn" class="btn btn-primary btn-lg" disabled>Quizi Kaydet</button>
             </div>
         </div>
     </div>
-
 </div>
+
+@section Scripts {
+    <script>
+        let quizId = null;
+        let addedQuestions = 0;
+
+                $("#grade").on("change", function () {
+            const grade = $(this).val();
+
+            // Reset lower dropdowns
+            $("#lesson").empty().append('<option selected disabled>Seçiniz</option>').prop("disabled", true);
+            $("#subject").empty().append('<option selected disabled>Seçiniz</option>').prop("disabled", true);
+
+            // Load lessons
+            $.get("/Publisher/LoadLessons", { grade }, function (res) {
+                if (res.success && res.lessons.length > 0) {
+                    res.lessons.forEach(x => {
+                        $("#lesson").append(`<option value="${x.id}">${x.name}</option>`);
+                    });
+                    $("#lesson").prop("disabled", false);
+                }
+            });
+        });
+
+        $("#lesson").on("change", function () {
+            const lessonId = $(this).val();
+
+            // Reset subject dropdown
+            $("#subject").empty().append('<option selected disabled>Seçiniz</option>').prop("disabled", true);
+
+            // Load subjects
+            $.get("/Publisher/LoadSubjects", { lessonId }, function (res) {
+                if (res.success && res.subjects.length > 0) {
+                    res.subjects.forEach(x => {
+                        $("#subject").append(`<option value="${x.id}">${x.name}</option>`);
+                    });
+                    $("#subject").prop("disabled", false);
+                }
+            });
+        });
+
+
+        $("#subject, #difficulty").on("change", function () {
+            const subjectId = $("#subject").val();
+            const difficulty = $("#difficulty").val();
+            if (subjectId && difficulty) {
+                $("#addQuestionBtn").prop("disabled", false);
+            }
+        });
+
+        $("#addQuestionBtn").on("click", function () {
+            const subjectId = $("#subject").val();
+            const difficulty = $("#difficulty").val();
+            const isActive = $("#quizActive").is(":checked");
+
+            if (!quizId) {
+                $.post("/Publisher/CreateQuiz", {
+                    SelectedSubjectId: subjectId,
+                    Difficulty: difficulty,
+                    IsActive: isActive
+                }, function (res) {
+                    quizId = res.quizId;
+                    showQuestionForm();
+                });
+            } else {
+                showQuestionForm();
+            }
+        });
+
+        function showQuestionForm() {
+            const html = `
+            <div class="question-block mb-5">
+                <div class="mb-3">
+                    <label for="questionText" class="form-label">Soru Metni</label>
+                    <textarea class="form-control" id="questionText" rows="4" placeholder="Soru metnini buraya girin..."></textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="questionImage" class="form-label">Görsel Yükle (Opsiyonel)</label>
+                    <input class="form-control" type="file" id="questionImage" accept="image/*">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" style="color: green; font-weight: bold;">Doğru Cevabı Girin</label>
+                    <input type="text" class="form-control border-success" id="correctAnswer">
+                </div>
+                <div class="mb-3" id="incorrectAnswers">
+                    <label class="form-label" style="color: red; font-weight: bold;">Yanlış Cevapları Girin</label>
+                    <input type="text" class="form-control mb-2 border-danger">
+                    <input type="text" class="form-control mb-2 border-danger">
+                    <input type="text" class="form-control mb-2 border-danger">
+                </div>
+                <div class="d-flex justify-content-between mb-3">
+                    <button type="button" id="addChoice" class="btn btn-outline-secondary">Şık Ekle</button>
+                    <button type="button" id="removeChoice" class="btn btn-outline-danger">Şık Sil</button>
+                </div>
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="checkbox" id="questionIsActive" checked>
+                    <label class="form-check-label" for="questionIsActive">Bu soru aktif</label>
+                </div>
+                <div class="d-grid gap-2">
+                    <button type="button" id="submitQuestion" class="btn btn-primary btn-lg">Ekle</button>
+                </div>
+            </div>`;
+
+            $("#questionFormContainer").html(html).show();
+
+            $("#addChoice").on("click", function () {
+                const count = $("#incorrectAnswers input").length;
+                if (count < 4) {
+                    $("#incorrectAnswers").append('<input type="text" class="form-control mb-2 border-danger">');
+                }
+            });
+
+            $("#removeChoice").on("click", function () {
+                const inputs = $("#incorrectAnswers input");
+                if (inputs.length > 3) {
+                    inputs.last().remove();
+                }
+            });
+
+            $("#submitQuestion").on("click", function () {
+                const question = {
+                    Text: $("#questionText").val(),
+                    CorrectAnswer: $("#correctAnswer").val(),
+                    IncorrectAnswers: $("#incorrectAnswers input").map((i, el) => $(el).val()).get(),
+                    IsActive: $("#questionIsActive").is(":checked")
+                };
+
+                $.post("/Publisher/AddQuestion", { quizId, question }, function (res) {
+                    if (res.success) {
+                        addedQuestions++;
+                        alert("Soru eklendi");
+                        $("#questionFormContainer").hide().empty();
+                        if (addedQuestions >= 5 && addedQuestions <= 30) {
+                            $("#saveQuizBtn").prop("disabled", false);
+                        }
+                    }
+                });
+            });
+        }
+
+        $("#saveQuizBtn").on("click", function () {
+            const isActive = $("#quizActive").is(":checked");
+            $.post("/Publisher/SaveQuiz", { quizId, isActive }, function (res) {
+                if (res.success) {
+                    alert("Quiz başarıyla kaydedildi.");
+                    location.reload();
+                }
+            });
+        });
+    </script>
+}

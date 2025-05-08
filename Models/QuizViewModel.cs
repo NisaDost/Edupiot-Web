@@ -4,9 +4,9 @@ namespace EduPilot_Web.Models
 {
     public class QuizViewModel
     {
-        public int? SelectedGrade { get; set; }
-        public Guid? SelectedLessonId { get; set; }
-        public Guid? SelectedSubjectId { get; set; }
+        public int SelectedGrade { get; set; }
+        public Guid SelectedLessonId { get; set; }
+        public Guid SelectedSubjectId { get; set; }
 
         public List<int> Grades { get; set; } = Enumerable.Range(1, 12).ToList();
         public List<LessonsByGradeDTO> Lessons { get; set; } = new();

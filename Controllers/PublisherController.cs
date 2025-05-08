@@ -15,30 +15,31 @@ namespace EduPilot_Web.Controllers
             return View("Dashboard/AddQuiz");
         }
 
-        [HttpPost]
+        [HttpGet]
         public async Task<IActionResult> LoadLessons(int grade)
         {
             var client = GetApiClient();
-            var response = await client.GetAsync($"/api/lessons/{grade}");
+            var response = await client.GetAsync($"lessons/{grade}");
 
             if (!response.IsSuccessStatusCode)
-                return PartialView("_LessonDropdown", new List<LessonsByGradeDTO>());
+                return Json(new { success = false, lessons = new List<LessonsByGradeDTO>() });
 
             var lessons = await response.Content.ReadFromJsonAsync<List<LessonsByGradeDTO>>();
-            return PartialView("_LessonDropdown", lessons);
+            return Json(new { success = true, lessons });
         }
 
-        [HttpPost]
+
+        [HttpGet]
         public async Task<IActionResult> LoadSubjects(Guid lessonId)
         {
             var client = GetApiClient();
-            var response = await client.GetAsync($"/api/lessons/{lessonId}/subjects");
+            var response = await client.GetAsync($"lessons/{lessonId}/subjects");
 
             if (!response.IsSuccessStatusCode)
-                return PartialView("_SubjectDropdown", new List<SubjectDTO>());
+                return Json(new { success = false, subjects = new List<SubjectDTO>() });
 
             var subjects = await response.Content.ReadFromJsonAsync<List<SubjectDTO>>();
-            return PartialView("_SubjectDropdown", subjects);
+            return Json(new { success = true, subjects });
         }
 
         [HttpPost]
@@ -47,39 +48,35 @@ namespace EduPilot_Web.Controllers
             var client = GetApiClient();
             var quizDto = new QuizDTO
             {
-                SubjectId = model.SubjectId,
+                SubjectId = model.SelectedSubjectId,
                 Difficulty = model.Difficulty,
-                Questions = new List<QuestionDTO>() // boş başlangıç
+                Questions = new List<QuestionDTO>()
             };
-            var res = await client.PostAsJsonAsync("/api/publisher/addquiz", quizDto);
+            var res = await client.PostAsJsonAsync("publisher/addquiz", quizDto);
             if (!res.IsSuccessStatusCode) return BadRequest();
 
-            TempData["QuizId"] = await res.Content.ReadAsStringAsync();
+            var quizId = await res.Content.ReadAsStringAsync();
+            TempData["QuizId"] = quizId;
             TempData["QuizActive"] = model.IsActive;
 
-            return RedirectToAction("AddQuestions");
-        }
-
-        public IActionResult AddQuestions()
-        {
-            ViewBag.QuizId = TempData["QuizId"];
-            return View();
+            return Json(new { success = true, quizId });
         }
 
         [HttpPost]
         public async Task<IActionResult> AddQuestion(Guid quizId, QuestionDTO question)
         {
             var client = GetApiClient();
-            var res = await client.PostAsJsonAsync($"/api/question/quiz/{quizId}", question);
-            return res.IsSuccessStatusCode ? Ok() : BadRequest();
+            var res = await client.PostAsJsonAsync($"publisher/question/quiz/{quizId}", question);
+            return res.IsSuccessStatusCode ? Json(new { success = true }) : Json(new { success = false });
         }
 
         [HttpPost]
         public async Task<IActionResult> SaveQuiz(Guid quizId, bool isActive)
         {
             // Opsiyonel: quiz'e son hali kaydet
-            return RedirectToAction("QuizList");
+            return Json(new { success = true });
         }
+
 
         public IActionResult Login()
         {
