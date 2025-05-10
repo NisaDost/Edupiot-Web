@@ -1,6 +1,7 @@
 ﻿using EduPilot_Web.Models.DTOs;
 using EduPilot_Web.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 namespace EduPilot_Web.Controllers
 {
@@ -8,42 +9,71 @@ namespace EduPilot_Web.Controllers
     {
         public PublisherController(IHttpClientFactory httpClientFactory) : base(httpClientFactory) { }
 
+
         public string GetLoggedinPublisherId()
         {
             var publisherId = HttpContext.Session.GetString("PublisherId")?.Trim('"');
+            return publisherId ?? string.Empty;
+        }
 
-            if (publisherId != null)
-            {
-                return publisherId;
-            }
-            return string.Empty;
+        private PublisherDTO? GetPublisher(string publisherId)
+        {
+            var client = GetApiClient();
+            var response = client.GetAsync($"publisher/{publisherId}").Result;
+            if (!response.IsSuccessStatusCode) return null;
+
+            return response.Content.ReadFromJsonAsync<PublisherDTO>().Result;
         }
 
         public IActionResult Profile()
         {
             var publisherId = GetLoggedinPublisherId();
+            var publisher = GetPublisher(publisherId);
 
-            var client = GetApiClient();
-            var response = client.GetAsync($"publisher/{publisherId}").Result;
+            if (publisher == null)
+            {
+                return NotFound();
+            }
 
-            if (!response.IsSuccessStatusCode) return View("Dashboard/Profile");
+            var model = new PublisherViewModel
+            {
+                Id = publisher.Id,
+                Name = publisher.Name,
+                Email = publisher.Email,
+                Address = publisher.Address,
+                Website = publisher.Website,
+                Logo = publisher.Logo,
+                QuizCount = publisher.quizCount,
+                QuestionCount = publisher.questionCount,
+            };
 
-            var publisher = response.Content.ReadFromJsonAsync<PublisherDTO>().Result;
-            ViewBag.Publisher = publisher;
-            return View("Dashboard/Profile");
+            return View("Dashboard/Profile", model);
         }
-
-
         [HttpPut]
-        public async Task<IActionResult> UpdateProfile([FromBody] PublisherDTO model)
+        public async Task<IActionResult> UpdateProfile([FromBody] PublisherViewModel updated)
         {
-            if (!ModelState.IsValid)
-                return BadRequest("Geçersiz veri");
+            var publisherId = GetLoggedinPublisherId();
+            var current = GetPublisher(publisherId);
+            if (current == null) return BadRequest("Geçerli kullanıcı bulunamadı.");
+
+            
+            var updatedInfo = new
+            {
+                name = string.IsNullOrWhiteSpace(updated.Name) ? current.Name : updated.Name,
+                email = current.Email,
+                address = string.IsNullOrWhiteSpace(updated.Address) ? current.Address : updated.Address,
+                website = string.IsNullOrWhiteSpace(updated.Website) ? current.Website : updated.Website,
+                logo = string.IsNullOrWhiteSpace(updated.Logo) ? current.Logo : updated.Logo,
+                currentPassword = string.IsNullOrWhiteSpace(updated.CurrentPassword) ? current.CurrentPassword : updated.CurrentPassword,
+                password = string.IsNullOrWhiteSpace(updated.NewPassword) ? current.NewPassword : updated.NewPassword
+            };
 
             var client = GetApiClient();
-            var response = await client.PutAsJsonAsync($"/publisher/{model.Id}", model);
-            return response.IsSuccessStatusCode ? Ok() : BadRequest("API başarısız");
+            var response = await client.PutAsJsonAsync($"publisher/{publisherId}", updatedInfo);
+
+            return response.IsSuccessStatusCode ? Ok() : BadRequest("Profil güncellenemedi.");
         }
+
 
         [HttpGet]
         public IActionResult CreateQuiz()

@@ -1,6 +1,6 @@
 ﻿@using EduPilot_Web.Models.DTOs;
 @{
-    ViewBag.Title = "Yeni Quiz Oluştur";
+    ViewData["Title"] = "Yeni Quiz Oluştur";
     List<int> grades = Enumerable.Range(1, 12).ToList();
 }
 
@@ -17,7 +17,7 @@
                 <option selected disabled>Seçiniz</option>
                 @foreach (var grade in grades)
                 {
-                    <option value="@grade">@grade. Sınıf</option>
+                            <option value="@grade">@grade. Sınıf</option>
                 }
             </select>
 
@@ -36,6 +36,14 @@
                 <option value="Kolay">Kolay</option>
                 <option value="Orta">Orta</option>
                 <option value="Zor">Zor</option>
+            </select>
+
+            <!-- Şık Sayısı Dropdown -->
+            <label class="form-label mt-3">Şık Sayısı</label>
+            <select id="choiceCount" class="form-select">
+                <option value="3">3 Şık</option>
+                <option value="4">4 Şık</option>
+                <option value="5">5 Şık</option>
             </select>
 
             <!-- Quiz Aktif mi -->
@@ -61,7 +69,7 @@
 </div>
 
 @section Scripts {
-    <script>
+        <script>
         let addedQuestions = 0;
 
         function mapDifficulty(label) {
@@ -69,6 +77,10 @@
             if (label === "Orta") return 1;
             if (label === "Zor") return 2;
             return 0;
+        }
+
+        function updateAddButtonState() {
+            $('#addQuestionBtn').prop('disabled', !( $('#subject').val() && $('#difficulty').val() && $('#choiceCount').val() ));
         }
 
         $("#grade").on("change", function () {
@@ -102,57 +114,70 @@
             });
         });
 
-        $("#subject, #difficulty").on("change", function () {
-            if ($("#subject").val() && $("#difficulty").val()) {
-                $("#addQuestionBtn").prop("disabled", false);
-            }
+        $("#subject, #difficulty, #choiceCount").on("change", updateAddButtonState);
+
+        $("#choiceCount").on("change", function () {
+            const count = parseInt($(this).val());
+            $(".question-block").each(function () {
+                const incorrectContainer = $(this).find(".incorrect-answers");
+                incorrectContainer.empty();
+                for (let i = 0; i < count - 1; i++) {
+                    incorrectContainer.append('<input type="text" class="form-control mb-2 border-danger" name="incorrect-answer">');
+                }
+            });
+        });
+
+        $("#questionFormContainer").on("click", ".remove-question", function () {
+            $(this).closest(".question-block").remove();
+            addedQuestions--;
+            if (addedQuestions < 1) $("#saveQuizBtn").prop("disabled", true);
         });
 
         $("#addQuestionBtn").on("click", function () {
-            if (addedQuestions >= 30) {
-                alert("Bir quiz en fazla 30 soru içerebilir.");
-                return;
-            }
+            if (addedQuestions >= 30) return alert("Bir quiz en fazla 30 soru içerebilir.");
             addedQuestions++;
             const index = addedQuestions;
+            const choiceCount = parseInt($("#choiceCount").val());
+
+            let incorrectInputs = "";
+            for (let i = 0; i < choiceCount - 1; i++) {
+                incorrectInputs += `<input type="text" class="form-control mb-2 border-danger" name="incorrect-answer">`;
+            }
 
             const html = `
-                <div class="question-block mb-5" data-index="${index}">
-                    <h5>Soru ${index}</h5>
-                    <div class="mb-3">
-                        <label class="form-label">Soru Metni</label>
-                        <textarea class="form-control" rows="4" placeholder="Soru metni..." name="question-text"></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Doğru Cevap</label>
-                        <input type="text" class="form-control border-success" name="correct-answer">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Yanlış Cevaplar</label>
-                        <input type="text" class="form-control mb-2 border-danger" name="incorrect-answer">
-                        <input type="text" class="form-control mb-2 border-danger" name="incorrect-answer">
-                        <input type="text" class="form-control mb-2 border-danger" name="incorrect-answer">
-                    </div>
-                    <div class="form-check mb-3">
-                        <input class="form-check-input" type="checkbox" checked name="is-active">
-                        <label class="form-check-label">Bu soru aktif</label>
-                    </div>
-                    <hr>
+            <div class="question-block mb-5" data-index="${index}">
+                <h5>Soru ${index}</h5>
+                <div class="mb-3">
+                    <label class="form-label">Soru Metni</label>
+                    <textarea class="form-control" rows="4" placeholder="Soru metni..." name="question-text"></textarea>
                 </div>
-            `;
-            $("#questionFormContainer").append(html);
+                <div class="mb-3">
+                    <label class="form-label">Soru Görseli (Opsiyonel)</label>
+                    <input type="file" accept="image/*" name="question-image" class="form-control">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Doğru Cevap</label>
+                    <input type="text" class="form-control border-success" name="correct-answer">
+                </div>
+                <div class="mb-3 incorrect-answers">
+                    <label class="form-label">Yanlış Cevaplar</label>
+                    ${incorrectInputs}
+                </div>
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="checkbox" checked name="is-active">
+                    <label class="form-check-label">Bu soru aktif</label>
+                </div>
+                <button type="button" class="btn btn-sm btn-outline-danger remove-question">Soruyu Kaldır</button>
+                <hr>
+            </div>`;
 
-            if (addedQuestions >= 1) {
-                $("#saveQuizBtn").prop("disabled", false);
-            }
+            $("#questionFormContainer").append(html);
+            $("#saveQuizBtn").prop("disabled", false);
         });
 
         $("#saveQuizBtn").on("click", function () {
             const subjectId = $("#subject").val();
-            if (!subjectId || subjectId === "00000000-0000-0000-0000-000000000000") {
-                alert("Lütfen geçerli bir konu seçiniz.");
-                return;
-            }
+            if (!subjectId || subjectId === "00000000-0000-0000-0000-000000000000") return alert("Geçerli konu seçiniz.");
 
             const quiz = {
                 SubjectId: subjectId,
@@ -160,58 +185,54 @@
                 Questions: []
             };
 
+            let error = false;
+
             $(".question-block").each(function () {
-                const questionText = $(this).find("textarea[name='question-text']").val()?.trim();
-                const correctAnswer = $(this).find("input[name='correct-answer']").val()?.trim();
-                if (!questionText || !correctAnswer) return;
+                const q = $(this);
+                const text = q.find("textarea[name='question-text']").val()?.trim();
+                const correct = q.find("input[name='correct-answer']").val()?.trim();
+                const incorrects = q.find("input[name='incorrect-answer']");
+                const fileInput = q.find("input[name='question-image']")[0];
+
+                if (!text || !correct || incorrects.length < 2) {
+                    error = true;
+                    return;
+                }
+
+                const fileName = fileInput?.files?.length > 0 ? fileInput.files[0].name : "";
 
                 const question = {
-                    QuestionContent: questionText,
-                    isActive: $(this).find("input[name='is-active']").is(":checked"),
-                    Choices: [{
-                        ChoiceContent: correctAnswer,
-                        IsCorrect: true
-                    }]
+                    QuestionContent: text,
+                    isActive: q.find("input[name='is-active']").is(":checked"),
+                    QuestionImage: fileName,
+                    Choices: [{ ChoiceContent: correct, IsCorrect: true }]
                 };
 
-                $(this).find("input[name='incorrect-answer']").each(function () {
+                incorrects.each(function () {
                     const val = $(this).val()?.trim();
-                    if (val) {
-                        question.Choices.push({
-                            ChoiceContent: val,
-                            IsCorrect: false
-                        });
-                    }
+                    if (val) question.Choices.push({ ChoiceContent: val, IsCorrect: false });
                 });
 
-                if (question.Choices.length >= 4) {
-                    quiz.Questions.push(question);
-                }
+                if (question.Choices.length < 3) return;
+                quiz.Questions.push(question);
             });
 
-            if (quiz.Questions.length === 0) {
-                alert("Quiz kaydedilemez. Lütfen en az 1 geçerli soru girin (1 doğru + en az 3 yanlış).");
-                return;
-            }
+            if (error || quiz.Questions.length === 0) return alert("Lütfen tüm soruların metnini ve şıklarını doldurun.");
 
             $.ajax({
                 url: "/Publisher/CreateQuiz",
                 method: "POST",
                 contentType: "application/json",
                 data: JSON.stringify(quiz),
-                success: function (res) {
-                    if (res.success) {
-                        alert("Quiz başarıyla kaydedildi.");
-                        location.reload();
-                    } else {
-                        alert("Quiz kaydedilemedi.");
-                    }
+                success: res => {
+                    if (res.success) alert("Quiz başarıyla kaydedildi."), location.reload();
+                    else alert("Quiz kaydedilemedi.");
                 },
-                error: function (err) {
+                error: err => {
                     console.error("Sunucu hatası:", err);
                     alert("Quiz oluşturulurken hata oluştu.");
                 }
             });
         });
-    </script>
+        </script>
 }
