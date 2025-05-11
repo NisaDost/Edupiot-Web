@@ -1,93 +1,183 @@
-﻿@{
+﻿@model InstitutionViewModel
+@{
     ViewData["Title"] = "Profil";
+    var supervisorCount = Model.Supervisors.Count;
+    var studentCount = Model.Students.Count;
 }
 
 <div class="d-flex flex-row">
-
     <partial name="_InstitutionSidebar" />
-
     <div class="content">
 
         <!-- Profil Kartı -->
         <div class="bg-card p-4 mb-4">
             <div class="d-flex flex-column flex-md-row justify-content-between align-items-start">
-
-                <!-- Okul Bilgileri -->
+                <!-- Bilgiler -->
                 <div class="w-100 w-md-75">
                     <div class="d-flex align-items-center mb-4">
-                        <h1 class="fw-bold mb-0">Atatürk Ortaokulu</h1>
-                        <button class="btn btn-link p-0 ms-2"><i class="material-icons text-secondary">edit_square</i></button>
+                        <h1 class="fw-bold mb-0" id="institution-name">@Model.Name</h1>
+                        <button class="btn btn-link p-0 ms-2" data-bs-toggle="modal" data-bs-target="#editProfileModal">
+                            <i class="material-icons text-secondary">edit_square</i>
+                        </button>
                     </div>
 
                     <div class="row g-3">
-
                         <div class="col-12 col-md-6">
-                            <label for="eposta" class="form-label fs-5">E-Posta</label>
-                            <div class="input-group">
-                                <input type="email" id="eposta" class="form-control" placeholder="ataturkoo@EduPilot_Web.com">
-                                <button class="btn btn-outline-secondary"><i class="material-icons">edit_square</i></button>
-                            </div>
+                            <label class="form-label fs-5">E-Posta</label>
+                            <p class="form-control-plaintext">@Model.Email</p>
                         </div>
-
                         <div class="col-12 col-md-6">
-                            <label for="parola" class="form-label fs-5">Parola</label>
-                            <div class="input-group">
-                                <input type="password" id="parola" class="form-control" placeholder="********">
-                                <button class="btn btn-outline-secondary"><i class="material-icons">edit_square</i></button>
-                            </div>
+                            <label class="form-label fs-5">Web Sitesi</label>
+                            <p class="form-control-plaintext">@(string.IsNullOrEmpty(Model.Website) ? "Web sitesi bilgisi ekleyin" : Model.Website)</p>
                         </div>
-
                         <div class="col-12">
-                            <label for="adres" class="form-label fs-5">Adres</label>
-                            <div class="input-group">
-                                <input type="text" id="adres" class="form-control" placeholder="Okul adresini giriniz...">
-                                <button class="btn btn-outline-secondary"><i class="material-icons">edit_square</i></button>
-                            </div>
+                            <label class="form-label fs-5">Adres</label>
+                            <p class="form-control-plaintext">@(string.IsNullOrEmpty(Model.Address) ? "Adres bilgisi ekleyin" : Model.Address)</p>
                         </div>
-
                     </div>
                 </div>
 
-                <!-- Logo Bölümü -->
+                <!-- Logo -->
                 <div class="text-center mt-4 mt-md-0 w-100 w-md-25">
-                    <img src="~/Images/school-logo.png" alt="Okul Logosu" class="img-fluid mb-2" style="max-width: 10rem;">
-                    <div>
-                        <button class="btn btn-outline-secondary"><i class="material-icons">edit_square</i></button>
-                    </div>
+                    <img src="@Model.Logo" alt="Institution Logo" class="img-fluid mb-2" style="max-width: 10rem;">
                 </div>
-
             </div>
         </div>
 
-        <!-- İstatistikler Kartı -->
+        <!-- İstatistikler -->
         <div class="bg-card p-4">
             <h1 class="fw-bold text-center mb-5">İstatistikler</h1>
+            <div class="row justify-content-center g-4">
 
-            <div class="row justify-content-center align-items-end g-4">
-
-                <div class="col-12 col-sm-6 col-md-4">
+                <div class="col-12 col-sm-8 col-md-6">
                     <div class="card-primary p-4 text-center">
-                        <h4>Sisteme Kayıtlı Öğrenci Sayısı</h4>
-                        <h1 class="text-light mt-2">135</h1>
+                        <h4>Siteme Kayıtlı Öğrenci Sayısı</h4>
+                        <h1 class="text-light mt-2">@studentCount</h1>
                     </div>
                 </div>
 
-                <div class="col-12 col-sm-6 col-md-4">
+                <div class="col-12 col-sm-8 col-md-6">
                     <div class="card-primary p-4 text-center">
-                        <h4>Sisteme Kayıtlı Öğretmen Sayısı</h4>
-                        <h1 class="text-light mt-2">27</h1>
+                        <h4>Siteme Kayıtlı Öğretmen Sayısı</h4>
+                        <h1 class="text-light mt-2">@supervisorCount</h1>
                     </div>
                 </div>
-
-                <div class="col-12 col-sm-6 col-md-4">
+                
+                <div class="col-12 col-sm-8 col-md-6">
                     <div class="card-primary p-4 text-center">
                         <h4>Kameralı Sınıf Sayısı</h4>
-                        <h1 class="text-light mt-2">18</h1>
+                        <h1 class="text-light mt-2">##20##</h1>
                     </div>
                 </div>
-
             </div>
         </div>
-
     </div>
 </div>
+
+<!-- Düzenleme Modal -->
+<div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="editProfileForm">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editProfileLabel">Profili Düzenle</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="Id" value="@Model.Id" />
+                    <div class="mb-3">
+                        <label class="form-label">Ad</label>
+                        <input type="text" name="Name" class="form-control" value="@Model.Name" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">E-Posta</label>
+                        <input type="email" class="form-control" value="@Model.Email" readonly />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Web Sitesi</label>
+                        <input type="text" name="Website" class="form-control" value="@Model.Website" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Adres</label>
+                        <input type="text" name="Address" class="form-control" value="@Model.Address" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Logo (sadece dosya adı kaydedilir)</label>
+                        <input type="file" name="LogoFile" class="form-control" />
+                    </div>
+
+                    <!-- Parola Güncelleme -->
+                    <hr />
+                    <div class="mb-3">
+                        <label class="form-label">Mevcut Parola</label>
+                        <input type="password" name="CurrentPassword" class="form-control" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Yeni Parola</label>
+                        <input type="password" name="NewPassword" class="form-control" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Yeni Parola (Tekrar)</label>
+                        <input type="password" name="ConfirmNewPassword" class="form-control" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Kaydet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+                $("#editProfileForm").on("submit", function (e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+
+            const data = {};
+            formData.forEach((value, key) => {
+                if (key === "LogoFile" && value.name) {
+                    data.Logo = value.name;
+                } else {
+                    data[key] = value;
+                }
+            });
+
+            const currentPassword = data.CurrentPassword?.trim();
+            const newPassword = data.NewPassword?.trim();
+            const confirmPassword = data.ConfirmNewPassword?.trim();
+
+            if (!currentPassword) {
+                alert("Mevcut parolanızı girmelisiniz.");
+                return;
+            }
+
+            const isNewPasswordEntered = newPassword || confirmPassword;
+            if (isNewPasswordEntered) {
+                if (!newPassword || !confirmPassword) {
+                    alert("Yeni parolayı ve tekrarını eksiksiz girin.");
+                    return;
+                }
+                if (newPassword !== confirmPassword) {
+                    alert("Yeni parolalar uyuşmuyor.");
+                    return;
+                }
+            }
+
+            $.ajax({
+                url: "/Institution/UpdateProfile",
+                type: "PUT",
+                contentType: "application/json",
+                data: JSON.stringify(data),
+                success: function () {
+                    alert("Profil güncellendi.");
+                    location.reload();
+                },
+                error: function (xhr) {
+                    alert("Güncelleme başarısız: " + xhr.responseText);
+                }
+            });
+        });
+    </script>
+}

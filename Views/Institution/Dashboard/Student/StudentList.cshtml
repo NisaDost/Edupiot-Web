@@ -1,4 +1,5 @@
-﻿@{
+﻿@model InstitutionStudentViewModel
+@{
     ViewData["Title"] = "Örenci Listesi";
 }
 
@@ -9,8 +10,7 @@
         <div class="bg-card">
 
             <h1 class="fw-bold">Öğrenci Listesi </h1>
-            <h3 class="fw-bold">Atatürk Orta Okulu</h3>
-            <h5 class="fw-bold">Dummy List </h5>
+            <h3 class="fw-bold">@Model</h3>
 
             <div class="d-flex flex-row align-items-center justify-content-end">
 

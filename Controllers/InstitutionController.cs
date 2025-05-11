@@ -47,8 +47,8 @@ namespace EduPilot_Web.Controllers
 
                 //burayı ayrıca mı çekeceğime karar vereceğim,
                 //hem listeye hem liste uzunluğuna ihtiyaç var
-                Students = new List<StudentViewModel>(),
-                Supervisors = new List<SupervisorViewModel>(),
+                Students = new List<InstitutionStudentViewModel>(),
+                Supervisors = new List<InstitutionSupervisorViewModel>(),
             };
 
             return View("Dashboard/Profile", model);
@@ -79,7 +79,38 @@ namespace EduPilot_Web.Controllers
             return response.IsSuccessStatusCode ? Ok() : BadRequest("Profil güncellenemedi.");
         }
 
+        public InstitutionDTO? GetStudentList(string institutionId)
+        {
+            var client = GetApiClient();
+            var response = client.GetAsync($"institution/{institutionId}/students").Result;
+            if (!response.IsSuccessStatusCode) return null;
+            return response.Content.ReadFromJsonAsync<InstitutionDTO>().Result;
+        }
+        [HttpGet]
+        public IActionResult StudentList( )
+        {
+            var institutionId = GetLoggedinInstitutionId();
+            var studentList = GetStudentList(institutionId);
 
+            if (studentList == null)
+            {
+                return NotFound(); //şimdilik 404
+            }
+
+            var model = new InstitutionViewModel
+            {
+                Students = studentList.Students.Select(s => new InstitutionStudentViewModel
+                {
+                    FirstName = s.FirstName,
+                    MiddleName = s.MiddleName,
+                    LastName = s.LastName,
+                    Email = s.Email,
+                    InstitutionId = institutionId
+                }).ToList()
+            };
+
+            return View("Dashboard/Student/StudentList");
+        }
 
         [AllowAnonymous]
         public IActionResult Login()
@@ -97,10 +128,7 @@ namespace EduPilot_Web.Controllers
             return View("Dashboard/Profile");
         }
 
-        public IActionResult StudentList()
-        {
-            return View("Dashboard/Student/StudentList");
-        }
+        
 
         public IActionResult ClassList()
         {

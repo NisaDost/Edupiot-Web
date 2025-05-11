@@ -10,5 +10,8 @@
         public string? Address { get; set; }
         public string? Logo { get; set; }
         public string? Website { get; set; }
+
+        public List<StudentDTO> Students { get; set; }
+        public List<SupervisorDTO> Supervisors { get; set; }
     }
 }

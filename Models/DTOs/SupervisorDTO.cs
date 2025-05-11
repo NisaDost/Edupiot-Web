@@ -1,6 +1,6 @@
-﻿namespace EduPilot_Web.Models
+﻿namespace EduPilot_Web.Models.DTOs
 {
-    public class SupervisorViewModel
+    public class SupervisorDTO
     {
         public string FirstName { get; set; }
         public string? MiddleName { get; set; }
