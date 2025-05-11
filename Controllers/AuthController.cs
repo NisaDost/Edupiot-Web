@@ -1,4 +1,5 @@
-﻿using EduPilot_Web.Models.DTOs;
+﻿using EduPilot_Web.Filters;
+using EduPilot_Web.Models.DTOs;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 
@@ -52,8 +53,8 @@ namespace EduPilot_Web.Controllers
                 var publisherId = await response.Content.ReadAsStringAsync();
                 try
                 {
-
                     HttpContext.Session.SetString("PublisherId", publisherId.ToString());
+                    HttpContext.Session.SetString("UserType", "Publisher");
                     return RedirectToAction("Profile", "Publisher");
                 }
                 catch (Exception ex)
@@ -112,7 +113,18 @@ namespace EduPilot_Web.Controllers
 
             if (response.IsSuccessStatusCode)
             {
-                return RedirectToAction("Profile", "Institution");
+                var institutionId = await response.Content.ReadAsStringAsync();
+                try
+                {
+                    HttpContext.Session.SetString("InstitutionId", institutionId.ToString());
+                    HttpContext.Session.SetString("UserType", "Institution");
+                    return RedirectToAction("Profile", "Institution");
+                }
+                catch (Exception ex)
+                {
+                    TempData["Error"] = "Hata: " + ex.Message;
+                    return RedirectToAction("Login", "Institution");
+                }
             }
             else
             {
@@ -120,6 +132,13 @@ namespace EduPilot_Web.Controllers
                 TempData["Error"] = $"Giriş başarısız: {content}";
                 return RedirectToAction("Login", "Institution");
             }
+        }
+
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear();
+            var UserType = HttpContext.Session.GetString("UserType");
+            return RedirectToAction("Login", UserType);
         }
 
     }

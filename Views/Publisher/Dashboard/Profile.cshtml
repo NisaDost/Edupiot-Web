@@ -120,7 +120,7 @@
 
 @section Scripts {
     <script>
-        $("#editProfileForm").on("submit", function (e) {
+                $("#editProfileForm").on("submit", function (e) {
             e.preventDefault();
             const formData = new FormData(this);
 
@@ -133,19 +133,22 @@
                 }
             });
 
-            // Parola validasyonu
-            const currentPassword = data.CurrentPassword || "";
-            const newPassword = data.NewPassword || "";
-            const confirmNewPassword = data.ConfirmNewPassword || "";
+            const currentPassword = data.CurrentPassword?.trim();
+            const newPassword = data.NewPassword?.trim();
+            const confirmPassword = data.ConfirmNewPassword?.trim();
 
-            const isPasswordUpdate = currentPassword || newPassword || confirmNewPassword;
+            if (!currentPassword) {
+                alert("Mevcut parolanızı girmelisiniz.");
+                return;
+            }
 
-            if (isPasswordUpdate) {
-                if (!currentPassword || !newPassword || !confirmNewPassword) {
-                    alert("Parola güncellemek için tüm alanları doldurun.");
+            const isNewPasswordEntered = newPassword || confirmPassword;
+            if (isNewPasswordEntered) {
+                if (!newPassword || !confirmPassword) {
+                    alert("Yeni parolayı ve tekrarını eksiksiz girin.");
                     return;
                 }
-                if (newPassword !== confirmNewPassword) {
+                if (newPassword !== confirmPassword) {
                     alert("Yeni parolalar uyuşmuyor.");
                     return;
                 }

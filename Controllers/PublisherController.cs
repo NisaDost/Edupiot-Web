@@ -1,21 +1,23 @@
 ﻿using EduPilot_Web.Models.DTOs;
 using EduPilot_Web.Models;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
+using EduPilot_Web.Filters;
+using Microsoft.AspNetCore.Authorization;
 
 namespace EduPilot_Web.Controllers
 {
+    [AuthorizeUser(Role = "Publisher")]
     public class PublisherController : ApiControllerBase
     {
         public PublisherController(IHttpClientFactory httpClientFactory) : base(httpClientFactory) { }
 
-
+        [AuthorizeUser(Role = "Publisher")]
         public string GetLoggedinPublisherId()
         {
             var publisherId = HttpContext.Session.GetString("PublisherId")?.Trim('"');
             return publisherId ?? string.Empty;
         }
-
+        [AuthorizeUser(Role = "Publisher")]
         private PublisherDTO? GetPublisher(string publisherId)
         {
             var client = GetApiClient();
@@ -25,6 +27,7 @@ namespace EduPilot_Web.Controllers
             return response.Content.ReadFromJsonAsync<PublisherDTO>().Result;
         }
 
+        [AuthorizeUser(Role = "Publisher")]
         public IActionResult Profile()
         {
             var publisherId = GetLoggedinPublisherId();
@@ -49,6 +52,8 @@ namespace EduPilot_Web.Controllers
 
             return View("Dashboard/Profile", model);
         }
+
+        [AuthorizeUser(Role = "Publisher")]
         [HttpPut]
         public async Task<IActionResult> UpdateProfile([FromBody] PublisherViewModel updated)
         {
@@ -74,7 +79,7 @@ namespace EduPilot_Web.Controllers
             return response.IsSuccessStatusCode ? Ok() : BadRequest("Profil güncellenemedi.");
         }
 
-
+        [AuthorizeUser(Role = "Publisher")]
         [HttpGet]
         public IActionResult CreateQuiz()
         {
@@ -82,6 +87,7 @@ namespace EduPilot_Web.Controllers
             return View("Dashboard/AddQuiz");
         }
 
+        [AuthorizeUser(Role = "Publisher")]
         [HttpGet]
         public async Task<IActionResult> LoadLessons(int grade)
         {
@@ -95,7 +101,7 @@ namespace EduPilot_Web.Controllers
             return Json(new { success = true, lessons });
         }
 
-
+        [AuthorizeUser(Role = "Publisher")]
         [HttpGet]
         public async Task<IActionResult> LoadSubjects(Guid lessonId)
         {
@@ -109,6 +115,7 @@ namespace EduPilot_Web.Controllers
             return Json(new { success = true, subjects });
         }
 
+        [AuthorizeUser(Role = "Publisher")]
         [HttpPost]
         public async Task<IActionResult> CreateQuiz([FromBody] QuizDTO quizDto)
         {
@@ -123,7 +130,7 @@ namespace EduPilot_Web.Controllers
             return Json(new { success = true, quizId });
         }
 
-
+        [AuthorizeUser(Role = "Publisher")]
         [HttpPost]
         public async Task<IActionResult> AddQuestion(Guid quizId, QuestionDTO question)
         {
@@ -131,29 +138,23 @@ namespace EduPilot_Web.Controllers
             var res = await client.PostAsJsonAsync($"publisher/question/quiz/{quizId}", question);
             return res.IsSuccessStatusCode ? Json(new { success = true }) : Json(new { success = false });
         }
-
-        [HttpPost]
-        public async Task<IActionResult> SaveQuiz(Guid quizId, bool isActive)
+        [AuthorizeUser(Role = "Publisher")]
+        public IActionResult Index()
         {
-            // Opsiyonel: quiz'e son hali kaydet
-            return Json(new { success = true });
+            return View("Dashboard/Profile");
         }
-
-
+        [AllowAnonymous]
         public IActionResult Login()
         {
             return View("Auth/Login");
         }
-
+        [AllowAnonymous]
         public IActionResult Register()
         {
             return View("Auth/Register");
         }
 
-        public IActionResult Index()
-        {
-            return View("Dashboard/Profile");
-        }
+        [AuthorizeUser(Role = "Publisher")]
         public IActionResult AddQuiz()
         {
             return View("Dashboard/AddQuiz");

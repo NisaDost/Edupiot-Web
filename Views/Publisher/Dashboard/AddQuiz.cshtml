@@ -6,61 +6,60 @@
 
 <div class="d-flex flex-row">
     <partial name="_PublisherSidebar" />
-
     <div class="content">
         <div class="bg-card">
             <h2 class="mb-4 text-center">Yeni Quiz Oluştur</h2>
 
-            <!-- Sınıf Seçimi -->
             <label for="grade" class="form-label">Sınıf Seçiniz</label>
             <select id="grade" class="form-select">
                 <option selected disabled>Seçiniz</option>
                 @foreach (var grade in grades)
                 {
-                            <option value="@grade">@grade. Sınıf</option>
+                    <option value="@grade">@grade. Sınıf</option>
                 }
             </select>
 
-            <!-- Ders Dropdown -->
             <label class="form-label mt-3">Ders Seçiniz</label>
             <select id="lesson" class="form-select" disabled></select>
 
-            <!-- Konu Dropdown -->
             <label class="form-label mt-3">Konu Seçiniz</label>
             <select id="subject" class="form-select" disabled></select>
 
-            <!-- Zorluk Dropdown -->
-            <label class="form-label mt-3">Zorluk Seviyesi</label>
-            <select id="difficulty" class="form-select">
-                <option value="">Seçiniz</option>
-                <option value="Kolay">Kolay</option>
-                <option value="Orta">Orta</option>
-                <option value="Zor">Zor</option>
-            </select>
+            <!-- Zorluk, Şık Sayısı ve Süre -->
+            <div class="row mt-3">
+                <div class="col-md-4">
+                    <label class="form-label">Zorluk Seviyesi</label>
+                    <select id="difficulty" class="form-select">
+                        <option value="">Seçiniz</option>
+                        <option value="Kolay">Kolay</option>
+                        <option value="Orta">Orta</option>
+                        <option value="Zor">Zor</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Şık Sayısı</label>
+                    <select id="choiceCount" class="form-select">
+                        <option value="3">3 Şık</option>
+                        <option value="4">4 Şık</option>
+                        <option value="5">5 Şık</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Süre (dakika)</label>
+                    <input type="number" id="duration" class="form-control" min="1" step="1" placeholder="Dakika cinsinden" />
+                </div>
+            </div>
 
-            <!-- Şık Sayısı Dropdown -->
-            <label class="form-label mt-3">Şık Sayısı</label>
-            <select id="choiceCount" class="form-select">
-                <option value="3">3 Şık</option>
-                <option value="4">4 Şık</option>
-                <option value="5">5 Şık</option>
-            </select>
-
-            <!-- Quiz Aktif mi -->
             <div class="form-check mt-3">
                 <input class="form-check-input" type="checkbox" id="quizActive">
                 <label class="form-check-label" for="quizActive">Quiz Aktif Olsun</label>
             </div>
 
-            <!-- Soru Ekleme Formu -->
             <div id="questionFormContainer" class="mt-5"></div>
 
-            <!-- Soru Ekle Butonu -->
             <div class="d-grid mt-4">
                 <button id="addQuestionBtn" class="btn btn-success" disabled>Soru Ekle</button>
             </div>
-
-            <!-- Quizi Kaydet Butonu -->
             <div class="d-grid mt-3">
                 <button id="saveQuizBtn" class="btn btn-primary btn-lg" disabled>Quizi Kaydet</button>
             </div>
@@ -69,7 +68,7 @@
 </div>
 
 @section Scripts {
-        <script>
+    <script>
         let addedQuestions = 0;
 
         function mapDifficulty(label) {
@@ -80,7 +79,8 @@
         }
 
         function updateAddButtonState() {
-            $('#addQuestionBtn').prop('disabled', !( $('#subject').val() && $('#difficulty').val() && $('#choiceCount').val() ));
+            const isReady = $('#subject').val() && $('#difficulty').val() && $('#choiceCount').val() && $('#duration').val();
+            $('#addQuestionBtn').prop('disabled', !isReady);
         }
 
         $("#grade").on("change", function () {
@@ -89,7 +89,7 @@
             $("#subject").empty().append('<option selected disabled>Seçiniz</option>').prop("disabled", true);
 
             $.get("/Publisher/LoadLessons", { grade }, function (res) {
-                if (res.success && res.lessons.length > 0) {
+                if (res.success) {
                     res.lessons.forEach(x => {
                         $("#lesson").append(`<option value="${x.id}">${x.name}</option>`);
                     });
@@ -103,7 +103,7 @@
             $("#subject").empty().append('<option selected disabled>Seçiniz</option>').prop("disabled", true);
 
             $.get("/Publisher/LoadSubjects", { lessonId }, function (res) {
-                if (res.success && res.subjects.length > 0) {
+                if (res.success) {
                     res.subjects.forEach(x => {
                         if (x.id) {
                             $("#subject").append(`<option value="${x.id}">${x.name}</option>`);
@@ -114,7 +114,7 @@
             });
         });
 
-        $("#subject, #difficulty, #choiceCount").on("change", updateAddButtonState);
+        $("#subject, #difficulty, #choiceCount, #duration").on("input change", updateAddButtonState);
 
         $("#choiceCount").on("change", function () {
             const count = parseInt($(this).val());
@@ -177,10 +177,12 @@
 
         $("#saveQuizBtn").on("click", function () {
             const subjectId = $("#subject").val();
-            if (!subjectId || subjectId === "00000000-0000-0000-0000-000000000000") return alert("Geçerli konu seçiniz.");
+            const duration = parseInt($("#duration").val());
+            if (!subjectId || isNaN(duration) || duration <= 0) return alert("Lütfen geçerli konu ve süre giriniz.");
 
             const quiz = {
                 SubjectId: subjectId,
+                Duration: duration,
                 Difficulty: mapDifficulty($("#difficulty").val()),
                 Questions: []
             };
@@ -234,5 +236,5 @@
                 }
             });
         });
-        </script>
+    </script>
 }
