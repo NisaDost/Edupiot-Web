@@ -3,13 +3,25 @@ using EduPilot_Web.Models;
 using EduPilot_Web.Models.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
+using System.Text;
 
 namespace EduPilot_Web.Controllers
 {
     public class InstitutionController : ApiControllerBase
     {
         public InstitutionController(IHttpClientFactory httpClientFactory) : base(httpClientFactory) { }
+
+        [AllowAnonymous]
+        public IActionResult Login()
+        {
+            return View("Auth/Login");
+        }
+
+        [AllowAnonymous]
+        public IActionResult Register()
+        {
+            return View("Auth/Register");
+        }
 
         public string GetLoggedinInstitutionId()
         {
@@ -100,17 +112,33 @@ namespace EduPilot_Web.Controllers
             return View("Dashboard/Student/StudentList", studentList);
         }
 
-        [AllowAnonymous]
-        public IActionResult Login() => View("Auth/Login");
+        [HttpGet]
+        public async Task<IActionResult> SupervisorList()
+        {
+            //Buradaki supervisor listesi aslında institutiona bağlı öğretmen listesi.
+            var institutionId = GetLoggedinInstitutionId();
+            var supervisorList = await GetSupervisorListAsync(institutionId);
+            if (supervisorList == null) return NotFound();
 
-        [AllowAnonymous]
-        public IActionResult Register() => View("Auth/Register");
+            return View("Dashboard/Teacher/TeacherList", supervisorList);
+        }
 
-        public IActionResult Index() => View("Dashboard/Profile");
+        [HttpPost]
+        public async Task<IActionResult> AddStudent([FromBody] string email)
+        {
+            var institutionId = GetLoggedinInstitutionId();
+            var client = GetApiClient();
+
+            var response = await client.PostAsync(
+                $"institution/{institutionId}/student/{email}",
+                null
+            );
+
+            return response.IsSuccessStatusCode ? Ok() : BadRequest("Öğrenci eklenemedi.");
+        }
 
         public IActionResult ClassList() => View("Dashboard/Student/ClassList");
 
-        public IActionResult TeacherList() => View("Dashboard/Teacher/TeacherList");
 
         public IActionResult Attendance() => View("Dashboard/Student/Attendance");
 

@@ -15,5 +15,10 @@ namespace EduPilot_Web.Controllers
         {
             return _httpClientFactory.CreateClient("EduPilotApi");
         }
+
+        protected HttpClient GetPythonApiClient()
+        {
+            return _httpClientFactory.CreateClient("PythonApi");
+        }
     }
 }

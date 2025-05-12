@@ -1,4 +1,5 @@
-﻿@{
+﻿@model List<EduPilot_Web.Models.DTOs.SupervisorDTO>
+@{
     ViewData["Title"] = "Öğretmen Listesi";
 }
 
@@ -7,39 +8,36 @@
 
     <div class="content">
         <div class="bg-card">
-            
-            <h1 class="fw-bold">Öğrenci Listesi </h1>
-            <h3 class="fw-bold">Atatürk Orta Okulu</h3>
+
+            <h1 class="fw-bold">Sisteme Kayıtlı Öğretmen Listesi </h1>
 
             <div class="table-responsive mt-5">
                 <table class="table table-bordered table-striped">
                     <thead class="text-light" style="background-color: var(--primary-accent)">
                         <tr>
                             <th scope="col">Ad</th>
+                            <th scope="col">İkinci Ad</th>
                             <th scope="col">Soyad</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>Ahmet</td>
-                            <td>Yıldız</td>
-                        </tr>
-                        <tr>
-                            <td>Ayşe</td>
-                            <td>Kurt</td>
-                        </tr>
-                        <tr>
-                            <td>Mehmet</td>
-                            <td>Arslan</td>
-                        </tr>
-                        <tr>
-                            <td>Elif</td>
-                            <td>Çetin</td>
-                        </tr>
-                        <tr>
-                            <td>Burak</td>
-                            <td>Öztürk</td>
-                        </tr>
+                        @if (Model != null && Model.Any())
+                        {
+                            @foreach (var teacher in Model)
+                            {
+                                <tr>
+                                    <td>@teacher.FirstName</td>
+                                    <td>@(string.IsNullOrEmpty(teacher.MiddleName) ? "-" : teacher.MiddleName)</td>
+                                    <td>@teacher.LastName</td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="3" class="text-center">Kayıtlı öğrentmen bulunmamaktadır.</td>
+                            </tr>
+                        }
                     </tbody>
                 </table>
             </div>
