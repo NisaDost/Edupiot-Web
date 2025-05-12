@@ -1,4 +1,5 @@
-﻿namespace EduPilot_Web.Models
+﻿using EduPilot_Web.Models.DTOs;
+namespace EduPilot_Web.Models
 {
     public class InstitutionViewModel
     {
@@ -9,7 +10,7 @@
         public string? Address { get; set; }
         public string? Logo { get; set; }
         public string? Website { get; set; }
-        public List<InstitutionStudentViewModel> Students { get; set; }
-        public List<InstitutionSupervisorViewModel> Supervisors { get; set; }
+        public List<StudentDTO> Students { get; set; }
+        public List<SupervisorDTO> Supervisors { get; set; }
     }
 }

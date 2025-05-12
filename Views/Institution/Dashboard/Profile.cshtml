@@ -1,8 +1,8 @@
 ﻿@model InstitutionViewModel
 @{
     ViewData["Title"] = "Profil";
-    var supervisorCount = Model.Supervisors.Count;
     var studentCount = Model.Students.Count;
+    var supervisorCount = Model.Supervisors.Count;
 }
 
 <div class="d-flex flex-row">
@@ -59,7 +59,7 @@
                 <div class="col-12 col-sm-8 col-md-6">
                     <div class="card-primary p-4 text-center">
                         <h4>Siteme Kayıtlı Öğretmen Sayısı</h4>
-                        <h1 class="text-light mt-2">@supervisorCount</h1>
+                        <h1 class="text-light mt-2">@(string.IsNullOrEmpty(supervisorCount.ToString()) ? "Danışman Bulunamadı." : supervisorCount)</h1>
                     </div>
                 </div>
                 

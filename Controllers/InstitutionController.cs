@@ -3,38 +3,54 @@ using EduPilot_Web.Models;
 using EduPilot_Web.Models.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 
 namespace EduPilot_Web.Controllers
 {
     public class InstitutionController : ApiControllerBase
     {
-
         public InstitutionController(IHttpClientFactory httpClientFactory) : base(httpClientFactory) { }
+
         public string GetLoggedinInstitutionId()
         {
             var institutionId = HttpContext.Session.GetString("InstitutionId")?.Trim('"');
             return institutionId ?? string.Empty;
         }
 
-        private InstitutionDTO? GetInstitution(string institutionId)
+        private async Task<InstitutionDTO?> GetInstitutionAsync(string institutionId)
         {
             var client = GetApiClient();
-            var response = client.GetAsync($"institution/{institutionId}").Result;
+            var response = await client.GetAsync($"institution/{institutionId}");
             if (!response.IsSuccessStatusCode) return null;
+            return await response.Content.ReadFromJsonAsync<InstitutionDTO>();
+        }
 
-            return response.Content.ReadFromJsonAsync<InstitutionDTO>().Result;
+        private async Task<List<StudentDTO>?> GetStudentListAsync(string institutionId)
+        {
+            var client = GetApiClient();
+            var response = await client.GetAsync($"institution/{institutionId}/students");
+            if (!response.IsSuccessStatusCode) return new List<StudentDTO>();
+            return await response.Content.ReadFromJsonAsync<List<StudentDTO>>();
+        }
+
+        private async Task<List<SupervisorDTO>?> GetSupervisorListAsync(string institutionId)
+        {
+            var client = GetApiClient();
+            var response = await client.GetAsync($"institution/{institutionId}/supervisor");
+            if (!response.IsSuccessStatusCode) return new List<SupervisorDTO>();
+            return await response.Content.ReadFromJsonAsync<List<SupervisorDTO>>();
         }
 
         [AuthorizeUser(Role = "Institution")]
-        public IActionResult Profile()
+        public async Task<IActionResult> Profile()
         {
             var institutionId = GetLoggedinInstitutionId();
-            var institution = GetInstitution(institutionId);
+            var institution = await GetInstitutionAsync(institutionId);
 
-            if (institution == null)
-            {
-                return NotFound();
-            }
+            if (institution == null) return NotFound();
+
+            var students = await GetStudentListAsync(institutionId) ?? new List<StudentDTO>();
+            var supervisors = await GetSupervisorListAsync(institutionId) ?? new List<SupervisorDTO>();
 
             var model = new InstitutionViewModel
             {
@@ -44,11 +60,8 @@ namespace EduPilot_Web.Controllers
                 Address = institution.Address,
                 Website = institution.Website,
                 Logo = institution.Logo,
-
-                //burayı ayrıca mı çekeceğime karar vereceğim,
-                //hem listeye hem liste uzunluğuna ihtiyaç var
-                Students = new List<InstitutionStudentViewModel>(),
-                Supervisors = new List<InstitutionSupervisorViewModel>(),
+                Students = students,
+                Supervisors = supervisors
             };
 
             return View("Dashboard/Profile", model);
@@ -58,9 +71,8 @@ namespace EduPilot_Web.Controllers
         public async Task<IActionResult> UpdateProfile([FromBody] PublisherViewModel updated)
         {
             var institutionId = GetLoggedinInstitutionId();
-            var current = GetInstitution(institutionId);
+            var current = await GetInstitutionAsync(institutionId);
             if (current == null) return BadRequest("Geçerli kullanıcı bulunamadı.");
-
 
             var updatedInfo = new
             {
@@ -75,79 +87,33 @@ namespace EduPilot_Web.Controllers
 
             var client = GetApiClient();
             var response = await client.PutAsJsonAsync($"institution/{institutionId}", updatedInfo);
-
             return response.IsSuccessStatusCode ? Ok() : BadRequest("Profil güncellenemedi.");
         }
 
-        public InstitutionDTO? GetStudentList(string institutionId)
-        {
-            var client = GetApiClient();
-            var response = client.GetAsync($"institution/{institutionId}/students").Result;
-            if (!response.IsSuccessStatusCode) return null;
-            return response.Content.ReadFromJsonAsync<InstitutionDTO>().Result;
-        }
         [HttpGet]
-        public IActionResult StudentList( )
+        public async Task<IActionResult> StudentList()
         {
             var institutionId = GetLoggedinInstitutionId();
-            var studentList = GetStudentList(institutionId);
+            var studentList = await GetStudentListAsync(institutionId);
+            if (studentList == null) return NotFound();
 
-            if (studentList == null)
-            {
-                return NotFound(); //şimdilik 404
-            }
-
-            var model = new InstitutionViewModel
-            {
-                Students = studentList.Students.Select(s => new InstitutionStudentViewModel
-                {
-                    FirstName = s.FirstName,
-                    MiddleName = s.MiddleName,
-                    LastName = s.LastName,
-                    Email = s.Email,
-                    InstitutionId = institutionId
-                }).ToList()
-            };
-
-            return View("Dashboard/Student/StudentList");
+            return View("Dashboard/Student/StudentList", studentList);
         }
 
         [AllowAnonymous]
-        public IActionResult Login()
-        {
-            return View("Auth/Login");
-        }
+        public IActionResult Login() => View("Auth/Login");
+
         [AllowAnonymous]
-        public IActionResult Register()
-        {
-            return View("Auth/Register");
-        }
+        public IActionResult Register() => View("Auth/Register");
 
-        public IActionResult Index()
-        {
-            return View("Dashboard/Profile");
-        }
+        public IActionResult Index() => View("Dashboard/Profile");
 
-        
+        public IActionResult ClassList() => View("Dashboard/Student/ClassList");
 
-        public IActionResult ClassList()
-        {
-            return View("Dashboard/Student/ClassList");
-        }
+        public IActionResult TeacherList() => View("Dashboard/Teacher/TeacherList");
 
-        public IActionResult TeacherList()
-        {
-            return View("Dashboard/Teacher/TeacherList");
-        }
+        public IActionResult Attendance() => View("Dashboard/Student/Attendance");
 
-        public IActionResult Attendance()
-        {
-            return View("Dashboard/Student/Attendance");
-        }
-
-        public IActionResult CurrentPlan()
-        {
-            return View("Dashboard/CurrentPlan");
-        }
+        public IActionResult CurrentPlan() => View("Dashboard/CurrentPlan");
     }
 }
