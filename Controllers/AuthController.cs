@@ -19,20 +19,23 @@ namespace EduPilot_Web.Controllers
                 return RedirectToAction("Register", "Publisher");
             }
 
-            var client = GetApiClient();
-            var response = await client.PostAsJsonAsync("publisher/register", model);
+            try
+            {
+                var client = GetApiClient();
+                var response = await client.PostAsJsonAsync("publisher/register", model);
 
-            if (response.IsSuccessStatusCode)
-            {
-                //TempData["Success"] = "Kayıt başarılı. Giriş sayfasına yönlendiriliyorsunuz.";
-                return RedirectToAction("Login", "Publisher");
-            }
-            else
-            {
+                if (response.IsSuccessStatusCode)
+                    return RedirectToAction("Login", "Publisher");
+
                 var errorContent = await response.Content.ReadAsStringAsync();
                 TempData["Error"] = "Kayıt başarısız: " + errorContent;
-                return RedirectToAction("Register", "Publisher");
             }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Beklenmeyen bir hata oluştu: " + ex.Message;
+            }
+
+            return RedirectToAction("Register", "Publisher");
         }
 
         [HttpPost]
@@ -45,30 +48,28 @@ namespace EduPilot_Web.Controllers
                 return RedirectToAction("Login", "Publisher");
             }
 
-            var client = GetApiClient();
-            var response = await client.PostAsJsonAsync("auth/login/publisher", model);
-
-            if (response.IsSuccessStatusCode)
+            try
             {
-                var publisherId = await response.Content.ReadAsStringAsync();
-                try
+                var client = GetApiClient();
+                var response = await client.PostAsJsonAsync("auth/login/publisher", model);
+
+                if (response.IsSuccessStatusCode)
                 {
-                    HttpContext.Session.SetString("PublisherId", publisherId.ToString());
+                    var publisherId = await response.Content.ReadAsStringAsync();
+                    HttpContext.Session.SetString("PublisherId", publisherId);
                     HttpContext.Session.SetString("UserType", "Publisher");
                     return RedirectToAction("Profile", "Publisher");
                 }
-                catch (Exception ex)
-                {
-                    TempData["Error"] = "Hata: " + ex.Message;
-                    return RedirectToAction("Login", "Publisher");
-                }
-            }
-            else
-            {
+
                 var content = await response.Content.ReadAsStringAsync();
                 TempData["Error"] = $"Giriş başarısız: {content}";
-                return RedirectToAction("Login", "Publisher");
             }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Hata: " + ex.Message;
+            }
+
+            return RedirectToAction("Login", "Publisher");
         }
 
         [HttpPost]
@@ -81,23 +82,25 @@ namespace EduPilot_Web.Controllers
                 return RedirectToAction("Register", "Institution");
             }
 
-            var client = GetApiClient();
-            var response = await client.PostAsJsonAsync("institution/register", model);
+            try
+            {
+                var client = GetApiClient();
+                var response = await client.PostAsJsonAsync("institution/register", model);
 
-            if (response.IsSuccessStatusCode)
-            {
-                //TempData["Success"] = "Kayıt başarılı. Giriş sayfasına yönlendiriliyorsunuz.";
-                return RedirectToAction("Login", "Institution");
-            }
-            else
-            {
+                if (response.IsSuccessStatusCode)
+                    return RedirectToAction("Login", "Institution");
+
                 var errorContent = await response.Content.ReadAsStringAsync();
                 TempData["Error"] = "Kayıt başarısız: " + errorContent;
-                return RedirectToAction("Register", "Institution");
             }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Beklenmeyen bir hata oluştu: " + ex.Message;
+            }
+
+            return RedirectToAction("Register", "Institution");
         }
 
-        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> InstitutionLoginSubmit([FromForm] LoginDTO model)
@@ -108,30 +111,28 @@ namespace EduPilot_Web.Controllers
                 return RedirectToAction("Login", "Institution");
             }
 
-            var client = GetApiClient();
-            var response = await client.PostAsJsonAsync("auth/login/institution", model);
-
-            if (response.IsSuccessStatusCode)
+            try
             {
-                var institutionId = await response.Content.ReadAsStringAsync();
-                try
+                var client = GetApiClient();
+                var response = await client.PostAsJsonAsync("auth/login/institution", model);
+
+                if (response.IsSuccessStatusCode)
                 {
-                    HttpContext.Session.SetString("InstitutionId", institutionId.ToString());
+                    var institutionId = await response.Content.ReadAsStringAsync();
+                    HttpContext.Session.SetString("InstitutionId", institutionId);
                     HttpContext.Session.SetString("UserType", "Institution");
                     return RedirectToAction("Profile", "Institution");
                 }
-                catch (Exception ex)
-                {
-                    TempData["Error"] = "Hata: " + ex.Message;
-                    return RedirectToAction("Login", "Institution");
-                }
-            }
-            else
-            {
+
                 var content = await response.Content.ReadAsStringAsync();
                 TempData["Error"] = $"Giriş başarısız: {content}";
-                return RedirectToAction("Login", "Institution");
             }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "Hata: " + ex.Message;
+            }
+
+            return RedirectToAction("Login", "Institution");
         }
 
         public IActionResult Logout()
@@ -139,6 +140,5 @@ namespace EduPilot_Web.Controllers
             HttpContext.Session.Clear();
             return RedirectToAction("Index", "Home");
         }
-
     }
 }

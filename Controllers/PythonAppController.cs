@@ -1,38 +1,94 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Net.Http;
+﻿using EduPilot_Web.Models;
+using Microsoft.AspNetCore.Mvc;
+using System.Text;
 
 namespace EduPilot_Web.Controllers
 {
     public class PythonAppController : ApiControllerBase
     {
         public PythonAppController(IHttpClientFactory httpClientFactory) : base(httpClientFactory) { }
-        public IActionResult Index()
+
+        private readonly string savePath = @".\FRAS\faces";
+
+        public IActionResult TakePhoto()
         {
             return View();
         }
 
-        //[HttpPost]
-        public IActionResult TakePhoto()
+        [HttpPost]
+        public async Task<IActionResult> SaveCapturedPhotoAsync([FromBody] ImageUploadModel model)
         {
-            return View("Attendance");
+            try
+            {
+                if (string.IsNullOrEmpty(model.Image) || string.IsNullOrEmpty(model.FileName) || string.IsNullOrEmpty(model.StudentId))
+                    return BadRequest(new { message = "Eksik veri: image, filename veya studentId yok." });
+
+                var fileName = model.FileName;
+                var studentId = model.StudentId;
+                var imageBytes = Convert.FromBase64String(model.Image);
+
+                var photoPath = Path.Combine(savePath, fileName);
+                await System.IO.File.WriteAllBytesAsync(photoPath, imageBytes);
+
+                var pythonClient = GetPythonApiClient();
+                var encodeResponse = await pythonClient.GetAsync("encode_faces");
+
+                if (!encodeResponse.IsSuccessStatusCode)
+                {
+                    var error = await encodeResponse.Content.ReadAsStringAsync();
+                    return StatusCode(500, new { message = "Face encode hatası", error });
+                }
+
+                var updatedMugshot = new
+                {
+                    Mugshot = model.FileName
+                };
+                var appClient = GetApiClient();
+                var updateResponse = await appClient.PutAsJsonAsync($"students/{studentId}/mugshot", updatedMugshot);
+
+                if (!updateResponse.IsSuccessStatusCode)
+                {
+                    return StatusCode(500, new { message = "Profil resmi güncellenemedi." });
+                }
+
+                return Ok(new { message = $"Fotoğraf kaydedildi: {fileName}", filePath = photoPath });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = $"Hata oluştu: {ex.Message}" });
+            }
         }
 
-        [HttpPost]
-        public async Task<IActionResult> TakeAttendance()
+
+        public IActionResult TakeAttendance()
         {
-            var client = GetPythonApiClient();
-            var response = await client.GetAsync($"/take_attendance"); // python API Route
-            var result = await response.Content.ReadAsStringAsync();
-            ViewBag.Message = result;
-            return View("Index");
+            return View();
         }
+
+
+        //public async Task<IActionResult> ListAttendanceAndEmotion()
+        //{
+        //    var client = GetPythonApiClient();
+        //    var response = await client.GetAsync("get_attendance_report");
+        //    return View("ListAttendanceAndEmotion");
+        //}
+
+        //[HttpPost]
+        //public async Task<IActionResult> TakeAttendanceAsync()
+        //{
+        //    var client = GetPythonApiClient();
+        //    var response = await client.GetAsync("/take_attendance"); // python API Route
+        //    var result = await response.Content.ReadAsStringAsync();
+        //    ViewBag.Message = result;
+        //    return View("Index");
+        //}
 
         // buradan aşağısı güncel değil
 
-        //public async Task<IActionResult> AttendanceList()
+        //public async Task<IActionResult> AttendanceListAsync()
         //{
         //    var client = GetPythonApiClient();
-        //    var response = await client.GetAsync($"/get_attendance_report"); // python API Route
+        //    var response = await client.GetAsync("get_attendance_report"); // python API Route
         //    var jsonString = await response.Content.ReadAsStringAsync();
 
         //    // JSON'u parse et
@@ -63,26 +119,6 @@ namespace EduPilot_Web.Controllers
         //    }
         //    return View(attendanceList);
         //}
-        //public async Task<IActionResult> StudentList()
-        //{
-        //    var response = await _httpClient.GetAsync($"{pythonApiUrl}/get_students");
-        //    if (!response.IsSuccessStatusCode)
-        //    {
-        //        // Handle error
-        //        return View(new List<StudentModel>());
-        //    }
-
-        //    var jsonString = await response.Content.ReadAsStringAsync();
-        //    var students = JsonConvert.DeserializeObject<List<StudentModel>>(jsonString);
-
-        //    // Convert image paths to Base64
-        //    foreach (var student in students)
-        //    {
-        //        student.PhotoBase64 = ConvertImageToBase64(student.PhotoUrl);
-        //    }
-
-        //    return View(students);
-        //}
 
         //private string ConvertImageToBase64(string imagePath)
         //{
@@ -99,43 +135,8 @@ namespace EduPilot_Web.Controllers
         //    }
         //}
 
-        //[HttpPost]
-        //public async Task<IActionResult> SaveCapturedPhoto([FromBody] ImageUploadModel model)
-        //{
-        //    try
-        //    {
-        //        if (string.IsNullOrEmpty(model.Image) || string.IsNullOrEmpty(model.FileName))
-        //            return BadRequest(new { message = "Invalid image data or filename." });
-
-        //        // Save the image
-        //        byte[] imageBytes = Convert.FromBase64String(model.Image);
-        //        string filePath = Path.Combine(savePath, model.FileName);
-        //        await System.IO.File.WriteAllBytesAsync(filePath, imageBytes);
-
-        //        // Call the Flask API to run encode_faces.py
-        //        var httpClient = _httpClientFactory.CreateClient();
-        //        var response = await httpClient.GetAsync($"{pythonApiUrl}/encode_faces");
-
-        //        if (!response.IsSuccessStatusCode)
-        //        {
-        //            var errorMsg = await response.Content.ReadAsStringAsync();
-        //            return StatusCode(500, new { message = "Error encoding faces", error = errorMsg });
-        //        }
-
-        //        return Ok(new { message = $"Photo saved for {model.FileName}!", filePath });
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return StatusCode(500, new { message = $"Error saving photo: {ex.Message}" });
-        //    }
-        //}
 
         //public IActionResult Capture()
-        //{
-        //    return View();
-        //}
-
-        //public IActionResult Privacy()
         //{
         //    return View();
         //}

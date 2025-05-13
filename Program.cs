@@ -18,11 +18,7 @@ builder.Services.AddHttpClient("EduPilotApi", client =>
 
 builder.Services.AddHttpClient("PythonApi", client =>
 {
-    client.BaseAddress = new Uri("https://localhost:7105/api/"); // Python API URL
-
-    //Auth yok
-    //client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(
-    //    "Basic", Convert.ToBase64String(Encoding.UTF8.GetBytes(apiUsername + ":" + apiPassword)));
+    client.BaseAddress = new Uri("http://127.0.0.1:5000/");
 });
 
 builder.Services.AddSession();

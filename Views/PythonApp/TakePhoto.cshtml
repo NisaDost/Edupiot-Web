@@ -1,5 +1,7 @@
 ﻿@{
-    ViewData["Title"] = "Fotoğraf ile Kayıt";
+    ViewData["Title"] = "Fotoğraf ile Yüz Tanıma Kayıt";
+    var studentId = Context.Request.Query["sId"];
+    var studentName = Context.Request.Query["sName"];
 }
 
 <div class="d-flex flex-row">
@@ -7,8 +9,19 @@
     <div class="content">
         <div class="bg-card p-4">
 
-            <h1 class="fw-bold mb-4">Yüz Tanıma Sistemi - Fotoğraf Kaydet</h1>
-            <p>Tarayıcı ayarlarından kameraya erişim izni verdiğinizden emin olun.</p>
+            <h1 class="fw-bold mb-4">Yüz Tanıma Sistemi - Fotoğraf Kaydı</h1>
+
+            <!-- Material Icons Yönergeler -->
+            <div id="instructions" class="mb-4 p-3 border rounded bg-light">
+                <h5><span class="material-symbols-outlined align-middle">info</span> Kayıt Talimatları</h5>
+                <ol class="ps-3">
+                    <li><span class="material-symbols-outlined text-primary align-middle">videocam</span> <strong>"Kamerayı Aç"</strong> butonuna tıklayın ve kamera izni verin.</li>
+                    <li><span class="material-symbols-outlined text-primary align-middle">face</span> Nötr bir ifadeyle doğrudan kameraya bakın.</li>
+                    <li><span class="material-symbols-outlined text-primary align-middle">photo_camera</span> <strong>Fotoğraf Çek</strong> butonuna tıklayın.</li>
+                    <li><span class="material-symbols-outlined text-primary align-middle">save</span> <strong>Kaydet</strong> ile işlemi tamamlayın.</li>
+                </ol>
+                <p class="mb-0 text-muted"><i class="material-symbols-outlined text-warning align-middle">warning</i> Kayıt, yüz tanıma için gereklidir.</p>
+            </div>
 
             <div class="d-flex justify-content-between flex-wrap">
                 <div class="text-center">
@@ -21,29 +34,28 @@
             </div>
 
             <div class="d-flex justify-content-center mt-4 gap-3 flex-wrap">
-                <button id="startBtn" class="btn btn-primary">Kamerayı Aç</button>
-                <button id="captureBtn" class="btn btn-info" style="display: none;">Fotoğraf Çek</button>
-                <button id="uploadBtn" class="btn btn-success" style="display: none;">Kaydet</button>
-                <button id="stopBtn" class="btn btn-danger" style="display: none;">Kamerayı Kapat</button>
+                <button id="startBtn" class="btn btn-primary">
+                    <span class="material-symbols-outlined align-middle">videocam</span> Kamerayı Aç
+                </button>
+                <button id="captureBtn" class="btn btn-info" style="display: none;">
+                    <span class="material-symbols-outlined align-middle">photo_camera</span> Fotoğraf Çek
+                </button>
+                <button id="uploadBtn" class="btn btn-success" style="display: none;">
+                    <span class="material-symbols-outlined align-middle">save</span> Kaydet
+                </button>
+                <button id="stopBtn" class="btn btn-danger" style="display: none;">
+                    <span class="material-symbols-outlined align-middle">cancel</span> Kamerayı Kapat
+                </button>
             </div>
-
-            <form id="studentForm" class="row g-3 mt-4" style="display: none;">
-                <div class="col-md-6">
-                    <label for="firstName" class="form-label">Ad</label>
-                    <input type="text" class="form-control" id="firstName" required />
-                </div>
-                <div class="col-md-6">
-                    <label for="lastName" class="form-label">Soyad</label>
-                    <input type="text" class="form-control" id="lastName" required />
-                </div>
-            </form>
-
         </div>
     </div>
 </div>
 
 @section Scripts {
     <script>
+        const studentId = "@studentId";
+        const studentName = "@studentName";
+
         const video = document.getElementById('video');
         const canvas = document.getElementById('canvas');
         const photo = document.getElementById('photo');
@@ -51,9 +63,7 @@
         const captureBtn = document.getElementById('captureBtn');
         const uploadBtn = document.getElementById('uploadBtn');
         const stopBtn = document.getElementById('stopBtn');
-        const studentForm = document.getElementById('studentForm');
-        const firstNameInput = document.getElementById('firstName');
-        const lastNameInput = document.getElementById('lastName');
+        const instructions = document.getElementById('instructions');
 
         let stream;
 
@@ -64,6 +74,7 @@
                 video.style.display = "block";
                 captureBtn.style.display = "inline-block";
                 stopBtn.style.display = "inline-block";
+                instructions.style.display = "none";
             } catch (err) {
                 alert("Kamera erişimi reddedildi.");
                 console.error(err);
@@ -85,25 +96,16 @@
             photo.src = imageData;
             photo.style.display = "block";
             uploadBtn.style.display = "inline-block";
-            studentForm.style.display = "flex";
         });
 
         uploadBtn.addEventListener('click', async () => {
-            const firstName = firstNameInput.value.trim();
-            const lastName = lastNameInput.value.trim();
-
-            if (!firstName || !lastName) {
-                alert("Lütfen ad ve soyad giriniz.");
-                return;
-            }
-
-            const filename = `${firstName}_${lastName}.png`;
             const imageBase64 = photo.src.split(',')[1];
+            const filename = `${studentName}.png`;
 
             const res = await fetch('/PythonApp/SaveCapturedPhoto', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ image: imageBase64, filename })
+                body: JSON.stringify({ Image: imageBase64, Filename: filename, StudentId: studentId })
             });
 
             const result = await res.json();
@@ -116,19 +118,13 @@
                 stream.getTracks().forEach(track => track.stop());
                 stream = null;
             }
-
             video.style.display = "none";
             canvas.style.display = "none";
             photo.style.display = "none";
-
             captureBtn.style.display = "none";
             uploadBtn.style.display = "none";
             stopBtn.style.display = "none";
-            studentForm.style.display = "none";
-
-            photo.src = "";
-            firstNameInput.value = "";
-            lastNameInput.value = "";
+            instructions.style.display = "block";
         }
     </script>
 }

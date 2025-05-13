@@ -7,7 +7,6 @@ using System.Text;
 
 namespace EduPilot_Web.Controllers
 {
-
     [AuthorizeUser(Role = "Institution")]
     public class InstitutionController : ApiControllerBase
     {
@@ -33,116 +32,168 @@ namespace EduPilot_Web.Controllers
 
         private async Task<InstitutionDTO?> GetInstitutionAsync(string institutionId)
         {
-            var client = GetApiClient();
-            var response = await client.GetAsync($"institution/{institutionId}");
-            if (!response.IsSuccessStatusCode) return null;
-            return await response.Content.ReadFromJsonAsync<InstitutionDTO>();
+            try
+            {
+                var client = GetApiClient();
+                var response = await client.GetAsync($"institution/{institutionId}");
+                if (!response.IsSuccessStatusCode) return null;
+                return await response.Content.ReadFromJsonAsync<InstitutionDTO>();
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         private async Task<List<StudentDTO>?> GetStudentListAsync(string institutionId)
         {
-            var client = GetApiClient();
-            var response = await client.GetAsync($"institution/{institutionId}/students");
-            if (!response.IsSuccessStatusCode) return new List<StudentDTO>();
-            return await response.Content.ReadFromJsonAsync<List<StudentDTO>>();
+            try
+            {
+                var client = GetApiClient();
+                var response = await client.GetAsync($"institution/{institutionId}/students");
+                if (!response.IsSuccessStatusCode) return new List<StudentDTO>();
+                return await response.Content.ReadFromJsonAsync<List<StudentDTO>>();
+            }
+            catch
+            {
+                return new List<StudentDTO>();
+            }
         }
 
-        //[AuthorizeUser(Role = "Institution")]
         private async Task<List<SupervisorDTO>?> GetSupervisorListAsync(string institutionId)
         {
-            var client = GetApiClient();
-            var response = await client.GetAsync($"institution/{institutionId}/supervisor");
-            if (!response.IsSuccessStatusCode) return new List<SupervisorDTO>();
-            return await response.Content.ReadFromJsonAsync<List<SupervisorDTO>>();
+            try
+            {
+                var client = GetApiClient();
+                var response = await client.GetAsync($"institution/{institutionId}/supervisor");
+                if (!response.IsSuccessStatusCode) return new List<SupervisorDTO>();
+                return await response.Content.ReadFromJsonAsync<List<SupervisorDTO>>();
+            }
+            catch
+            {
+                return new List<SupervisorDTO>();
+            }
         }
 
-        //[AuthorizeUser(Role = "Institution")]
         public async Task<IActionResult> Profile()
         {
-            var institutionId = GetLoggedinInstitutionId();
-            var institution = await GetInstitutionAsync(institutionId);
-
-            if (institution == null) return NotFound();
-
-            var students = await GetStudentListAsync(institutionId) ?? new List<StudentDTO>();
-            var supervisors = await GetSupervisorListAsync(institutionId) ?? new List<SupervisorDTO>();
-
-            var model = new InstitutionViewModel
+            try
             {
-                Id = institution.Id,
-                Name = institution.Name,
-                Email = institution.Email,
-                Address = institution.Address,
-                Website = institution.Website,
-                Logo = institution.Logo,
-                Students = students,
-                Supervisors = supervisors
-            };
+                var institutionId = GetLoggedinInstitutionId();
+                var institution = await GetInstitutionAsync(institutionId);
+                if (institution == null) return NotFound();
 
-            return View("Profile", model);
+                var students = await GetStudentListAsync(institutionId) ?? new List<StudentDTO>();
+                var supervisors = await GetSupervisorListAsync(institutionId) ?? new List<SupervisorDTO>();
+
+                var model = new InstitutionViewModel
+                {
+                    Id = institution.Id,
+                    Name = institution.Name,
+                    Email = institution.Email,
+                    Address = institution.Address,
+                    Website = institution.Website,
+                    Logo = institution.Logo,
+                    Students = students,
+                    Supervisors = supervisors
+                };
+
+                return View("Profile", model);
+            }
+            catch
+            {
+                return StatusCode(500, "Beklenmeyen bir hata oluştu.");
+            }
         }
 
         [HttpPut]
         public async Task<IActionResult> UpdateProfile([FromBody] PublisherViewModel updated)
         {
-            var institutionId = GetLoggedinInstitutionId();
-            var current = await GetInstitutionAsync(institutionId);
-            if (current == null) return BadRequest("Geçerli kullanıcı bulunamadı.");
-
-            var updatedInfo = new
+            try
             {
-                name = string.IsNullOrWhiteSpace(updated.Name) ? current.Name : updated.Name,
-                email = current.Email,
-                address = string.IsNullOrWhiteSpace(updated.Address) ? current.Address : updated.Address,
-                website = string.IsNullOrWhiteSpace(updated.Website) ? current.Website : updated.Website,
-                logo = string.IsNullOrWhiteSpace(updated.Logo) ? current.Logo : updated.Logo,
-                currentPassword = string.IsNullOrWhiteSpace(updated.CurrentPassword) ? current.CurrentPassword : updated.CurrentPassword,
-                password = string.IsNullOrWhiteSpace(updated.NewPassword) ? current.NewPassword : updated.NewPassword
-            };
+                var institutionId = GetLoggedinInstitutionId();
+                var current = await GetInstitutionAsync(institutionId);
+                if (current == null) return BadRequest("Geçerli kullanıcı bulunamadı.");
 
-            var client = GetApiClient();
-            var response = await client.PutAsJsonAsync($"institution/{institutionId}", updatedInfo);
-            return response.IsSuccessStatusCode ? Ok() : BadRequest("Profil güncellenemedi.");
+                var updatedInfo = new
+                {
+                    name = string.IsNullOrWhiteSpace(updated.Name) ? current.Name : updated.Name,
+                    email = current.Email,
+                    address = string.IsNullOrWhiteSpace(updated.Address) ? current.Address : updated.Address,
+                    website = string.IsNullOrWhiteSpace(updated.Website) ? current.Website : updated.Website,
+                    logo = string.IsNullOrWhiteSpace(updated.Logo) ? current.Logo : updated.Logo,
+                    currentPassword = string.IsNullOrWhiteSpace(updated.CurrentPassword) ? current.CurrentPassword : updated.CurrentPassword,
+                    password = string.IsNullOrWhiteSpace(updated.NewPassword) ? current.NewPassword : updated.NewPassword
+                };
+
+                var client = GetApiClient();
+                var response = await client.PutAsJsonAsync($"institution/{institutionId}", updatedInfo);
+                return response.IsSuccessStatusCode ? Ok() : BadRequest("Profil güncellenemedi.");
+            }
+            catch
+            {
+                return StatusCode(500, "Güncelleme sırasında bir hata oluştu.");
+            }
         }
 
         [HttpGet]
         public async Task<IActionResult> StudentList()
         {
-            var institutionId = GetLoggedinInstitutionId();
-            var studentList = await GetStudentListAsync(institutionId);
-            if (studentList == null) return NotFound();
+            try
+            {
+                var institutionId = GetLoggedinInstitutionId();
+                var studentList = await GetStudentListAsync(institutionId);
+                if (studentList == null) return NotFound();
 
-            return View("StudentList", studentList);
+                return View("StudentList", studentList);
+            }
+            catch
+            {
+                return StatusCode(500, "Liste alınırken hata oluştu.");
+            }
         }
 
         [HttpGet]
         public async Task<IActionResult> SupervisorList()
         {
-            //Buradaki supervisor listesi aslında institutiona bağlı öğretmen listesi.
-            var institutionId = GetLoggedinInstitutionId();
-            var supervisorList = await GetSupervisorListAsync(institutionId);
-            if (supervisorList == null) return NotFound();
+            try
+            {
+                var institutionId = GetLoggedinInstitutionId();
+                var supervisorList = await GetSupervisorListAsync(institutionId);
+                if (supervisorList == null) return NotFound();
 
-            return View("TeacherList", supervisorList);
+                return View("TeacherList", supervisorList);
+            }
+            catch
+            {
+                return StatusCode(500, "Liste alınırken hata oluştu.");
+            }
         }
 
         [HttpPost]
         public async Task<IActionResult> AddStudent([FromBody] string email)
         {
-            var institutionId = GetLoggedinInstitutionId();
-            var client = GetApiClient();
+            try
+            {
+                var institutionId = GetLoggedinInstitutionId();
+                var client = GetApiClient();
 
-            var response = await client.PostAsync(
-                $"institution/{institutionId}/student/{email}",
-                null
-            );
+                var response = await client.PostAsync(
+                    $"institution/{institutionId}/student/{email}",
+                    null
+                );
 
-            return response.IsSuccessStatusCode ? Ok() : BadRequest("Öğrenci eklenemedi.");
+                return response.IsSuccessStatusCode ? Ok() : BadRequest("Öğrenci eklenemedi.");
+            }
+            catch
+            {
+                return StatusCode(500, "İşlem sırasında bir hata oluştu.");
+            }
         }
 
-        public IActionResult ClassList() => View("ClassList");
-
-
-        public IActionResult CurrentPlan() => View("CurrentPlan");
+        public IActionResult CurrentPlan()
+        {
+            return View("CurrentPlan");
+        }
     }
 }
