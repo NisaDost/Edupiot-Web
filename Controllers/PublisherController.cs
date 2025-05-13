@@ -11,13 +11,24 @@ namespace EduPilot_Web.Controllers
     {
         public PublisherController(IHttpClientFactory httpClientFactory) : base(httpClientFactory) { }
 
-        [AuthorizeUser(Role = "Publisher")]
+        [AllowAnonymous]
+        public IActionResult Login()
+        {
+            return View("Auth/Login");
+        }
+
+        [AllowAnonymous]
+        public IActionResult Register()
+        {
+            return View("Auth/Register");
+        }
+
         public string GetLoggedinPublisherId()
         {
             var publisherId = HttpContext.Session.GetString("PublisherId")?.Trim('"');
             return publisherId ?? string.Empty;
         }
-        [AuthorizeUser(Role = "Publisher")]
+
         private PublisherDTO? GetPublisher(string publisherId)
         {
             var client = GetApiClient();
@@ -50,10 +61,9 @@ namespace EduPilot_Web.Controllers
                 QuestionCount = publisher.questionCount,
             };
 
-            return View("Dashboard/Profile", model);
+            return View("Profile", model);
         }
 
-        [AuthorizeUser(Role = "Publisher")]
         [HttpPut]
         public async Task<IActionResult> UpdateProfile([FromBody] PublisherViewModel updated)
         {
@@ -79,15 +89,11 @@ namespace EduPilot_Web.Controllers
             return response.IsSuccessStatusCode ? Ok() : BadRequest("Profil güncellenemedi.");
         }
 
-        [AuthorizeUser(Role = "Publisher")]
-        [HttpGet]
         public IActionResult CreateQuiz()
         {
-
-            return View("Dashboard/AddQuiz");
+            return View("CreateQuiz");
         }
 
-        [AuthorizeUser(Role = "Publisher")]
         [HttpGet]
         public async Task<IActionResult> LoadLessons(int grade)
         {
@@ -101,7 +107,6 @@ namespace EduPilot_Web.Controllers
             return Json(new { success = true, lessons });
         }
 
-        [AuthorizeUser(Role = "Publisher")]
         [HttpGet]
         public async Task<IActionResult> LoadSubjects(Guid lessonId)
         {
@@ -115,7 +120,6 @@ namespace EduPilot_Web.Controllers
             return Json(new { success = true, subjects });
         }
 
-        [AuthorizeUser(Role = "Publisher")]
         [HttpPost]
         public async Task<IActionResult> CreateQuiz([FromBody] QuizDTO quizDto)
         {
@@ -130,34 +134,5 @@ namespace EduPilot_Web.Controllers
             return Json(new { success = true, quizId });
         }
 
-        [AuthorizeUser(Role = "Publisher")]
-        [HttpPost]
-        public async Task<IActionResult> AddQuestion(Guid quizId, QuestionDTO question)
-        {
-            var client = GetApiClient();
-            var res = await client.PostAsJsonAsync($"publisher/question/quiz/{quizId}", question);
-            return res.IsSuccessStatusCode ? Json(new { success = true }) : Json(new { success = false });
-        }
-        [AuthorizeUser(Role = "Publisher")]
-        public IActionResult Index()
-        {
-            return View("Dashboard/Profile");
-        }
-        [AllowAnonymous]
-        public IActionResult Login()
-        {
-            return View("Auth/Login");
-        }
-        [AllowAnonymous]
-        public IActionResult Register()
-        {
-            return View("Auth/Register");
-        }
-
-        [AuthorizeUser(Role = "Publisher")]
-        public IActionResult AddQuiz()
-        {
-            return View("Dashboard/AddQuiz");
-        }
     }
 }

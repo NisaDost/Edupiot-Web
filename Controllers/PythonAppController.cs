@@ -11,6 +11,12 @@ namespace EduPilot_Web.Controllers
             return View();
         }
 
+        //[HttpPost]
+        public IActionResult TakePhoto()
+        {
+            return View("Attendance");
+        }
+
         [HttpPost]
         public async Task<IActionResult> TakeAttendance()
         {

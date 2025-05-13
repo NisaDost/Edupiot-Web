@@ -137,8 +137,7 @@ namespace EduPilot_Web.Controllers
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();
-            var UserType = HttpContext.Session.GetString("UserType");
-            return RedirectToAction("Login", UserType);
+            return RedirectToAction("Index", "Home");
         }
 
     }

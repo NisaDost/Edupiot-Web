@@ -7,6 +7,8 @@ using System.Text;
 
 namespace EduPilot_Web.Controllers
 {
+
+    [AuthorizeUser(Role = "Institution")]
     public class InstitutionController : ApiControllerBase
     {
         public InstitutionController(IHttpClientFactory httpClientFactory) : base(httpClientFactory) { }
@@ -45,6 +47,7 @@ namespace EduPilot_Web.Controllers
             return await response.Content.ReadFromJsonAsync<List<StudentDTO>>();
         }
 
+        //[AuthorizeUser(Role = "Institution")]
         private async Task<List<SupervisorDTO>?> GetSupervisorListAsync(string institutionId)
         {
             var client = GetApiClient();
@@ -53,7 +56,7 @@ namespace EduPilot_Web.Controllers
             return await response.Content.ReadFromJsonAsync<List<SupervisorDTO>>();
         }
 
-        [AuthorizeUser(Role = "Institution")]
+        //[AuthorizeUser(Role = "Institution")]
         public async Task<IActionResult> Profile()
         {
             var institutionId = GetLoggedinInstitutionId();
@@ -76,7 +79,7 @@ namespace EduPilot_Web.Controllers
                 Supervisors = supervisors
             };
 
-            return View("Dashboard/Profile", model);
+            return View("Profile", model);
         }
 
         [HttpPut]
@@ -109,7 +112,7 @@ namespace EduPilot_Web.Controllers
             var studentList = await GetStudentListAsync(institutionId);
             if (studentList == null) return NotFound();
 
-            return View("Dashboard/Student/StudentList", studentList);
+            return View("StudentList", studentList);
         }
 
         [HttpGet]
@@ -120,7 +123,7 @@ namespace EduPilot_Web.Controllers
             var supervisorList = await GetSupervisorListAsync(institutionId);
             if (supervisorList == null) return NotFound();
 
-            return View("Dashboard/Teacher/TeacherList", supervisorList);
+            return View("TeacherList", supervisorList);
         }
 
         [HttpPost]
@@ -137,11 +140,9 @@ namespace EduPilot_Web.Controllers
             return response.IsSuccessStatusCode ? Ok() : BadRequest("Öğrenci eklenemedi.");
         }
 
-        public IActionResult ClassList() => View("Dashboard/Student/ClassList");
+        public IActionResult ClassList() => View("ClassList");
 
 
-        public IActionResult Attendance() => View("Dashboard/Student/Attendance");
-
-        public IActionResult CurrentPlan() => View("Dashboard/CurrentPlan");
+        public IActionResult CurrentPlan() => View("CurrentPlan");
     }
 }

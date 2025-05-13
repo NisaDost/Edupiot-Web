@@ -1,0 +1,134 @@
+﻿@{
+    ViewData["Title"] = "Fotoğraf ile Kayıt";
+}
+
+<div class="d-flex flex-row">
+    <partial name="_InstitutionSidebar" />
+    <div class="content">
+        <div class="bg-card p-4">
+
+            <h1 class="fw-bold mb-4">Yüz Tanıma Sistemi - Fotoğraf Kaydet</h1>
+            <p>Tarayıcı ayarlarından kameraya erişim izni verdiğinizden emin olun.</p>
+
+            <div class="d-flex justify-content-between flex-wrap">
+                <div class="text-center">
+                    <video id="video" width="480" height="360" autoplay style="border-radius: 8px; display: none; border: 1px solid #ccc;"></video>
+                    <canvas id="canvas" width="480" height="360" style="display: none;"></canvas>
+                </div>
+                <div class="text-center">
+                    <img id="photo" width="480" height="360" class="img-thumbnail" style="display: none;" />
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-center mt-4 gap-3 flex-wrap">
+                <button id="startBtn" class="btn btn-primary">Kamerayı Aç</button>
+                <button id="captureBtn" class="btn btn-info" style="display: none;">Fotoğraf Çek</button>
+                <button id="uploadBtn" class="btn btn-success" style="display: none;">Kaydet</button>
+                <button id="stopBtn" class="btn btn-danger" style="display: none;">Kamerayı Kapat</button>
+            </div>
+
+            <form id="studentForm" class="row g-3 mt-4" style="display: none;">
+                <div class="col-md-6">
+                    <label for="firstName" class="form-label">Ad</label>
+                    <input type="text" class="form-control" id="firstName" required />
+                </div>
+                <div class="col-md-6">
+                    <label for="lastName" class="form-label">Soyad</label>
+                    <input type="text" class="form-control" id="lastName" required />
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const photo = document.getElementById('photo');
+        const startBtn = document.getElementById('startBtn');
+        const captureBtn = document.getElementById('captureBtn');
+        const uploadBtn = document.getElementById('uploadBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const studentForm = document.getElementById('studentForm');
+        const firstNameInput = document.getElementById('firstName');
+        const lastNameInput = document.getElementById('lastName');
+
+        let stream;
+
+        startBtn.addEventListener('click', async () => {
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                video.srcObject = stream;
+                video.style.display = "block";
+                captureBtn.style.display = "inline-block";
+                stopBtn.style.display = "inline-block";
+            } catch (err) {
+                alert("Kamera erişimi reddedildi.");
+                console.error(err);
+            }
+        });
+
+        stopBtn.addEventListener('click', () => {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                stream = null;
+            }
+            resetAll();
+        });
+
+        captureBtn.addEventListener('click', () => {
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const imageData = canvas.toDataURL('image/png');
+            photo.src = imageData;
+            photo.style.display = "block";
+            uploadBtn.style.display = "inline-block";
+            studentForm.style.display = "flex";
+        });
+
+        uploadBtn.addEventListener('click', async () => {
+            const firstName = firstNameInput.value.trim();
+            const lastName = lastNameInput.value.trim();
+
+            if (!firstName || !lastName) {
+                alert("Lütfen ad ve soyad giriniz.");
+                return;
+            }
+
+            const filename = `${firstName}_${lastName}.png`;
+            const imageBase64 = photo.src.split(',')[1];
+
+            const res = await fetch('/PythonApp/SaveCapturedPhoto', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ image: imageBase64, filename })
+            });
+
+            const result = await res.json();
+            alert(result.message || "Fotoğraf kaydedildi.");
+            resetAll();
+        });
+
+        function resetAll() {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                stream = null;
+            }
+
+            video.style.display = "none";
+            canvas.style.display = "none";
+            photo.style.display = "none";
+
+            captureBtn.style.display = "none";
+            uploadBtn.style.display = "none";
+            stopBtn.style.display = "none";
+            studentForm.style.display = "none";
+
+            photo.src = "";
+            firstNameInput.value = "";
+            lastNameInput.value = "";
+        }
+    </script>
+}
