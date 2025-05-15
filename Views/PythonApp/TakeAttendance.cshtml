@@ -1,5 +1,39 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@{
+    ViewData["Title"] = "Yoklama Al";
 }
+
+<div class="d-flex flex-row">
+    <partial name="_InstitutionSidebar" />
+
+    <div class="content bg-card p-4">
+
+        <h1 class="fw-bold mb-4">Yüz Tanıma ile Yoklama Sistemi</h1>
+
+        <!-- Kullanım Talimatları -->
+        <div class="border rounded p-3 mb-4 bg-light">
+            <h5 class="d-flex align-items-center gap-2">
+                <span class="material-symbols-outlined text-primary">info</span>
+                Kullanım Talimatları
+            </h5>
+            <ul class="mt-3 ps-3">
+                <li><span class="material-symbols-outlined text-success align-middle">play_circle</span> <strong>“Yoklama Al”</strong> butonuna basıldığında GUIDE uygulaması başlatılır.</li>
+                <li><span class="material-symbols-outlined text-success align-middle">videocam</span> Kamera açılır, <strong>kadrajdaki yüzlerin net görünmesine</strong> dikkat edilmelidir.</li>
+                <li><span class="material-symbols-outlined text-success align-middle">face</span> Uygulama, algılanan yüzleri tanımlayıp <strong>duygu durumunu analiz</strong> eder.</li>
+                <li><span class="material-symbols-outlined text-success align-middle">analytics</span> Veriler <strong>30 saniyede bir</strong> kaydedilir.</li>
+                <li><span class="material-symbols-outlined text-success align-middle">stop_circle</span> Uygulama kapatıldığında tüm yoklama ve duygu analiz verisi dışa aktarılır.</li>
+            </ul>
+            <p class="text-muted mt-2">
+                <i class="material-symbols-outlined align-middle me-1">warning</i>
+                Uygulama, tarayıcıdan bağımsızdır ve harici bir GUIDE penceresinde çalışır.
+            </p>
+        </div>
+
+        <!-- Buton -->
+        <form asp-controller="PythonApp" asp-action="RunAttendanceApp" method="post" class="text-center">
+            <button type="submit" class="btn btn-success btn-lg d-flex align-items-center gap-2 px-4 py-2">
+                <span class="material-symbols-outlined">play_arrow</span>
+                Yoklama Al
+            </button>
+        </form>
+    </div>
+</div>

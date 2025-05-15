@@ -43,6 +43,7 @@ namespace EduPilot_Web.Controllers
                 {
                     Mugshot = model.FileName
                 };
+
                 var appClient = GetApiClient();
                 var updateResponse = await appClient.PutAsJsonAsync($"students/{studentId}/mugshot", updatedMugshot);
 
@@ -65,13 +66,27 @@ namespace EduPilot_Web.Controllers
             return View();
         }
 
+        public async Task<IActionResult> RunAttendanceAppAsync()
+        {
+            try
+            {
+                var client = GetPythonApiClient();
+                var response = await client.GetAsync("take_attendance");
+                var result = await response.Content.ReadAsStringAsync();
+                return View("TakeAttendance");
+            }
+            catch
+            {
+                return StatusCode(500, "Yoklama alınırken bir hata oluştu.");
+            }
+        }
 
-        //public async Task<IActionResult> ListAttendanceAndEmotion()
-        //{
-        //    var client = GetPythonApiClient();
-        //    var response = await client.GetAsync("get_attendance_report");
-        //    return View("ListAttendanceAndEmotion");
-        //}
+        public async Task<IActionResult> ListAttendanceAndEmotion()
+        {
+            var client = GetPythonApiClient();
+            var response = await client.GetAsync("get_attendance_report");
+            return View("ListAttendanceAndEmotion");
+        }
 
         //[HttpPost]
         //public async Task<IActionResult> TakeAttendanceAsync()

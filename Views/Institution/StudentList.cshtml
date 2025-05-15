@@ -70,9 +70,15 @@
                                     <td class="text-center">
                                         @if (student.MugShot != null && student.MugShot.Any())
                                         {
-                                            <span class="material-icons-outlined text-success">
-                                                check_circle
+                                            <span>
+                                                @* Put student image in a small circle *@
+                                                @student.MugShot
+
                                             </span>
+                                            <a class="material-symbols-outlined text-decoration-none text-dark"
+                                               href="@Url.Action("TakePhoto", "PythonApp", new { sId = student.StudentId, sName = student.FirstName + "_" + student.LastName })">
+                                                reset_image
+                                            </a>
                                         }
                                         else
                                         {
