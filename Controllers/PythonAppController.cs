@@ -1,5 +1,8 @@
-﻿using EduPilot_Web.Models;
+﻿using EduPilot_Web.DTOs;
+using EduPilot_Web.Models;
+using EduPilot_Web.Models.DTOs;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
 using System.Text;
 
 namespace EduPilot_Web.Controllers
@@ -81,80 +84,65 @@ namespace EduPilot_Web.Controllers
             }
         }
 
-        public async Task<IActionResult> ListAttendanceAndEmotion()
+
+        public async Task<IActionResult> ListAttendanceAndEmotionAsync()
         {
+
             var client = GetPythonApiClient();
             var response = await client.GetAsync("get_attendance_report");
-            return View("ListAttendanceAndEmotion");
+            var jsonString = await response.Content.ReadAsStringAsync();
+
+            // JSON'u parse et
+            var jsonObject = JObject.Parse(jsonString);
+            var reportData = jsonObject["report"]?.ToString();
+
+            // CSV formatındaki veriyi tabloya çevirmek
+            var attendanceList = new List<AttendanceDTO>();
+
+            if (!string.IsNullOrEmpty(reportData))
+            {
+                var lines = reportData.Split("\n");
+                foreach (var line in lines.Skip(1)) // İlk satır başlık olduğu için atla
+                {
+                    var columns = line.Split(",");
+                    if (columns.Length == 4)
+                    {
+                        var name = columns[0].Split("_");
+                        attendanceList.Add(new AttendanceDTO
+                        {
+                            //attendanceDTO ile uyumlu hale getirip ana veritabanına iletmeliyiz.
+                            //Name = name[0] + " " + name[1],
+                            //Date = columns[1],
+                            //Time = columns[2],
+                            //Emotion = columns[3]
+                        });
+                    }
+                }
+            }
+            return View(attendanceList);
         }
 
-        //[HttpPost]
-        //public async Task<IActionResult> TakeAttendanceAsync()
-        //{
-        //    var client = GetPythonApiClient();
-        //    var response = await client.GetAsync("/take_attendance"); // python API Route
-        //    var result = await response.Content.ReadAsStringAsync();
-        //    ViewBag.Message = result;
-        //    return View("Index");
-        //}
-
-        // buradan aşağısı güncel değil
-
-        //public async Task<IActionResult> AttendanceListAsync()
-        //{
-        //    var client = GetPythonApiClient();
-        //    var response = await client.GetAsync("get_attendance_report"); // python API Route
-        //    var jsonString = await response.Content.ReadAsStringAsync();
-
-        //    // JSON'u parse et
-        //    var jsonObject = JObject.Parse(jsonString);
-        //    var reportData = jsonObject["report"]?.ToString();
-
-        //    // CSV formatındaki veriyi tabloya çevirmek
-        //    var attendanceList = new List<AttendanceModel>();
-
-        //    if (!string.IsNullOrEmpty(reportData))
-        //    {
-        //        var lines = reportData.Split("\n");
-        //        foreach (var line in lines.Skip(1)) // İlk satır başlık olduğu için atla
-        //        {
-        //            var columns = line.Split(",");
-        //            if (columns.Length == 4)
-        //            {
-        //                var name = columns[0].Split("_");
-        //                attendanceList.Add(new AttendanceModel
-        //                {
-        //                    Name = name[0] + " " + name[1],
-        //                    Date = columns[1],
-        //                    Time = columns[2],
-        //                    Emotion = columns[3]
-        //                });
-        //            }
-        //        }
-        //    }
-        //    return View(attendanceList);
-        //}
-
-        //private string ConvertImageToBase64(string imagePath)
-        //{
-        //    try
-        //    {
-        //        byte[] imageBytes = System.IO.File.ReadAllBytes(imagePath);
-        //        return Convert.ToBase64String(imageBytes);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        // Log error and return an empty string if conversion fails
-        //        Console.WriteLine($"Error converting image: {ex.Message}");
-        //        return string.Empty;
-        //    }
-        //}
-
-
-        //public IActionResult Capture()
-        //{
-        //    return View();
-        //}
-
     }
+
+
+    // buradan aşağısı güncel değil
+
+
+    //private string ConvertImageToBase64(string imagePath)
+    //{
+    //    try
+    //    {
+    //        byte[] imageBytes = System.IO.File.ReadAllBytes(imagePath);
+    //        return Convert.ToBase64String(imageBytes);
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        // Log error and return an empty string if conversion fails
+    //        Console.WriteLine($"Error converting image: {ex.Message}");
+    //        return string.Empty;
+    //    }
+    //}
+
+
+
 }
