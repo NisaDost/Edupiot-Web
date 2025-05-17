@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace EduPilot_Web.Controllers
+namespace EduPilot.Web.Controllers
 {
     public class ApiControllerBase : Controller
     {

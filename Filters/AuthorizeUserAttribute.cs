@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace EduPilot_Web.Filters
+namespace EduPilot.Web.Filters
 {
     public class AuthorizeUserAttribute : ActionFilterAttribute
     {

@@ -1,4 +1,4 @@
-﻿namespace EduPilot_Web.Models
+﻿namespace EduPilot.Web.Models
 {
     public class PublisherViewModel
     {

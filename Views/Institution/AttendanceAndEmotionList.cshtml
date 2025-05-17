@@ -1,4 +1,4 @@
-﻿@model List<EduPilot_Web.Models.DTOs.AttendanceDTO>
+﻿@model List<EduPilot.Web.DTOs.AttendanceDTO>
 
 @{
     ViewData["Title"] = "Yoklama ve Duygu Durumu Listesi";
@@ -31,7 +31,7 @@
                                 <tr>
                                     <td>@attendance.StudentId</td>
                                     <td>@attendance.LessonId</td>
-                                    <td>@attendance.date</td>
+                                    <td>@attendance.Date</td>
                                     <td>@attendance.Emotion</td>
                                 </tr>
                             }
@@ -39,7 +39,7 @@
                         else
                         {
                             <tr>
-                                <td colspan="4" class="text-center">Kayıtlı öğrentmen bulunmamaktadır.</td>
+                                <td colspan="4" class="text-center">Kayıtlı öğretmen bulunmamaktadır.</td>
                             </tr>
                         }
                     </tbody>

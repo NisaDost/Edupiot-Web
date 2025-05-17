@@ -1,4 +1,4 @@
-﻿namespace EduPilot_Web.DTOs
+﻿namespace EduPilot.Web.DTOs
 {
     public class AttendanceDTO
     {

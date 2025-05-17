@@ -1,8 +1,8 @@
 using System.Diagnostics;
-using EduPilot_Web.Models;
+using EduPilot.Web.Models;
 using Microsoft.AspNetCore.Mvc;
 
-namespace EduPilot_Web.Controllers
+namespace EduPilot.Web.Controllers
 {
     public class HomeController : ApiControllerBase
     {

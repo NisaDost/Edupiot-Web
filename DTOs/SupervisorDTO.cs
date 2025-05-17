@@ -1,4 +1,4 @@
-﻿namespace EduPilot_Web.Models.DTOs
+﻿namespace EduPilot.Web.DTOs
 {
     public class SupervisorDTO
     {

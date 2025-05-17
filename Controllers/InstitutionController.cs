@@ -1,13 +1,13 @@
-﻿using EduPilot_Web.DTOs;
-using EduPilot_Web.Filters;
-using EduPilot_Web.Models;
-using EduPilot_Web.Models.DTOs;
+﻿using EduPilot.Web.DTOs;
+using EduPilot.Web.Filters;
+using EduPilot.Web.Models;
+using EduPilot.Web.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Text;
 using System.Text.Json;
 
-namespace EduPilot_Web.Controllers
+namespace EduPilot.Web.Controllers
 {
     [AuthorizeUser(Role = "Institution")]
     public class InstitutionController : ApiControllerBase

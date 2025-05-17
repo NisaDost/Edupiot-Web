@@ -1,9 +1,9 @@
-﻿using EduPilot_Web.Filters;
-using EduPilot_Web.Models.DTOs;
+﻿using EduPilot.Web.Filters;
+using EduPilot.Web.DTOs;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 
-namespace EduPilot_Web.Controllers
+namespace EduPilot.Web.Controllers
 {
     public class AuthController : ApiControllerBase
     {

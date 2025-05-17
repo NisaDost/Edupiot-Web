@@ -1,17 +1,20 @@
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Net.Http.Headers;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
 var config = builder.Configuration;
-var apiUsername = "admin";
-var apiPassword = "password";
+var apiUsername = config.GetValue<string>("Authentication:Basic:Username");
+var apiPassword = config.GetValue<string>("Authentication:Basic:Password");
+var apiUrl = config.GetValue<string>("APIURL");
 
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddHttpClient("EduPilotApi", client =>
 {
-    client.BaseAddress = new Uri("https://localhost:7104/api/");
+    client.BaseAddress = new Uri(apiUrl);
     client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue(
         "Basic", Convert.ToBase64String(Encoding.UTF8.GetBytes(apiUsername + ":" + apiPassword)));
 });

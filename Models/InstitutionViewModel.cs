@@ -1,5 +1,6 @@
-﻿using EduPilot_Web.Models.DTOs;
-namespace EduPilot_Web.Models
+﻿using EduPilot.Web.DTOs;
+
+namespace EduPilot.Web.Models
 {
     public class InstitutionViewModel
     {
