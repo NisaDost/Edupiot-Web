@@ -102,7 +102,7 @@
             const imageBase64 = photo.src.split(',')[1];
             const filename = `${studentName}.png`;
 
-            const res = await fetch('/PythonApp/SaveCapturedPhoto', {
+            const res = await fetch('/Institution/SaveCapturedPhoto', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ Image: imageBase64, Filename: filename, StudentId: studentId })

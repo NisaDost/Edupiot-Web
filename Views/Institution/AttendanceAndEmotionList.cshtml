@@ -1,0 +1,52 @@
+﻿@model List<EduPilot_Web.Models.DTOs.AttendanceDTO>
+
+@{
+    ViewData["Title"] = "Yoklama ve Duygu Durumu Listesi";
+}
+
+<div class="d-flex flex-row">
+
+    <partial name="_InstitutionSidebar" />
+
+    <div class="content">
+        <div class="bg-card">
+            <h1 class="fw-bold">Yoklama ve Duygu Dururmu Listesi </h1>
+
+            <div class="table-responsive mt-5">
+                <table class="table table-bordered table-striped">
+                    <thead class="text-light" style="background-color: var(--primary-accent)">
+                        <tr>
+                            <th scope="col">Öğrenci Adı</th>
+                            <th scope="col">Ders Adı</th>
+                            <th scope="col">Tarih</th>
+                            <th scope="col">Yoklama</th>
+                            <th scope="col">Duygu</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null && Model.Any())
+                        {
+                            @foreach (var attendance in Model)
+                            {
+                                <tr>
+                                    <td>@attendance.StudentId</td>
+                                    <td>@attendance.LessonId</td>
+                                    <td>@attendance.date</td>
+                                    <td>@attendance.Emotion</td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="4" class="text-center">Kayıtlı öğrentmen bulunmamaktadır.</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+</div>

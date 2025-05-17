@@ -1,0 +1,24 @@
+
+External Requirements
+---------------
+cmake 
+dlib
+
+pip Installs
+----------------
+pip install face_recognition
+pip install face_recognition_models 
+pip install opencv-python
+pip install pandas
+pip install os
+pip install numpy
+pip install --upgrade setuptools
+pip install pyodbc
+pip install flask
+pip install fer==22.4.0
+pip install face_recognition_models
+python face_recognition_attendance.py
+
+Execution Steps
+----------------
+1- run server.py before building website    // python server.py

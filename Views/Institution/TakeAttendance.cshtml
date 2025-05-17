@@ -1,0 +1,165 @@
+﻿@using EduPilot_Web.Models.DTOs;
+@{
+    ViewData["Title"] = "Yoklama Al";
+    List<int> grades = Enumerable.Range(1, 12).ToList();
+}
+
+<div class="d-flex flex-row">
+    <partial name="_InstitutionSidebar" />
+    <div class="content bg-card p-4">
+        <h1 class="fw-bold mb-4">Yüz Tanıma ile Yoklama Sistemi</h1>
+
+        <div class="row">
+            <!-- Sol Panel -->
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">
+                            <span class="material-symbols-outlined align-middle me-2">school</span>
+                            Sınıf ve Ders Seçimi
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="gradeSelect" class="form-label">Sınıf Seçiniz:</label>
+                            <select id="gradeSelect" class="form-select">
+                                <option value="" selected disabled>Sınıf seçiniz...</option>
+                                @foreach (var grade in grades)
+                                {
+                                    <option value="@grade">@grade. Sınıf</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="lessonSelect" class="form-label">Ders Seçiniz:</label>
+                            <select id="lessonSelect" class="form-select" disabled>
+                                <option value="" selected disabled>Önce sınıf seçiniz</option>
+                            </select>
+                        </div>
+                        <div id="selectedInfo" class="alert alert-info d-none">
+                            <span class="material-symbols-outlined align-middle me-2">info</span>
+                            <span id="selectionSummary"></span>
+                        </div>
+                    </div>
+                    <div class="text-center mt-2 mb-5">
+                        <button id="startAttendanceBtn" class="btn btn-success btn-lg d-flex align-items-center gap-2 px-4 py-2 mx-auto" disabled>
+                            <span class="material-symbols-outlined">play_arrow</span>
+                            Yoklama Al
+                        </button>
+                        <p id="errorMessage" class="text-danger mt-2 d-none">Lütfen sınıf ve ders seçimini yapınız.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sağ Panel -->
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0">
+                            <span class="material-symbols-outlined align-middle me-2">info</span>
+                            Kullanım Talimatları
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="ps-3">
+                            <li class="mb-2"><span class="material-symbols-outlined text-success align-middle me-1">play_circle</span> <strong>"Yoklama Al"</strong> butonuna basıldığında GUIDE uygulaması başlatılır.</li>
+                            <li class="mb-2"><span class="material-symbols-outlined text-success align-middle me-1">videocam</span> Kamera açılır, <strong>kadrajdaki yüzlerin net görünmesine</strong> dikkat edilmelidir.</li>
+                            <li class="mb-2"><span class="material-symbols-outlined text-success align-middle me-1">face</span> Uygulama, algılanan yüzleri tanımlayıp <strong>duygu durumunu analiz</strong> eder.</li>
+                            <li class="mb-2"><span class="material-symbols-outlined text-success align-middle me-1">analytics</span> Veriler <strong>30 saniyede bir</strong> kaydedilir.</li>
+                            <li class="mb-2"><span class="material-symbols-outlined text-success align-middle me-1">stop_circle</span> Uygulama kapatıldığında tüm yoklama ve duygu analiz verisi dışa aktarılır.</li>
+                        </ul>
+                        <p class="text-muted mt-2">
+                            <span class="material-symbols-outlined align-middle me-1">warning</span>
+                            Uygulama, tarayıcıdan bağımsızdır ve harici bir GUIDE penceresinde çalışır.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const gradeSelect = document.getElementById('gradeSelect');
+            const lessonSelect = document.getElementById('lessonSelect');
+            const startBtn = document.getElementById('startAttendanceBtn');
+            const errorMessage = document.getElementById('errorMessage');
+            const selectedInfo = document.getElementById('selectedInfo');
+            const selectionSummary = document.getElementById('selectionSummary');
+
+            let selectedGrade = null;
+            let selectedLessonName = null;
+            let selectedLessonId = null;
+
+            gradeSelect.addEventListener('change', () => {
+                selectedGrade = gradeSelect.value;
+                lessonSelect.disabled = true;
+                lessonSelect.innerHTML = '<option value="" selected disabled>Dersler yükleniyor...</option>';
+                startBtn.disabled = true;
+                selectedInfo.classList.add('d-none');
+                errorMessage.classList.add('d-none');
+
+                        fetch(`/Institution/LoadLessons?grade=${selectedGrade}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        lessonSelect.innerHTML = '<option value="" selected disabled>Ders seçiniz...</option>';
+                        if (data.success && data.lessons.length > 0) {
+                            data.lessons.forEach(lesson => {
+                                const opt = document.createElement('option');
+                                opt.value = lesson.id;
+                                opt.textContent = lesson.name;
+                                lessonSelect.appendChild(opt);
+                            });
+                            lessonSelect.disabled = false;
+                        } else {
+                            lessonSelect.innerHTML = '<option value="" disabled>Ders bulunamadı</option>';
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Dersler yüklenirken hata:', err);
+                        lessonSelect.innerHTML = '<option value="" disabled>Dersler yüklenemedi</option>';
+                    });
+            });
+
+            lessonSelect.addEventListener('change', () => {
+                const selectedOption = lessonSelect.options[lessonSelect.selectedIndex];
+                selectedLessonId = selectedOption.value;
+                selectedLessonName = selectedOption.textContent;
+
+                selectionSummary.textContent = `${selectedGrade}. Sınıf - ${selectedLessonName} dersi için yoklama alınacak.`;
+                selectedInfo.classList.remove('d-none');
+                startBtn.disabled = false;
+                errorMessage.classList.add('d-none');
+            });
+
+            startBtn.addEventListener('click', () => {
+                if (!selectedGrade || !selectedLessonId) {
+                    errorMessage.classList.remove('d-none');
+                    return;
+                }
+
+                fetch('/Institution/RunAttendanceApp', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            lessonId: selectedLessonId,
+                            lessonName: selectedLessonName,})
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(`${selectedGrade}. Sınıf - ${selectedLessonName} dersi için yoklama başlatılıyor. Lütfen bekleyiniz...`);
+                    } else {
+                        alert(`Yoklama başlatılamadı: ${data.message}`);
+                    }
+                })
+                .catch(err => {
+                    console.error('Yoklama başlatılırken hata:', err);
+                    alert('Yoklama başlatılırken bir hata oluştu.');
+                });
+            });
+        });
+    </script>
+}
