@@ -64,8 +64,8 @@ namespace EduPilot.Web.Controllers
                     Address = publisher.Address,
                     Website = publisher.Website,
                     Logo = publisher.Logo,
-                    QuizCount = publisher.quizCount,
-                    QuestionCount = publisher.questionCount,
+                    QuizCount = publisher.QuizCount,
+                    QuestionCount = publisher.QuestionCount,
                 };
 
                 return View("Profile", model);
@@ -87,13 +87,13 @@ namespace EduPilot.Web.Controllers
 
                 var updatedInfo = new
                 {
-                    name = string.IsNullOrWhiteSpace(updated.Name) ? current.Name : updated.Name,
+                    name = updated.Name,
                     email = current.Email,
-                    address = string.IsNullOrWhiteSpace(updated.Address) ? current.Address : updated.Address,
-                    website = string.IsNullOrWhiteSpace(updated.Website) ? current.Website : updated.Website,
-                    logo = string.IsNullOrWhiteSpace(updated.Logo) ? current.Logo : updated.Logo,
-                    currentPassword = string.IsNullOrWhiteSpace(updated.CurrentPassword) ? current.CurrentPassword : updated.CurrentPassword,
-                    password = string.IsNullOrWhiteSpace(updated.NewPassword) ? current.NewPassword : updated.NewPassword
+                    address = updated.Address, 
+                    website = updated.Website, 
+                    logo = updated.Logo,       
+                    currentPassword = updated.CurrentPassword,
+                    password = updated.NewPassword
                 };
 
                 var client = GetApiClient();

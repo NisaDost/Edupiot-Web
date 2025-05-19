@@ -99,15 +99,15 @@
                     <hr />
                     <div class="mb-3">
                         <label class="form-label">Mevcut Parola</label>
-                        <input type="password" name="CurrentPassword" class="form-control" />
+                        <input type="password" name="CurrentPassword" class="form-control" id="CurrentPassword" />
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Yeni Parola</label>
-                        <input type="password" name="NewPassword" class="form-control" />
+                        <input type="password" name="NewPassword" class="form-control" id="NewPassword" />
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Yeni Parola (Tekrar)</label>
-                        <input type="password" name="ConfirmNewPassword" class="form-control" />
+                        <input type="password" name="ConfirmNewPassword" class="form-control" id="ConfirmNewPassword" />
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -120,7 +120,7 @@
 
 @section Scripts {
     <script>
-                $("#editProfileForm").on("submit", function (e) {
+        $("#editProfileForm").on("submit", function (e) {
             e.preventDefault();
             const formData = new FormData(this);
 
@@ -137,15 +137,20 @@
             const newPassword = data.NewPassword?.trim();
             const confirmPassword = data.ConfirmNewPassword?.trim();
 
-            if (!currentPassword) {
+            const isPasswordChanged = newPassword || confirmPassword;
+
+            if ((data.Name || data.Website || data.Address) && !currentPassword) {
                 alert("Mevcut parolanızı girmelisiniz.");
                 return;
             }
 
-            const isNewPasswordEntered = newPassword || confirmPassword;
-            if (isNewPasswordEntered) {
+            if (isPasswordChanged) {
                 if (!newPassword || !confirmPassword) {
                     alert("Yeni parolayı ve tekrarını eksiksiz girin.");
+                    return;
+                }
+                if (newPassword.length < 8) {
+                    alert("Yeni parola en az 8 karakter olmalı.");
                     return;
                 }
                 if (newPassword !== confirmPassword) {
