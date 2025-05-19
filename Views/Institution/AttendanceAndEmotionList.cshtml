@@ -1,4 +1,4 @@
-﻿@model List<EduPilot.Web.DTOs.AttendanceDTO>
+@model List<EduPilot.Web.DTOs.AttendanceDTO>
 
 @{
     ViewData["Title"] = "Yoklama ve Duygu Durumu Listesi";
@@ -10,16 +10,16 @@
 
     <div class="content">
         <div class="bg-card">
-            <h1 class="fw-bold">Yoklama ve Duygu Dururmu Listesi </h1>
+            <h1 class="fw-bold">Yoklama ve Duygu Durumu Listesi </h1>
 
             <div class="table-responsive mt-5">
                 <table class="table table-bordered table-striped">
                     <thead class="text-light" style="background-color: var(--primary-accent)">
                         <tr>
                             <th scope="col">Öğrenci Adı</th>
+                            <th scope="col">Sınıfı</th>
                             <th scope="col">Ders Adı</th>
                             <th scope="col">Tarih</th>
-                            <th scope="col">Yoklama</th>
                             <th scope="col">Duygu</th>
                         </tr>
                     </thead>
@@ -29,8 +29,9 @@
                             @foreach (var attendance in Model)
                             {
                                 <tr>
-                                    <td>@attendance.StudentId</td>
-                                    <td>@attendance.LessonId</td>
+                                    <td>@attendance.StudentName</td>
+                                    <td>@attendance.StudentGrade</td>
+                                    <td>@attendance.LessonName</td>
                                     <td>@attendance.Date</td>
                                     <td>@attendance.Emotion</td>
                                 </tr>
@@ -39,7 +40,7 @@
                         else
                         {
                             <tr>
-                                <td colspan="4" class="text-center">Kayıtlı öğretmen bulunmamaktadır.</td>
+                                <td colspan="5" class="text-center">Yoklama kaydı bulunmamaktadır.</td>
                             </tr>
                         }
                     </tbody>

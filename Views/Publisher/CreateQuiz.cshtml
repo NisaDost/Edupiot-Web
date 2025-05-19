@@ -16,7 +16,7 @@
                     <option selected disabled>Seçiniz</option>
                     @foreach (var grade in grades)
                     {
-                        <option value="@grade">@grade. Sınıf</option>
+                            <option value="@grade">@grade. Sınıf</option>
                     }
                 </select>
 
@@ -52,7 +52,7 @@
                 </div>
 
                 <div class="form-check mt-3">
-                    <input class="form-check-input" type="checkbox" id="isActive" name="IsActive" checked>
+                    <input class="form-check-input" type="checkbox" id="isActive" name="IsActive" value="true" checked>
                     <label class="form-check-label" for="isActive">Quiz Aktif Olsun</label>
                 </div>
 
@@ -70,212 +70,188 @@
 </div>
 
 @section Scripts {
-    <script>
-        let addedQuestions = 0;
+        <script>
+            let addedQuestions = 0;
 
-        function updateAddButtonState() {
-            const isReady = $('#subject').val() && $('#difficulty').val() && $('#choiceCount').val() && $('#duration').val();
-            $('#addQuestionBtn').prop('disabled', !isReady);
+            function updateAddButtonState() {
+                const isReady = $('#subject').val() && $('#difficulty').val() && $('#choiceCount').val() && $('#duration').val();
+                $('#addQuestionBtn').prop('disabled', !isReady);
+            }
+
+            $("#grade").on("change", function () {
+                const grade = $(this).val();
+                $("#lesson").empty().append('<option selected disabled>Seçiniz</option>').prop("disabled", true);
+                $("#subject").empty().append('<option selected disabled>Seçiniz</option>').prop("disabled", true);
+
+                $.get("/Publisher/LoadLessons", { grade }, function (res) {
+                    if (res.success) {
+                        res.lessons.forEach(x => {
+                            $("#lesson").append(`<option value="${x.id}">${x.name}</option>`);
+                        });
+                        $("#lesson").prop("disabled", false);
+                    }
+                });
+            });
+
+            $("#lesson").on("change", function () {
+                const lessonId = $(this).val();
+                $("#subject").empty().append('<option selected disabled>Seçiniz</option>').prop("disabled", true);
+
+                $.get("/Publisher/LoadSubjects", { lessonId }, function (res) {
+                    if (res.success) {
+                        res.subjects.forEach(x => {
+                            if (x.id) {
+                                $("#subject").append(`<option value="${x.id}">${x.name}</option>`);
+                            }
+                        });
+                        $("#subject").prop("disabled", false);
+                    }
+                });
+            });
+
+            $("#subject, #difficulty, #choiceCount, #duration").on("input change", updateAddButtonState);
+
+            $("#choiceCount").on("change", function () {
+                const count = parseInt($(this).val());
+                $(".question-block").each(function () {
+                    const incorrectContainer = $(this).find(".incorrect-answers");
+                    incorrectContainer.empty();
+                    incorrectContainer.append('<label class="form-label">Yanlış Cevaplar</label>');
+
+                    for (let i = 0; i < count - 1; i++) {
+                        incorrectContainer.append(`<input type="text" class="form-control mb-2 border-danger" name="Questions[${$(this).data('index')-1}].Choices[${i+1}].ChoiceContent">`);
+                        incorrectContainer.append(`<input type="hidden" name="Questions[${$(this).data('index')-1}].Choices[${i+1}].IsCorrect" value="false">`);
+                    }
+                });
+            });
+
+            $("#questionFormContainer").on("click", ".remove-question", function () {
+                $(this).closest(".question-block").remove();
+                addedQuestions--;
+
+                $(".question-block").each(function(index) {
+                    const newIndex = index + 1;
+                    $(this).data('index', newIndex);
+                    $(this).find('h5').text(`Soru ${newIndex}`);
+
+                    $(this).find("textarea[name$='QuestionContent']").attr('name', `Questions[${index}].QuestionContent`);
+                    $(this).find("input[name$='File']").attr('name', `Questions[${index}].File`);
+                    $(this).find("input[type='checkbox'][name$='isActive']").attr('name', `Questions[${index}].isActive`);
+                    $(this).find("input[type='hidden'][name$='isActive']").attr('name', `Questions[${index}].isActive`);
+
+                    $(this).find("input[name$='IsCorrect'][value='true']").closest('.mb-3').find("input[type='text']")
+                        .attr('name', `Questions[${index}].Choices[0].ChoiceContent`);
+                    $(this).find("input[name$='IsCorrect'][value='true']")
+                        .attr('name', `Questions[${index}].Choices[0].IsCorrect`);
+
+                    $(this).find(".incorrect-answers input[type='text']").each(function(choiceIndex) {
+                        $(this).attr('name', `Questions[${index}].Choices[${choiceIndex+1}].ChoiceContent`);
+                        $(this).next("input[type='hidden']").attr('name', `Questions[${index}].Choices[${choiceIndex+1}].IsCorrect`);
+                    });
+                });
+
+                if (addedQuestions < 1) $("#saveQuizBtn").prop("disabled", true);
+            });
+
+            $("#addQuestionBtn").on("click", function () {
+                if (addedQuestions >= 30) return alert("Bir quiz en fazla 30 soru içerebilir.");
+                addedQuestions++;
+                const index = addedQuestions;
+                const choiceCount = parseInt($("#choiceCount").val());
+                const questionIndex = index - 1;
+
+                let incorrectInputs = "";
+                for (let i = 0; i < choiceCount - 1; i++) {
+                    incorrectInputs += `
+                        <input type="text" class="form-control mb-2 border-danger" name="Questions[${questionIndex}].Choices[${i+1}].ChoiceContent">
+                        <input type="hidden" name="Questions[${questionIndex}].Choices[${i+1}].IsCorrect" value="false">
+                    `;
+                }
+
+                const html = `
+                <div class="question-block mb-5" data-index="${index}">
+                    <h5>Soru ${index}</h5>
+                    <div class="mb-3">
+                        <label class="form-label">Soru Metni</label>
+                        <textarea class="form-control" rows="4" placeholder="Soru metni..." name="Questions[${questionIndex}].QuestionContent"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Soru Görseli (Opsiyonel)</label>
+                        <input type="file" accept="image/*" name="Questions[${questionIndex}].File" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Doğru Cevap</label>
+                        <input type="text" class="form-control border-success" name="Questions[${questionIndex}].Choices[0].ChoiceContent">
+                        <input type="hidden" name="Questions[${questionIndex}].Choices[0].IsCorrect" value="true">
+                    </div>
+                    <div class="mb-3 incorrect-answers">
+                        <label class="form-label">Yanlış Cevaplar</label>
+                        ${incorrectInputs}
+                    </div>
+                    
+                    <button type="button" class="btn btn-sm btn-outline-danger remove-question">Soruyu Kaldır</button>
+                    <hr>
+                </div>`;
+
+                $("#questionFormContainer").append(html);
+                $("#saveQuizBtn").prop("disabled", false);
+            });
+
+                $("#saveQuizBtn").on("click", function () {
+        const subjectId = $("#subject").val();
+        const duration = parseInt($("#duration").val());
+        const isActive = $("#isActive").is(":checked") ? "true" : "false";  // Checkbox durumunu al
+
+        if (!subjectId || isNaN(duration) || duration <= 0) return alert("Lütfen geçerli konu ve süre giriniz.");
+
+        let error = false;
+        $(".question-block").each(function () {
+            const q = $(this);
+            const text = q.find("textarea[name$='QuestionContent']").val()?.trim();
+            const correct = q.find("input[name$='Choices[0].ChoiceContent']").val()?.trim();
+            const incorrects = q.find("input[type='text'][name*='Choices'][name*='ChoiceContent']:not([name$='Choices[0].ChoiceContent'])");
+
+            if (!text || !correct) {
+                error = true;
+                return;
+            }
+
+            incorrects.each(function() {
+                if (!$(this).val()?.trim()) {
+                    error = true;
+                    return false;
+                }
+            });
+        });
+
+        if (error || $(".question-block").length === 0) {
+            return alert("Lütfen tüm soruların metnini ve şıklarını doldurun.");
         }
 
-        $("#grade").on("change", function () {
-            const grade = $(this).val();
-            $("#lesson").empty().append('<option selected disabled>Seçiniz</option>').prop("disabled", true);
-            $("#subject").empty().append('<option selected disabled>Seçiniz</option>').prop("disabled", true);
+        // Formu serialize ederken, checkbox'ı ekleyelim
+        $("#quizForm").append(`<input type="hidden" name="IsActive" value="${isActive}" />`);
 
-            $.get("/Publisher/LoadLessons", { grade }, function (res) {
+        const formData = new FormData(document.getElementById('quizForm'));
+
+        $.ajax({
+            url: "/Publisher/CreateQuiz",
+            type: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(res) {
                 if (res.success) {
-                    res.lessons.forEach(x => {
-                        $("#lesson").append(`<option value="${x.id}">${x.name}</option>`);
-                    });
-                    $("#lesson").prop("disabled", false);
-                }
-            });
-        });
-
-        $("#lesson").on("change", function () {
-            const lessonId = $(this).val();
-            $("#subject").empty().append('<option selected disabled>Seçiniz</option>').prop("disabled", true);
-
-            $.get("/Publisher/LoadSubjects", { lessonId }, function (res) {
-                if (res.success) {
-                    res.subjects.forEach(x => {
-                        if (x.id) {
-                            $("#subject").append(`<option value="${x.id}">${x.name}</option>`);
-                        }
-                    });
-                    $("#subject").prop("disabled", false);
-                }
-            });
-        });
-
-        $("#subject, #difficulty, #choiceCount, #duration").on("input change", updateAddButtonState);
-
-        $("#choiceCount").on("change", function () {
-            const count = parseInt($(this).val());
-            $(".question-block").each(function () {
-                const incorrectContainer = $(this).find(".incorrect-answers");
-                incorrectContainer.empty();
-
-                // Add label first
-                incorrectContainer.append('<label class="form-label">Yanlış Cevaplar</label>');
-
-                // Add the inputs
-                for (let i = 0; i < count - 1; i++) {
-                    incorrectContainer.append(`<input type="text" class="form-control mb-2 border-danger" name="Questions[${$(this).data('index')-1}].Choices[${i+1}].ChoiceContent">`);
-                    incorrectContainer.append(`<input type="hidden" name="Questions[${$(this).data('index')-1}].Choices[${i+1}].IsCorrect" value="false">`);
-                }
-            });
-        });
-
-        $("#questionFormContainer").on("click", ".remove-question", function () {
-            $(this).closest(".question-block").remove();
-            addedQuestions--;
-
-            // Renumber the remaining questions and update form field names
-            $(".question-block").each(function(index) {
-                const newIndex = index + 1;
-                $(this).data('index', newIndex);
-                $(this).find('h5').text(`Soru ${newIndex}`);
-
-                // Update field names with new indices
-                $(this).find("textarea[name$='QuestionContent']").attr('name', `Questions[${index}].QuestionContent`);
-                $(this).find("input[name$='File']").attr('name', `Questions[${index}].File`);
-                $(this).find("input[name$='isActive']").attr('name', `Questions[${index}].isActive`);
-
-                // Update correct answer field
-                $(this).find("input[name$='IsCorrect'][value='true']").closest('.mb-3').find("input[type='text']")
-                    .attr('name', `Questions[${index}].Choices[0].ChoiceContent`);
-                $(this).find("input[name$='IsCorrect'][value='true']")
-                    .attr('name', `Questions[${index}].Choices[0].IsCorrect`);
-
-                // Update incorrect answers fields
-                $(this).find(".incorrect-answers input[type='text']").each(function(choiceIndex) {
-                    $(this).attr('name', `Questions[${index}].Choices[${choiceIndex+1}].ChoiceContent`);
-                    $(this).next("input[type='hidden']").attr('name', `Questions[${index}].Choices[${choiceIndex+1}].IsCorrect`);
-                });
-            });
-
-            if (addedQuestions < 1) $("#saveQuizBtn").prop("disabled", true);
-        });
-
-        $("#addQuestionBtn").on("click", function () {
-            if (addedQuestions >= 30) return alert("Bir quiz en fazla 30 soru içerebilir.");
-            addedQuestions++;
-            const index = addedQuestions;
-            const choiceCount = parseInt($("#choiceCount").val());
-            const questionIndex = index - 1; // Zero-based for form submission
-
-            let incorrectInputs = "";
-            for (let i = 0; i < choiceCount - 1; i++) {
-                incorrectInputs += `
-                    <input type="text" class="form-control mb-2 border-danger" name="Questions[${questionIndex}].Choices[${i+1}].ChoiceContent">
-                    <input type="hidden" name="Questions[${questionIndex}].Choices[${i+1}].IsCorrect" value="false">
-                `;
-            }
-
-            const html = `
-            <div class="question-block mb-5" data-index="${index}">
-                <h5>Soru ${index}</h5>
-                <div class="mb-3">
-                    <label class="form-label">Soru Metni</label>
-                    <textarea class="form-control" rows="4" placeholder="Soru metni..." name="Questions[${questionIndex}].QuestionContent"></textarea>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Soru Görseli (Opsiyonel)</label>
-                    <input type="file" accept="image/*" name="Questions[${questionIndex}].File" class="form-control">
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Doğru Cevap</label>
-                    <input type="text" class="form-control border-success" name="Questions[${questionIndex}].Choices[0].ChoiceContent">
-                    <input type="hidden" name="Questions[${questionIndex}].Choices[0].IsCorrect" value="true">
-                </div>
-                <div class="mb-3 incorrect-answers">
-                    <label class="form-label">Yanlış Cevaplar</label>
-                    ${incorrectInputs}
-                </div>
-                <div class="form-check mb-3">
-                    <input class="form-check-input" type="checkbox" checked name="Questions[${questionIndex}].isActive" value="true">
-                    <input type="hidden" name="Questions[${questionIndex}].isActive" value="false">
-                    <label class="form-check-label">Bu soru aktif</label>
-                </div>
-                <button type="button" class="btn btn-sm btn-outline-danger remove-question">Soruyu Kaldır</button>
-                <hr>
-            </div>`;
-
-            $("#questionFormContainer").append(html);
-            $("#saveQuizBtn").prop("disabled", false);
-        });
-
-        $("#saveQuizBtn").on("click", function () {
-            const subjectId = $("#subject").val();
-            const duration = parseInt($("#duration").val());
-            if (!subjectId || isNaN(duration) || duration <= 0) return alert("Lütfen geçerli konu ve süre giriniz.");
-
-            // Validate form data
-            let error = false;
-            $(".question-block").each(function () {
-                const q = $(this);
-                const text = q.find("textarea[name$='QuestionContent']").val()?.trim();
-                const correct = q.find("input[name$='Choices[0].ChoiceContent']").val()?.trim();
-                const incorrects = q.find("input[type='text'][name*='Choices'][name*='ChoiceContent']:not([name$='Choices[0].ChoiceContent'])");
-
-                if (!text || !correct) {
-                    error = true;
-                    return;
-                }
-
-                let hasEmptyIncorrect = false;
-                incorrects.each(function() {
-                    if (!$(this).val()?.trim()) {
-                        hasEmptyIncorrect = true;
-                        return false;
-                    }
-                });
-
-                if (hasEmptyIncorrect) {
-                    error = true;
-                    return;
-                }
-            });
-
-            if (error || $(".question-block").length === 0) {
-                return alert("Lütfen tüm soruların metnini ve şıklarını doldurun.");
-            }
-
-            // Handle checkbox values for isActive fields
-            $("input[type='checkbox'][name$='isActive']").each(function() {
-                if (!$(this).is(":checked")) {
-                    $(this).closest(".form-check").find("input[type='hidden'][name$='isActive']").prop("disabled", false);
-                    $(this).prop("disabled", true);
+                    alert("Quiz başarıyla kaydedildi.");
+                    location.reload();
                 } else {
-                    $(this).closest(".form-check").find("input[type='hidden'][name$='isActive']").prop("disabled", true);
+                    alert("Quiz kaydedilemedi.");
                 }
-            });
-
-            // Create a FormData object and submit the form
-            const formData = new FormData(document.getElementById('quizForm'));
-
-            // Submit the form using AJAX
-            $.ajax({
-                url: "/Publisher/CreateQuiz",
-                type: "POST",
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function(res) {
-                    if (res.success) {
-                        alert("Quiz başarıyla kaydedildi.");
-                        location.reload();
-                    } else {
-                        alert("Quiz kaydedilemedi.");
-                    }
-                },
-                error: function(err) {
-                    console.error("Sunucu hatası:", err);
-                    alert("Quiz oluşturulurken hata oluştu.");
-                }
-            });
+            },
+            error: function(err) {
+                console.error("Sunucu hatası:", err);
+                alert("Quiz oluşturulurken hata oluştu.");
+            }
         });
-    </script>
+    });
+        </script>
 }
