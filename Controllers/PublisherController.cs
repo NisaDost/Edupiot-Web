@@ -77,7 +77,7 @@ namespace EduPilot.Web.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateProfile([FromBody] PublisherViewModel updated)
+        public async Task<IActionResult> UpdateProfile([FromForm] PublisherViewModel updated)
         {
             try
             {
@@ -89,9 +89,9 @@ namespace EduPilot.Web.Controllers
                 {
                     name = updated.Name,
                     email = current.Email,
-                    address = updated.Address, 
-                    website = updated.Website, 
-                    logo = updated.Logo,       
+                    address = updated.Address == null ? String.Empty : updated.Address,
+                    website = updated.Website == null ? String.Empty : updated.Website,
+                    logo = updated.Logo,
                     currentPassword = updated.CurrentPassword,
                     password = updated.NewPassword
                 };
@@ -211,6 +211,50 @@ namespace EduPilot.Web.Controllers
             {
                 return StatusCode(400, "Quiz oluşturma sırasında hata oluştu.");
             }
+        }
+
+
+        public async Task<IActionResult> GetQuizzes()
+        {
+            try
+            {
+                var publisherId = GetLoggedinPublisherId();
+                var client = GetApiClient();
+                var response = await client.GetAsync($"publisher/{publisherId}/quizzes");
+
+                if (!response.IsSuccessStatusCode)
+                    return Json(new { success = false, quizzes = new List<QuizDTO>() });
+                var quizzes = await response.Content.ReadFromJsonAsync<List<QuizDTO>>();
+                return Json(new { success = true, quizzes });
+            }
+            catch
+            {
+                return Json(new { success = false, quizzes = new List<QuizDTO>() });
+            }
+
+        }
+
+        public async Task<IActionResult> SetQuizState(Guid quizId)
+        {
+            try
+            {
+                var client = GetApiClient();
+                var publisherId = GetLoggedinPublisherId();
+                var response = await client.PutAsJsonAsync($"publisher/{publisherId}/quizstate/{quizId}", new { quizId });
+                return response.IsSuccessStatusCode
+                    ? Json(new { success = true, message = "Quiz durumu güncellendi." })
+                    : Json(new { success = false, message = "Quiz durumu güncellenemedi." });
+            }
+            catch
+            {
+                return Json(new { success = false, message = "Quiz durumu güncellenemedi." });
+            }
+        }
+
+        public IActionResult EditQuiz(Guid quizId)
+        {
+            //TODO: QuizId'e göre quiz bilgilerini al ve düzenleme sayfasına git
+            return View("EditQuiz");
         }
     }
 }

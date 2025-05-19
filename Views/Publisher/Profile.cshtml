@@ -124,22 +124,13 @@
             e.preventDefault();
             const formData = new FormData(this);
 
-            const data = {};
-            formData.forEach((value, key) => {
-                if (key === "LogoFile" && value.name) {
-                    data.Logo = value.name;
-                } else {
-                    data[key] = value;
-                }
-            });
-
-            const currentPassword = data.CurrentPassword?.trim();
-            const newPassword = data.NewPassword?.trim();
-            const confirmPassword = data.ConfirmNewPassword?.trim();
+            const currentPassword = formData.get("CurrentPassword")?.trim();
+            const newPassword = formData.get("NewPassword")?.trim();
+            const confirmPassword = formData.get("ConfirmNewPassword")?.trim();
 
             const isPasswordChanged = newPassword || confirmPassword;
 
-            if ((data.Name || data.Website || data.Address) && !currentPassword) {
+            if ((formData.get("Name") || formData.get("Website") || formData.get("Address")) && !currentPassword) {
                 alert("Mevcut parolanızı girmelisiniz.");
                 return;
             }
@@ -162,8 +153,9 @@
             $.ajax({
                 url: "/Publisher/UpdateProfile",
                 type: "PUT",
-                contentType: "application/json",
-                data: JSON.stringify(data),
+                data: formData,
+                processData: false,
+                contentType: false,
                 success: function () {
                     alert("Profil güncellendi.");
                     location.reload();
