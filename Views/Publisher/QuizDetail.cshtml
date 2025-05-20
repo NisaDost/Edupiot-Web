@@ -1,0 +1,97 @@
+﻿@model EduPilot.Web.DTOs.QuizDetailDTO
+
+@{
+    ViewData["Title"] = "Quiz Detay";
+    var questionIndex = 1;
+}
+
+<div class="d-flex flex-row">
+    <partial name="_PublisherSidebar" />
+    <div class="content">
+        <div class="bg-card">
+
+            <a href="@Url.Action("ListQuizzes", "Publisher")"
+               class="btn mb-3 d-flex align-items-center"
+               style="background-color: #ffe5b4; color: #6b3e26;">
+                <span class="material-symbols-outlined me-2">arrow_back</span> Geri Dön
+            </a>
+
+
+            <!-- Genel Bilgi Kartı -->
+            <div class="card mb-4 border-info" style="background-color: #f0f8ff;">
+                <div class="card-body">
+                    <h2 class="card-title text-info d-flex align-items-center">
+                        <span class="material-symbols-outlined me-2">quiz</span> Quiz Detay
+                    </h2>
+                    <p class="d-flex align-items-center mb-1">
+                        <span class="material-symbols-outlined me-2">book</span> Konu: <strong class="ms-2">@Model.SubjectName</strong>
+                    </p>
+                    <p class="d-flex align-items-center mb-1">
+                        <span class="material-symbols-outlined me-2">list_alt</span> Soru Sayısı: <strong class="ms-2">@Model.QuestionCount</strong>
+                    </p>
+                    <p class="d-flex align-items-center mb-1">
+                        <span class="material-symbols-outlined me-2">timer</span> Süre: <strong class="ms-2">@Model.Duration dakika</strong>
+                    </p>
+                    <p class="d-flex align-items-center mb-0">
+                        <span class="material-symbols-outlined me-2">check_circle</span>
+                        Durum: <strong class="ms-2 @(Model.IsActive ? "text-success" : "text-danger")">
+                            @(Model.IsActive ? "Aktif" : "Pasif")
+                        </strong>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Soru Kartları -->
+            @foreach (var question in Model.Questions)
+            {
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title d-flex align-items-center">
+                            <span class="material-symbols-outlined me-2">help</span>
+                            @($"{questionIndex++}. Soru")
+                        </h5>
+
+                        @if (!string.IsNullOrEmpty(question.QuestionImage))
+                        {
+                            <div class="mb-3">
+                                <div class="d-flex align-items-center mb-2">
+                                    <span class="material-symbols-outlined me-2">image</span> Soru Görseli:
+                                </div>
+                                <img src="@question.QuestionImage" alt="Soru Görseli" class="img-fluid rounded" />
+                            </div>
+                        }
+
+                        <p class="mb-3">@question.QuestionContent</p>
+
+                        <div class="row">
+                            <!-- Doğru Cevap-->
+                            @{
+                                var correctChoice = question.Choices.FirstOrDefault(c => c.IsCorrect);
+                                if (correctChoice != null)
+                                {
+                                    <div class="col-12 mb-3">
+                                        <div class="p-3 border border-success rounded d-flex align-items-center text-success">
+                                            <span class="material-symbols-outlined me-2">check_circle</span>
+                                            <strong>@correctChoice.ChoiceContent</strong>
+                                        </div>
+                                    </div>
+                                }
+                            }
+
+                            <!-- Yanlış Cevaplar -->
+                            @foreach (var wrongChoice in question.Choices.Where(c => !c.IsCorrect))
+                            {
+                                <div class="col-md-6 mb-2">
+                                    <div class="p-3 border border-danger rounded d-flex align-items-center text-danger">
+                                        <span class="material-symbols-outlined me-2">cancel</span>
+                                        @wrongChoice.ChoiceContent
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

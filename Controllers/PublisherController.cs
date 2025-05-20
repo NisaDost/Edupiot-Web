@@ -207,25 +207,28 @@ namespace EduPilot.Web.Controllers
                 var quizId = await res.Content.ReadAsStringAsync();
                 return Json(new { success = true, quizId });
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return StatusCode(400, "Quiz oluşturma sırasında hata oluştu.");
             }
         }
 
 
-        public async Task<IActionResult> GetQuizzes()
+        public async Task<IActionResult> ListQuizzes()
         {
             try
             {
                 var publisherId = GetLoggedinPublisherId();
                 var client = GetApiClient();
-                var response = await client.GetAsync($"publisher/{publisherId}/quizzes");
-
+                var response = await client.GetAsync($"publisher/{publisherId}/quizlist");
+                var quizzes = new List<PublisherQuizzesDTO>();
                 if (!response.IsSuccessStatusCode)
-                    return Json(new { success = false, quizzes = new List<QuizDTO>() });
-                var quizzes = await response.Content.ReadFromJsonAsync<List<QuizDTO>>();
-                return Json(new { success = true, quizzes });
+                {
+                    return View("ListQuizzes", quizzes);
+                }
+
+                quizzes = await response.Content.ReadFromJsonAsync<List<PublisherQuizzesDTO>>();
+                return View("ListQuizzes", quizzes);
             }
             catch
             {
@@ -251,10 +254,27 @@ namespace EduPilot.Web.Controllers
             }
         }
 
-        public IActionResult EditQuiz(Guid quizId)
+        public async Task<IActionResult> QuizDetail(Guid quizId)
         {
-            //TODO: QuizId'e göre quiz bilgilerini al ve düzenleme sayfasına git
-            return View("EditQuiz");
+            var questions = new QuizDetailDTO();
+            try
+            {
+                var client = GetApiClient();
+                var publisherId = GetLoggedinPublisherId();
+                var response = await client.GetAsync($"publisher/{publisherId}/quiz/{quizId}");
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    return View("QuizDetail", questions);
+                }
+
+                questions = await response.Content.ReadFromJsonAsync<QuizDetailDTO>();
+                return View("QuizDetail", questions);
+            }
+            catch
+            {
+                return View("QuizDetail", questions);
+            }
         }
     }
 }
