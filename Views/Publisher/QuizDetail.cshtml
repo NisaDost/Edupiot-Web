@@ -34,7 +34,7 @@
                     <p class="d-flex align-items-center mb-0">
                         <span class="material-symbols-outlined me-2">check_circle</span>
                         Durum: <strong class="ms-2 @(Model.IsActive ? "text-success" : "text-danger")">
-                            @(Model.IsActive ? "Aktif" : "Pasif")
+                            @(Model.IsActive ? "Aktif" : "İnaktif")
                         </strong>
                     </p>
                 </div>
@@ -104,6 +104,7 @@
                             <form class="question-edit-form">
                                 <input type="hidden" name="QuestionId" value="@question.QuestionId" />
                                 <input type="hidden" name="QuizId" value="@Model.Id" />
+                                <input type="hidden" name="choiceCount" value="@(question.Choices.Count())" />
 
                                 <div class="mb-3">
                                     <label for="questionContent-@question.QuestionId" class="form-label">Soru İçeriği</label>
@@ -147,6 +148,7 @@
                                         {
                                             <input type="hidden" name="CorrectChoiceId" value="@correctChoiceEdit.ChoiceId" />
                                             <input type="text" class="form-control" name="CorrectChoiceContent" value="@correctChoiceEdit.ChoiceContent" />
+
                                         }
                                     }
                                 </div>
@@ -251,6 +253,7 @@
                                     </div>
                                 }
                             }
+                            <input type="hidden" name="choiceCount" value="@(wrongChoiceCount + 1)" />
                         </div>
 
                         <div class="d-flex justify-content-end">

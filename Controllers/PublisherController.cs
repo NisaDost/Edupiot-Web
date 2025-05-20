@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using EduPilot.Web.Filters;
 using Microsoft.AspNetCore.Authorization;
 using System.Net.Http.Headers;
+using System.Text;
 
 namespace EduPilot.Web.Controllers
 {
@@ -176,7 +177,7 @@ namespace EduPilot.Web.Controllers
 
                     // Add question properties
                     content.Add(new StringContent(question.QuestionContent), $"Questions[{i}].QuestionContent");
-                    content.Add(new StringContent(question.isActive.ToString().ToLower()), $"Questions[{i}].isActive");
+                    content.Add(new StringContent(question.IsActive.ToString().ToLower()), $"Questions[{i}].isActive");
 
                     // Add file if exists
                     if (question.File != null)
@@ -237,20 +238,21 @@ namespace EduPilot.Web.Controllers
 
         }
 
-        public async Task<IActionResult> SetQuizState(Guid quizId)
+        public async Task<IActionResult> SetQuizState(Guid id, bool isActive)
         {
             try
             {
                 var client = GetApiClient();
-                var publisherId = GetLoggedinPublisherId();
-                var response = await client.PutAsJsonAsync($"publisher/{publisherId}/quizstate/{quizId}", new { quizId });
-                return response.IsSuccessStatusCode
-                    ? Json(new { success = true, message = "Quiz durumu güncellendi." })
-                    : Json(new { success = false, message = "Quiz durumu güncellenemedi." });
+                var response = await client.PutAsJsonAsync($"publisher/quizstate/{id}", isActive);
+
+                if (!response.IsSuccessStatusCode)
+                    Json(new { success = false, message = "Quiz durumu güncellenemedi." });
+
+                return Json(new { success = true, message = "Quiz durumu güncellendi." });
             }
-            catch
+            catch (Exception ex)
             {
-                return Json(new { success = false, message = "Quiz durumu güncellenemedi." });
+                return Json(new { success = false, message = "Quiz durumu güncellenemedi.", error = ex.Message });
             }
         }
 
@@ -274,6 +276,192 @@ namespace EduPilot.Web.Controllers
             catch
             {
                 return View("QuizDetail", questions);
+            }
+        }
+
+        public async Task<IActionResult> AddQuestionToQuiz()
+        {
+            try
+            {
+                // Extract quiz ID from form
+                var quizId = Request.Form["QuizId"].ToString();
+
+                // Extract question content and image from form
+                var questionContent = Request.Form["QuestionContent"].ToString();
+                var questionImage = Request.Form["QuestionImage"].ToString();
+                var isActive = true; // Default to active
+
+                // Process choices
+                var correctChoiceContent = Request.Form["CorrectChoiceContent"].ToString();
+
+                // Count wrong answers based on form structure from the view
+                var choiceCount = int.Parse(Request.Form["choiceCount"].ToString());
+                int wrongAnswerCount = choiceCount - 1; // Total choices minus the correct one
+
+                // Check if we have a file to upload
+                IFormFile file = null;
+                if (Request.Form.Files.Count > 0)
+                {
+                    file = Request.Form.Files[0];
+                }
+
+                // Prepare the MultipartFormDataContent
+                var client = GetApiClient();
+                using var content = new MultipartFormDataContent();
+
+                // Add basic question data
+                content.Add(new StringContent(questionContent), "QuestionContent");
+                content.Add(new StringContent(isActive.ToString().ToLower()), "IsActive");
+
+                // Add question image URL if it exists
+                if (!string.IsNullOrEmpty(questionImage))
+                {
+                    content.Add(new StringContent(questionImage), "QuestionImage");
+                }
+
+                // Add file if it exists
+                if (file != null && file.Length > 0)
+                {
+                    var fileContent = new StreamContent(file.OpenReadStream());
+                    fileContent.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
+                    content.Add(fileContent, "File", file.FileName);
+                }
+
+                // Add the correct answer as the first choice
+                content.Add(new StringContent(correctChoiceContent), "Choices[0].ChoiceContent");
+                content.Add(new StringContent("true"), "Choices[0].IsCorrect");
+
+                // Add wrong answers from the form
+                for (int i = 0; i < wrongAnswerCount; i++)
+                {
+                    var wrongAnswerContent = Request.Form[$"WrongChoiceContents[{i}]"].ToString();
+                    if (!string.IsNullOrEmpty(wrongAnswerContent))
+                    {
+                        content.Add(new StringContent(wrongAnswerContent), $"Choices[{i + 1}].ChoiceContent");
+                        content.Add(new StringContent("false"), $"Choices[{i + 1}].IsCorrect");
+                    }
+                }
+
+                // Send request to API - using POST to create a new question
+                var response = await client.PostAsync($"publisher/question/quiz/{quizId}", content);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return Json(new { success = true, message = "Question added successfully" });
+                }
+                else
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    return Json(new { success = false, message = $"Error: {errorContent}" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = $"Error adding question: {ex.Message}" });
+            }
+        }
+
+        public async Task<IActionResult> UpdateQuestion(QuestionDTO questionDTO)
+        {
+            try
+            {
+                // Initialize new QuestionDTO to send to API
+                var apiQuestionDTO = new QuestionDTO
+                {
+                    QuestionId = questionDTO.QuestionId,
+                    QuestionContent = questionDTO.QuestionContent,
+                    QuestionImage = Request.Form["QuestionImage"].ToString(),
+                    IsActive = true // Default to active
+                };
+
+                // Initialize choices collection
+                apiQuestionDTO.Choices = new List<ChoiceDTO>();
+
+                // Extract correct choice data from form
+                if (!string.IsNullOrEmpty(Request.Form["CorrectChoiceId"]) && !string.IsNullOrEmpty(Request.Form["CorrectChoiceContent"]))
+                {
+                    var correctChoiceId = Guid.Parse(Request.Form["CorrectChoiceId"]);
+                    var correctChoiceContent = Request.Form["CorrectChoiceContent"].ToString();
+
+                    apiQuestionDTO.Choices.Add(new ChoiceDTO
+                    {
+                        ChoiceId = correctChoiceId,
+                        ChoiceContent = correctChoiceContent,
+                        IsCorrect = true
+                    });
+                }
+
+                // Extract wrong choice data from form
+                int wrongChoiceIndex = 0;
+                while (Request.Form.ContainsKey($"WrongChoiceIds[{wrongChoiceIndex}]") &&
+                       Request.Form.ContainsKey($"WrongChoiceContents[{wrongChoiceIndex}]"))
+                {
+                    var wrongChoiceId = Guid.Parse(Request.Form[$"WrongChoiceIds[{wrongChoiceIndex}]"]);
+                    var wrongChoiceContent = Request.Form[$"WrongChoiceContents[{wrongChoiceIndex}]"].ToString();
+
+                    apiQuestionDTO.Choices.Add(new ChoiceDTO
+                    {
+                        ChoiceId = wrongChoiceId,
+                        ChoiceContent = wrongChoiceContent,
+                        IsCorrect = false
+                    });
+
+                    wrongChoiceIndex++;
+                }
+
+                // Check if we have a file to upload
+                IFormFile file = null;
+                if (Request.Form.Files.Count > 0)
+                {
+                    file = Request.Form.Files[0];
+                }
+
+                var client = GetApiClient();
+                using var content = new MultipartFormDataContent();
+
+                // Add basic question data
+                content.Add(new StringContent(apiQuestionDTO.QuestionId.ToString()), "QuestionId");
+                content.Add(new StringContent(apiQuestionDTO.QuestionContent), "QuestionContent");
+                content.Add(new StringContent(apiQuestionDTO.IsActive.ToString().ToLower()), "IsActive");
+
+                // Add question image URL if it exists
+                if (!string.IsNullOrEmpty(apiQuestionDTO.QuestionImage))
+                {
+                    content.Add(new StringContent(apiQuestionDTO.QuestionImage), "QuestionImage");
+                }
+
+                // Add file if it exists
+                if (file != null && file.Length > 0)
+                {
+                    var fileContent = new StreamContent(file.OpenReadStream());
+                    fileContent.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
+                    content.Add(fileContent, "File", file.FileName);
+                }
+
+                // Add choices to the request content
+                for (int i = 0; i < apiQuestionDTO.Choices.Count; i++)
+                {
+                    var choice = apiQuestionDTO.Choices[i];
+                    content.Add(new StringContent(choice.ChoiceId.ToString()), $"Choices[{i}].ChoiceId");
+                    content.Add(new StringContent(choice.ChoiceContent), $"Choices[{i}].ChoiceContent");
+                    content.Add(new StringContent(choice.IsCorrect.ToString().ToLower()), $"Choices[{i}].IsCorrect");
+                }
+
+                var response = await client.PutAsync($"publisher/question/{apiQuestionDTO.QuestionId}", content);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return Json(new { success = true, message = "Question updated successfully" });
+                }
+                else
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    return Json(new { success = false, message = $"Error: {errorContent}" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = $"Error updating question: {ex.Message}" });
             }
         }
     }

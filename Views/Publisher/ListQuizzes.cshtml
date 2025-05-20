@@ -14,7 +14,7 @@
                 @foreach (var quiz in Model)
                 {
                     <div class="col-12 col-md-6 col-lg-4 mb-4">
-                            <div class="card quiz-card h-100 shadow-sm p-3" style="cursor:pointer;" onclick="location.href='@Url.Action("QuizDetail", "Publisher", new { quizId = quiz.Id })'">
+                            <div class="card quiz-card h-100 shadow-sm p-3">
                             <div class="d-flex justify-content-between align-items-start">
                                 <div>
                                     <h5>@quiz.SubjectName</h5>
@@ -28,7 +28,7 @@
                                         <label class="form-check-label">Aktif</label>
                                     </div>
                                     <div>
-                                        <a href="@Url.Action("QuizDetails", "Publisher", new { quizId = quiz.Id })" class="btn btn-sm btn-outline-primary">Detay</a>
+                                        <a href="@Url.Action("QuizDetail", "Publisher", new { quizId = quiz.Id })" class="btn btn-sm btn-outline-primary">Detay</a>
                                     </div>
                                 </div>
                             </div>
