@@ -2,16 +2,19 @@
 @{
     ViewData["Title"] = "Öğretmen Listesi";
 }
-
 <div class="d-flex flex-row">
     <partial name="_InstitutionSidebar" />
-
     <div class="content">
         <div class="bg-card">
-
-            <h1 class="fw-bold">Sisteme Kayıtlı Öğretmen Listesi </h1>
-
-            <div class="table-responsive mt-5">
+            <h1 class="fw-bold">Sisteme Kayıtlı Öğretmen Listesi</h1>
+            <!-- Email giriş ve ekle butonu -->
+            <div class="d-flex flex-row align-items-center justify-content-end mb-3">
+                <label for="emailInput" class="fs-5 pe-3 mb-0">Öğretmen E-Posta:</label>
+                <input type="email" id="emailInput" class="form-control me-2" placeholder="Öğretmen E-posta" style="width: 15rem" required />
+                <button class="btn btn-secondary" style="width: 7rem" id="addEmailBtn">Ekle</button>
+            </div>
+            <!-- Öğretmen tablosu -->
+            <div class="table-responsive mt-4">
                 <table class="table table-bordered table-striped">
                     <thead class="text-light" style="background-color: var(--primary-accent)">
                         <tr>
@@ -23,26 +26,54 @@
                     <tbody>
                         @if (Model != null && Model.Any())
                         {
-                            @foreach (var teacher in Model)
+                            foreach (var teacher in Model)
                             {
-                                <tr>
-                                    <td>@teacher.FirstName</td>
-                                    <td>@(string.IsNullOrEmpty(teacher.MiddleName) ? "-" : teacher.MiddleName)</td>
-                                    <td>@teacher.LastName</td>
-                                </tr>
+                                        <tr>
+                                            <td>@teacher.FirstName</td>
+                                            <td>@(string.IsNullOrEmpty(teacher.MiddleName) ? "-" : teacher.MiddleName)</td>
+                                            <td>@teacher.LastName</td>
+                                        </tr>
                             }
                         }
                         else
                         {
-                            <tr>
-                                <td colspan="3" class="text-center">Kayıtlı öğrentmen bulunmamaktadır.</td>
-                            </tr>
+                                <tr>
+                                    <td colspan="3" class="text-center">Kayıtlı öğretmen bulunmamaktadır.</td>
+                                </tr>
                         }
                     </tbody>
                 </table>
             </div>
-
         </div>
     </div>
-
 </div>
+@section Scripts {
+        <script>
+            $(document).ready(function() {
+                $("#addEmailBtn").on("click", function () {
+                    const email = $("#emailInput").val().trim();
+                    if (!email) {
+                        alert("Lütfen geçerli bir e-posta girin.");
+                        return;
+                    }
+
+                    $.ajax({
+                        url: "/Institution/AddSupervisor",
+                        type: "POST",
+                        contentType: "application/json",
+                        data: JSON.stringify(email),
+                        headers: {
+                            "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val()
+                        },
+                        success: function () {
+                            alert("Öğretmen başarıyla eklendi.");
+                            location.reload();
+                        },
+                        error: function (xhr) {
+                            alert("Ekleme başarısız: " + (xhr.responseText || "Bilinmeyen hata"));
+                        }
+                    });
+                });
+            });
+        </script>
+}

@@ -43,143 +43,143 @@
             <!-- Soru Kartları -->
             @foreach (var question in Model.Questions)
             {
-                <div class="card mb-4 shadow-sm question-card" id="question-@question.QuestionId">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h5 class="card-title d-flex align-items-center mb-0">
-                                <span class="material-symbols-outlined me-2">help</span>
+                    <div class="card mb-4 shadow-sm question-card" id="question-@question.QuestionId">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="card-title d-flex align-items-center mb-0">
+                                    <span class="material-symbols-outlined me-2">help</span>
                                 @($"{questionIndex++}. Soru")
-                            </h5>
-                            <button class="btn btn-sm btn-primary edit-question-btn" data-question-id="@question.QuestionId">
-                                <span class="material-symbols-outlined me-1">edit</span> Düzenle
-                            </button>
-                        </div>
+                                </h5>
+                                <button class="btn btn-sm btn-primary edit-question-btn" data-question-id="@question.QuestionId">
+                                    <span class="material-symbols-outlined me-1">edit</span> Düzenle
+                                </button>
+                            </div>
 
-                        <!-- Görüntüleme Modu -->
-                        <div class="view-mode" id="view-@question.QuestionId">
+                            <!-- Görüntüleme Modu -->
+                            <div class="view-mode" id="view-@question.QuestionId">
                             @if (!string.IsNullOrEmpty(question.QuestionImage))
                             {
-                                <div class="mb-3">
-                                    <div class="d-flex align-items-center mb-2">
-                                        <span class="material-symbols-outlined me-2">image</span> Soru Görseli:
-                                    </div>
-                                    <div class="text-center" style="max-width: 400px; margin: 0 auto;">
-                                        <img src="@question.QuestionImage" alt="Soru Görseli" class="img-fluid rounded" style="max-height: 250px; object-fit: contain;" />
-                                    </div>
-                                </div>
+                                        <div class="mb-3">
+                                            <div class="d-flex align-items-center mb-2">
+                                                <span class="material-symbols-outlined me-2">image</span> Soru Görseli:
+                                            </div>
+                                            <div class="text-center" style="max-width: 400px; margin: 0 auto;">
+                                                <img src="@question.QuestionImage" alt="Soru Görseli" class="img-fluid rounded" style="max-height: 250px; object-fit: contain;" />
+                                            </div>
+                                        </div>
                             }
 
-                            <p class="mb-3">@question.QuestionContent</p>
+                                <p class="mb-3">@question.QuestionContent</p>
 
-                            <div class="row">
-                                <!-- Doğru Cevap-->
+                                <div class="row">
+                                    <!-- Doğru Cevap-->
                                 @{
                                     var correctChoice = question.Choices.FirstOrDefault(c => c.IsCorrect);
                                     if (correctChoice != null)
                                     {
-                                        <div class="col-12 mb-3">
-                                            <div class="p-3 border border-success rounded d-flex align-items-center text-success">
-                                                <span class="material-symbols-outlined me-2">check_circle</span>
-                                                <strong>@correctChoice.ChoiceContent</strong>
-                                            </div>
-                                        </div>
+                                                    <div class="col-12 mb-3">
+                                                        <div class="p-3 border border-success rounded d-flex align-items-center text-success">
+                                                            <span class="material-symbols-outlined me-2">check_circle</span>
+                                                            <strong>@correctChoice.ChoiceContent</strong>
+                                                        </div>
+                                                    </div>
                                     }
                                 }
 
-                                <!-- Yanlış Cevaplar -->
+                                    <!-- Yanlış Cevaplar -->
                                 @foreach (var wrongChoice in question.Choices.Where(c => !c.IsCorrect))
                                 {
-                                    <div class="col-md-6 mb-2">
-                                        <div class="p-3 border border-danger rounded d-flex align-items-center text-danger">
-                                            <span class="material-symbols-outlined me-2">cancel</span>
+                                            <div class="col-md-6 mb-2">
+                                                <div class="p-3 border border-danger rounded d-flex align-items-center text-danger">
+                                                    <span class="material-symbols-outlined me-2">cancel</span>
                                             @wrongChoice.ChoiceContent
-                                        </div>
-                                    </div>
+                                                </div>
+                                            </div>
                                 }
-                            </div>
-                        </div>
-
-                        <!-- Düzenleme Modu -->
-                        <div class="edit-mode d-none" id="edit-@question.QuestionId">
-                            <form class="question-edit-form">
-                                <input type="hidden" name="QuestionId" value="@question.QuestionId" />
-                                <input type="hidden" name="QuizId" value="@Model.Id" />
-                                <input type="hidden" name="choiceCount" value="@(question.Choices.Count())" />
-
-                                <div class="mb-3">
-                                    <label for="questionContent-@question.QuestionId" class="form-label">Soru İçeriği</label>
-                                    <textarea class="form-control" id="questionContent-@question.QuestionId" name="QuestionContent" rows="3">@question.QuestionContent</textarea>
                                 </div>
+                            </div>
 
-                                <div class="mb-3">
-                                    <label class="form-label">Soru Görseli</label>
-                                    <div class="d-flex align-items-center">
+                            <!-- Düzenleme Modu -->
+                            <div class="edit-mode d-none" id="edit-@question.QuestionId">
+                                <form class="question-edit-form">
+                                    <input type="hidden" name="QuestionId" value="@question.QuestionId" />
+                                    <input type="hidden" name="QuizId" value="@Model.Id" />
+                                    <input type="hidden" name="choiceCount" value="@(question.Choices.Count())" />
+
+                                    <div class="mb-3">
+                                        <label for="questionContent-@question.QuestionId" class="form-label">Soru İçeriği</label>
+                                        <textarea class="form-control" id="questionContent-@question.QuestionId" name="QuestionContent" rows="3">@question.QuestionContent</textarea>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label">Soru Görseli</label>
+                                        <div class="d-flex align-items-center">
                                         @if (!string.IsNullOrEmpty(question.QuestionImage))
                                         {
-                                            <button type="button" class="btn btn-warning me-2 update-image-btn">
-                                                <span class="material-symbols-outlined me-1">refresh</span> Güncelle
-                                            </button>
-                                            <input type="hidden" name="QuestionImage" value="@question.QuestionImage" />
-                                            <span class="ms-2 text-muted">Mevcut görsel kullanılacak</span>
-                                            <div class="ms-3">
-                                                <img src="@question.QuestionImage" alt="Önizleme" class="img-thumbnail" style="height: 40px; width: auto; object-fit: contain;" />
-                                            </div>
+                                                    <button type="button" class="btn btn-warning me-2 update-image-btn">
+                                                        <span class="material-symbols-outlined me-1">refresh</span> Güncelle
+                                                    </button>
+                                                    <input type="hidden" name="QuestionImage" value="@question.QuestionImage" />
+                                                    <span class="ms-2 text-muted">Mevcut görsel kullanılacak</span>
+                                                    <div class="ms-3">
+                                                        <img src="@question.QuestionImage" alt="Önizleme" class="img-thumbnail" style="height: 40px; width: auto; object-fit: contain;" />
+                                                    </div>
                                         }
                                         else
                                         {
-                                            <button type="button" class="btn btn-secondary me-2 upload-image-btn">
-                                                <span class="material-symbols-outlined me-1">upload</span> Medya Yükle
-                                            </button>
-                                            <input type="hidden" name="QuestionImage" value="" />
-                                            <span class="ms-2 text-muted">Görsel yok</span>
+                                                    <button type="button" class="btn btn-secondary me-2 upload-image-btn">
+                                                        <span class="material-symbols-outlined me-1">upload</span> Medya Yükle
+                                                    </button>
+                                                    <input type="hidden" name="QuestionImage" value="" />
+                                                    <span class="ms-2 text-muted">Görsel yok</span>
                                         }
-                                        <input type="file" class="form-control d-none image-upload" accept="image/*" />
+                                            <input type="file" class="form-control d-none image-upload" name="ImageFile" accept="image/*" />
+                                        </div>
+                                        <div class="preview-container mt-2 d-none text-center" style="max-width: 200px;">
+                                            <img src="" alt="Önizleme" class="img-preview img-fluid rounded" style="max-height: 150px; object-fit: contain;" />
+                                        </div>
                                     </div>
-                                    <div class="preview-container mt-2 d-none text-center" style="max-width: 200px;">
-                                        <img src="" alt="Önizleme" class="img-preview img-fluid rounded" style="max-height: 150px; object-fit: contain;" />
-                                    </div>
-                                </div>
 
-                                <div class="mb-3">
-                                    <label class="form-label">Doğru Cevap</label>
+                                    <div class="mb-3">
+                                        <label class="form-label">Doğru Cevap</label>
                                     @{
                                         var correctChoiceEdit = question.Choices.FirstOrDefault(c => c.IsCorrect);
                                         if (correctChoiceEdit != null)
                                         {
-                                            <input type="hidden" name="CorrectChoiceId" value="@correctChoiceEdit.ChoiceId" />
-                                            <input type="text" class="form-control" name="CorrectChoiceContent" value="@correctChoiceEdit.ChoiceContent" />
+                                                        <input type="hidden" name="CorrectChoiceId" value="@correctChoiceEdit.ChoiceId" />
+                                                        <input type="text" class="form-control" name="CorrectChoiceContent" value="@correctChoiceEdit.ChoiceContent" />
 
                                         }
                                     }
-                                </div>
+                                    </div>
 
-                                <div class="row mb-3">
-                                    <label class="form-label">Yanlış Cevaplar</label>
+                                    <div class="row mb-3">
+                                        <label class="form-label">Yanlış Cevaplar</label>
                                     @{
                                         var wrongChoicesEdit = question.Choices.Where(c => !c.IsCorrect).ToList();
                                         for (int i = 0; i < wrongChoicesEdit.Count; i++)
                                         {
                                             var wrongChoice = wrongChoicesEdit[i];
-                                            <div class="col-md-6 mb-2">
-                                                <input type="hidden" name="WrongChoiceIds[@i]" value="@wrongChoice.ChoiceId" />
-                                                <input type="text" class="form-control" name="WrongChoiceContents[@i]" value="@wrongChoice.ChoiceContent" />
-                                            </div>
+                                                        <div class="col-md-6 mb-2">
+                                                            <input type="hidden" name="WrongChoiceIds[@i]" value="@wrongChoice.ChoiceId" />
+                                                            <input type="text" class="form-control" name="WrongChoiceContents[@i]" value="@wrongChoice.ChoiceContent" />
+                                                        </div>
                                         }
                                     }
-                                </div>
+                                    </div>
 
-                                <div class="d-flex justify-content-end">
-                                    <button type="button" class="btn btn-secondary me-2 cancel-edit-btn" data-question-id="@question.QuestionId">
-                                        <span class="material-symbols-outlined me-1">close</span> İptal
-                                    </button>
-                                    <button type="submit" class="btn btn-success save-question-btn" data-question-id="@question.QuestionId">
-                                        <span class="material-symbols-outlined me-1">save</span> Kaydet
-                                    </button>
-                                </div>
-                            </form>
+                                    <div class="d-flex justify-content-end">
+                                        <button type="button" class="btn btn-secondary me-2 cancel-edit-btn" data-question-id="@question.QuestionId">
+                                            <span class="material-symbols-outlined me-1">close</span> İptal
+                                        </button>
+                                        <button type="submit" class="btn btn-success save-question-btn" data-question-id="@question.QuestionId">
+                                            <span class="material-symbols-outlined me-1">save</span> Kaydet
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
                     </div>
-                </div>
             }
 
             <!-- Soru Ekleme Butonu -->
@@ -212,7 +212,7 @@
                                 </button>
                                 <input type="hidden" name="QuestionImage" value="" />
                                 <span id="new-image-status" class="ms-2 text-muted">Görsel yok</span>
-                                <input type="file" class="form-control d-none" id="new-image-upload" accept="image/*" />
+                                <input type="file" class="form-control d-none" id="new-image-upload" name="ImageFile" accept="image/*" />
                             </div>
                             <div id="new-preview-container" class="mt-2 d-none text-center" style="max-width: 200px;">
                                 <img src="" alt="Önizleme" id="new-img-preview" class="img-fluid rounded" style="max-height: 150px; object-fit: contain;" />
@@ -248,9 +248,9 @@
                                 // Yanlış şık input'larını oluştur
                                 for (int i = 0; i < wrongChoiceCount; i++)
                                 {
-                                    <div class="col-md-6 mb-2">
-                                        <input type="text" class="form-control" name="WrongChoiceContents[@i]" placeholder="Yanlış Cevap @(i + 1)" required />
-                                    </div>
+                                            <div class="col-md-6 mb-2">
+                                                <input type="text" class="form-control" name="WrongChoiceContents[@i]" placeholder="Yanlış Cevap @(i + 1)" required />
+                                            </div>
                                 }
                             }
                             <input type="hidden" name="choiceCount" value="@(wrongChoiceCount + 1)" />
@@ -272,187 +272,148 @@
 </div>
 
 @section Scripts {
-    <script>
-        $(document).ready(function () {
-            // Soru düzenleme butonuna tıklandığında
-            $('.edit-question-btn').on('click', function () {
-                const questionId = $(this).data('question-id');
-                $(`#view-${questionId}`).addClass('d-none');
-                $(`#edit-${questionId}`).removeClass('d-none');
-            });
+        <script>
+            $(document).ready(function () {
+                // Soru düzenleme butonuna tıklandığında
+                $('.edit-question-btn').on('click', function () {
+                    const questionId = $(this).data('question-id');
+                    $(`#view-${questionId}`).addClass('d-none');
+                    $(`#edit-${questionId}`).removeClass('d-none');
+                });
 
-            // İptal butonuna tıklandığında
-            $('.cancel-edit-btn').on('click', function () {
-                const questionId = $(this).data('question-id');
-                $(`#edit-${questionId}`).addClass('d-none');
-                $(`#view-${questionId}`).removeClass('d-none');
-            });
+                // İptal butonuna tıklandığında
+                $('.cancel-edit-btn').on('click', function () {
+                    const questionId = $(this).data('question-id');
+                    $(`#edit-${questionId}`).addClass('d-none');
+                    $(`#view-${questionId}`).removeClass('d-none');
+                });
 
-            // Soruyu kaydet butonuna tıklandığında
-            $('.question-edit-form').on('submit', function (e) {
-                e.preventDefault();
-                const form = $(this);
-                const questionId = form.find('input[name="QuestionId"]').val();
+                // Medya yükleme butonlarına tıklandığında
+                $('.upload-image-btn, .update-image-btn').on('click', function () {
+                    $(this).closest('.d-flex').find('.image-upload').click();
+                });
 
-                // Form verilerini topla
-                const formData = new FormData(form[0]);
+                // Dosya seçildiğinde (sadece önizleme için)
+                $('.image-upload').on('change', function () {
+                    const file = this.files[0];
+                    if (file) {
+                        // Önizlemeyi göster
+                        const previewContainer = $(this).closest('.mb-3').find('.preview-container');
+                        const preview = previewContainer.find('.img-preview');
 
-                // AJAX ile güncelleme işlemi
-                $.ajax({
-                    url: '@Url.Action("UpdateQuestion", "Publisher")',
-                    type: 'POST',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    success: function (response) {
-                        if (response.success) {
-                            // Sayfayı yeniden yükle
-                            location.reload();
-                        } else {
-                            alert('Güncelleme işlemi sırasında bir hata oluştu: ' + response.message);
+                        previewContainer.removeClass('d-none');
+
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            preview.attr('src', e.target.result);
                         }
-                    },
-                    error: function () {
-                        alert('Güncelleme işlemi sırasında bir hata oluştu.');
+                        reader.readAsDataURL(file);
+
+                        // Durum mesajını güncelle
+                        $(this).closest('.d-flex').find('.text-muted').text('Görsel yüklenecek');
+
+                        // Hidden input'u temizle çünkü artık doğrudan dosya yüklenecek
+                        $(this).closest('.d-flex').find('input[name="QuestionImage"]').val('');
                     }
                 });
-            });
 
-            // Medya yükleme butonlarına tıklandığında
-            $('.upload-image-btn, .update-image-btn').on('click', function () {
-                $(this).closest('.d-flex').find('.image-upload').click();
-            });
+                // Soruyu kaydet butonuna tıklandığında
+                $('.question-edit-form').on('submit', function (e) {
+                    e.preventDefault();
+                    const form = $(this);
 
-            // Dosya seçildiğinde
-            $('.image-upload').on('change', function () {
-                const file = this.files[0];
-                if (file) {
-                    // Önizleme göster
-                    const previewContainer = $(this).closest('.mb-3').find('.preview-container');
-                    const preview = previewContainer.find('.img-preview');
+                    // Form verilerini topla
+                    const formData = new FormData(form[0]);
 
-                    previewContainer.removeClass('d-none');
-
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        preview.attr('src', e.target.result);
-                    }
-                    reader.readAsDataURL(file);
-
-                    const formData = new FormData();
-                    formData.append('image', file);
-
+                    // AJAX ile güncelleme işlemi
                     $.ajax({
-                        url: '@Url.Action("UploadImage", "Publisher")',
+                        url: '@Url.Action("UpdateQuestion", "Publisher")',
                         type: 'POST',
                         data: formData,
                         processData: false,
                         contentType: false,
                         success: function (response) {
                             if (response.success) {
-                                // Hidden input'a dosya URL'sini kaydet
-                                $(this).closest('.d-flex').find('input[name="QuestionImage"]').val(response.imageUrl);
-                                $(this).closest('.d-flex').find('.text-muted').text('Görsel yüklendi');
+                                // Sayfayı yeniden yükle
+                                location.reload();
                             } else {
-                                alert('Görsel yükleme sırasında bir hata oluştu: ' + response.message);
-                                previewContainer.addClass('d-none');
-                            }
-                        }.bind(this),
-                        error: function () {
-                            alert('Görsel yükleme sırasında bir hata oluştu.');
-                            previewContainer.addClass('d-none');
-                        }
-                    });
-                }
-            });
-
-            // Yeni soru ekle butonuna tıklandığında
-            $('#add-question-btn').on('click', function () {
-                $(this).parent().addClass('d-none');
-                $('#new-question-form').removeClass('d-none');
-            });
-
-            // Yeni soru eklemekten vazgeç butonuna tıklandığında
-            $('#cancel-add-question-btn').on('click', function () {
-                $('#new-question-form').addClass('d-none');
-                $('#add-question-btn').parent().removeClass('d-none');
-            });
-
-            // Yeni soru için medya yükleme butonuna tıklandığında
-            $('#new-upload-image-btn').on('click', function () {
-                $('#new-image-upload').click();
-            });
-
-            // Yeni soru için dosya seçildiğinde
-            $('#new-image-upload').on('change', function () {
-                const file = this.files[0];
-                if (file) {
-                    // Önizleme göster
-                    const previewContainer = $('#new-preview-container');
-                    const preview = $('#new-img-preview');
-
-                    previewContainer.removeClass('d-none');
-
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        preview.attr('src', e.target.result);
-                    }
-                    reader.readAsDataURL(file);
-
-                    const formData = new FormData();
-                    formData.append('image', file);
-
-                    $.ajax({
-                        url: '@Url.Action("UploadImage", "Publisher")',
-                        type: 'POST',
-                        data: formData,
-                        processData: false,
-                        contentType: false,
-                        success: function (response) {
-                            if (response.success) {
-                                // Hidden input'a dosya URL'sini kaydet
-                                $('#add-question-form input[name="QuestionImage"]').val(response.imageUrl);
-                                $('#new-image-status').text('Görsel yüklendi');
-                            } else {
-                                alert('Görsel yükleme sırasında bir hata oluştu: ' + response.message);
-                                previewContainer.addClass('d-none');
+                                alert('Güncelleme işlemi sırasında bir hata oluştu: ' + response.message);
                             }
                         },
                         error: function () {
-                            alert('Görsel yükleme sırasında bir hata oluştu.');
-                            previewContainer.addClass('d-none');
+                            alert('Güncelleme işlemi sırasında bir hata oluştu.');
                         }
                     });
-                }
-            });
+                });
 
-            // Yeni soru ekle formunu submit ettiğimizde
-            $('#add-question-form').on('submit', function (e) {
-                e.preventDefault();
+                // Yeni soru ekle butonuna tıklandığında
+                $('#add-question-btn').on('click', function () {
+                    $(this).parent().addClass('d-none');
+                    $('#new-question-form').removeClass('d-none');
+                });
 
-                // Form verilerini topla
-                const formData = new FormData(this);
+                // Yeni soru eklemekten vazgeç butonuna tıklandığında
+                $('#cancel-add-question-btn').on('click', function () {
+                    $('#new-question-form').addClass('d-none');
+                    $('#add-question-btn').parent().removeClass('d-none');
+                });
 
-                // AJAX ile ekleme işlemi
-                $.ajax({
-                    url: '@Url.Action("AddQuestionToQuiz", "Publisher")',
-                    type: 'POST',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    success: function (response) {
-                        if (response.success) {
-                            // Sayfayı yeniden yükle
-                            location.reload();
-                        } else {
-                            alert('Soru ekleme işlemi sırasında bir hata oluştu: ' + response.message);
+                // Yeni soru için medya yükleme butonuna tıklandığında
+                $('#new-upload-image-btn').on('click', function () {
+                    $('#new-image-upload').click();
+                });
+
+                // Yeni soru için dosya seçildiğinde (sadece önizleme için)
+                $('#new-image-upload').on('change', function () {
+                    const file = this.files[0];
+                    if (file) {
+                        // Önizlemeyi göster
+                        const previewContainer = $('#new-preview-container');
+                        const preview = $('#new-img-preview');
+
+                        previewContainer.removeClass('d-none');
+
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            preview.attr('src', e.target.result);
                         }
-                    },
-                    error: function () {
-                        alert('Soru ekleme işlemi sırasında bir hata oluştu.');
+                        reader.readAsDataURL(file);
+
+                        // Durum mesajını güncelle
+                        $('#new-image-status').text('Görsel yüklenecek');
+
+                        // Hidden input'u temizle çünkü artık doğrudan dosya yüklenecek
+                        $('#add-question-form input[name="QuestionImage"]').val('');
                     }
                 });
+
+                // Yeni soru ekle formunu submit ettiğimizde
+                $('#add-question-form').on('submit', function (e) {
+                    e.preventDefault();
+
+                    // Form verilerini topla
+                    const formData = new FormData(this);
+
+                    // AJAX ile ekleme işlemi
+                    $.ajax({
+                        url: '@Url.Action("AddQuestionToQuiz", "Publisher")',
+                        type: 'POST',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function (response) {
+                            if (response.success) {
+                                // Sayfayı yeniden yükle
+                                location.reload();
+                            } else {
+                                alert('Soru ekleme işlemi sırasında bir hata oluştu: ' + response.message);
+                            }
+                        },
+                        error: function () {
+                            alert('Soru ekleme işlemi sırasında bir hata oluştu.');
+                        }
+                    });
+                });
             });
-        });
-    </script>
+        </script>
 }

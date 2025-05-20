@@ -195,6 +195,26 @@ namespace EduPilot.Web.Controllers
             }
         }
 
+        public async Task<IActionResult> AddSupervisor([FromBody] string email)
+        {
+            try
+            {
+                var institutionId = GetLoggedinInstitutionId();
+                var client = GetApiClient();
+
+                var response = await client.PostAsync(
+                    $"institution/{institutionId}/supervisor/{email}",
+                    null
+                );
+
+                return response.IsSuccessStatusCode ? Ok() : BadRequest("Öğretmen eklenemedi.");
+            }
+            catch
+            {
+                return StatusCode(500, "İşlem sırasında bir hata oluştu.");
+            }
+        }
+
 
         public IActionResult TakePhoto()
         {
