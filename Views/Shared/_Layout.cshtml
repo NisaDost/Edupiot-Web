@@ -13,23 +13,20 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
-
 </head>
 <body>
     <header>
-        <nav class=" header-card navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow">
+        <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom box-shadow py-2">
             <div class="container-fluid">
-                <div class="w-25">
-                    <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
-                        <img style="height: 5vh" src="~/Images/logo horizontal.png" alt="logo" />
-                    </a>
-                </div>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                    <img src="~/Images/logo horizontal.png" alt="logo" style="max-height: 5vh;" />
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-center w-50">
-                    <ul class="navbar-nav flex-grow-1 justify-content-center">
+
+                <div class="collapse navbar-collapse" id="mainNavbar">
+                    <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Ana Sayfa</a>
                         </li>
@@ -43,46 +40,34 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">SSS</a>
                         </li>
                     </ul>
-                </div>
-                <div class="d-flex flex-row align-items-center justify-content-between w-25">
-                    <a class="nav-link text-dark p-0">EduPilot Business</a>
-                    <a class="nav-link text-center button-primary m-1" style="width:7rem" href="#EduPilotBusiness">Giriş Yap</a>
-
-                    <a class="nav-link text-center button-secondary m-1" style="width:7rem" href="#EduPilotBusiness">Kayıt Ol</a>
-
+                    <div class="d-flex flex-column flex-lg-row align-items-center gap-2 mt-2 mt-lg-0">
+                        <a class="nav-link text-dark p-0">EduPilot Business</a>
+                        <a class="btn btn-primary" style="width: 7rem;" href="#EduPilotBusiness">Giriş Yap</a>
+                        <a class="btn btn-outline-primary" style="width: 7rem;" href="#EduPilotBusiness">Kayıt Ol</a>
+                    </div>
                 </div>
             </div>
         </nav>
     </header>
-    <div>
-        <main role="main">
-            @RenderBody()
-        </main>
-    </div>
 
-    <footer class="footer-card footer box-shadow ">
-        <div>
-            <div class="d-flex flex-row justify-content-between">
+    <main role="main" class="container-fluid p-3">
+        @RenderBody()
+    </main>
 
-                <div class="w-25 justify-content-lg-start">
-                    <p class="mt-2 nav-item text-light ps-2"><b>&copy; 2025 - EduPilot</b></p>
+    <footer class="footer bg-dark text-white mt-auto py-3 box-shadow">
+        <div class="container-fluid">
+            <div class="row text-center text-lg-start align-items-center">
+                <div class="col-12 col-lg-6 mb-2 mb-lg-0">
+                    <p class="mb-0 ps-lg-2">&copy; 2025 - <b>EduPilot</b></p>
                 </div>
-
-                <div class="d-flex flex-row justify-content-center w-50">
-                    <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Index">Ana Sayfa</a>
-                    <a class="nav-link text-light" asp-area="" asp-controller="Institution" asp-action="Profile">Kurum Paneli</a>
-                    <a class="nav-link text-light" asp-area="" asp-controller="Publisher" asp-action="Profile">Yayınevi Paneli</a>
-                    <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Index">SSS</a>
-                </div>
-
-                <div class="d-flex flex-row justify-content-end align-items-center w-25">
-                    <img style="height: 4vh" class="pe-2" src="~/Images/app store.png" alt="App Store" />
-                    <img style="height: 4vh" class="pe-2" src="~/Images/play store.png" alt="Play Store" />
+                <div class="col-12 col-lg-6 d-flex justify-content-center justify-content-lg-end align-items-center gap-2">
+                    <img src="~/Images/app store.png" alt="App Store" style="max-height: 4vh;" />
+                    <img src="~/Images/play store.png" alt="Play Store" style="max-height: 4vh;" />
                 </div>
             </div>
-
         </div>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

@@ -1,7 +1,6 @@
 ﻿using EduPilot.Web.DTOs;
 using EduPilot.Web.Filters;
 using EduPilot.Web.Models;
-using EduPilot.Web.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Text;

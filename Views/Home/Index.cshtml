@@ -4,129 +4,108 @@
 
 <div class="text-center">
 
-    <!-- #region Poster Section -->
-    <section class="position-relative" style="margin-bottom: -1rem; margin-top: -1rem; z-index: -1">
-        <img class="w-100" src="~/Images/EduPilot-poster.png" alt="EduPilot Poster" style="object-fit: cover; height: 70vh;" />
-        <div class="position-absolute text-start" style="top: 20%; left: 3%; color: white;">
-            <h1 class="fw-bold display-4">Eğitimi</h1>
-            <h1 class="fw-bold display-1 text-light">Bulutların Üstüne</h1>
-            <h1 class="fw-bold display-4">Taşıyan Bir Deneyim.</h1>
+    <!-- #region Hero Section -->
+    <section class="hero-section">
+        <img class="hero-image" src="~/Images/EduPilot-poster.png" alt="EduPilot Poster" />
+        <div class="hero-content">
+            <h1 class="fw-bold">Eğitimi</h1>
+            <h1 class="fw-bold larger text-light">Bulutların Üstüne</h1>
+            <h1 class="fw-bold">Taşıyan Bir Deneyim.</h1>
         </div>
     </section>
     <!-- #endregion -->
     <!-- #region EduPilot Features Section -->
     <div class="bg-card position-relative pb-5" style="margin-bottom: -1em">
         <div>
-            <p class="title-large mt-3">EduPilot ile Yapabileceklerin...</p>
+            <p class="title-large my-4">EduPilot ile Yapabileceklerin...</p>
         </div>
-        @* Cards *@
-        <div class="d-flex flex-row flex-wrap justify-content-around">
 
-            @* Card 1 *@
-            <div class="d-flex flex-column align-items-center position-relative m-3" style="z-index: 2; margin-top: 2rem !important">
-                <!-- Overlapping Mascot -->
-                <div class=" d-flex justify-content-center" style="height: 7rem; width:20rem">
-                    <img src="~/Images/1.png" alt="Mascot"
-                         class="position-absolute"
-                         style=" top: -2rem; height: 15rem; z-index: 3;" />
-                </div>
-
-                <!-- Card content -->
-                <div class="card-primary position-relative d-flex justify-content-center pt-5" style="width: 20rem; height: 20rem">
-                    <div class="w-75 align-content-center">
-                        <p class="title-regular text-light text-center">
-                            Haftalık Soru Sayını Kaydet.
-                        </p>
-                        <p class="text-light text-center">
-                            Her gün çözdüğün soru sayısını kaydet, haftalık analizlerini karşılaştır.
-                        </p>
+        <div class="container">
+            <div class="feature-cards-container d-flex flex-wrap flex-row justify-content-center">
+                <!-- Card 1 -->
+                <div class="feature-card">
+                    <div class="feature-card-mascot-container top">
+                        <img src="~/Images/1.png" alt="Mascot" class="feature-card-mascot" />
                     </div>
-                </div>
-            </div>
-
-            @* Card 2 *@
-            <div class="d-flex flex-column align-items-center position-relative m-3" style="z-index: 2; margin-top: 1rem !important">
-
-                <!-- Card content -->
-                <div class="card-secondary position-relative d-flex justify-content-center" style="width: 20rem; height: 20rem">
-                    <div class="w-75 align-content-center mb-5">
-                        <p class="title-regular text-light text-center">
-                            Puan Topla, Ödülleri Kap!
-                        </p>
-                        <p class="text-light text-center">
-                            Quizleri çözerek hem kendini dene, hem puan topla. Kazandığın puanları dükkandaki ödülleri almak için harca!
-                        </p>
+                    <div class="feature-card-blue">
+                        <div class="pb-3 ps-3 pe-3">
+                            <p class="title-regular text-light text-center mb-2">
+                                Haftalık Soru Sayını Kaydet.
+                            </p>
+                            <p class="text-light text-center">
+                                Her gün çözdüğün soru sayısını kaydet, haftalık analizlerini karşılaştır.
+                            </p>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Overlapping Mascot -->
-                <div class=" d-flex justify-content-center" style="height: 7rem; width:20rem">
-                    <img src="~/Images/2.png" alt="Mascot"
-                         class="position-absolute"
-                         style=" top: 14rem; height: 15rem; z-index: 3;" />
-                </div>
-            </div>
-
-            @* Card 3 *@
-            <div class="d-flex flex-column align-items-center position-relative m-3" style="z-index: 2; margin-top: 2rem !important">
-                <!-- Overlapping Mascot -->
-                <div class=" d-flex justify-content-center" style="height: 7rem; width:20rem">
-                    <img src="~/Images/3.png" alt="Mascot"
-                         class="position-absolute"
-                         style=" top: -2rem; height: 15rem; z-index: 3;" />
-                </div>
-
-                <!-- Card content -->
-                <div class="card-primary position-relative d-flex justify-content-center pt-5" style="width: 20rem; height: 20rem">
-                    <div class="w-75 align-content-center">
-                        <p class="title-regular text-light text-center">
-                            Zayıf olduğun konu kalmasın!
-                        </p>
-                        <p class="text-light text-center">
-                            Çözdüğün quizlerin analizleriyle nerede eksik olduğunu gör. Zayıf konularını listele.
-                        </p>
+                <!-- Card 2 -->
+                <div class="feature-card">
+                    <div class="feature-card-orange">
+                        <div class="feature-card-text mt-5 pt-5 ps-3 pe-3">
+                            <p class="title-regular text-light text-center mb-2">
+                                Puan Topla, Ödülleri Kap!
+                            </p>
+                            <p class="text-light text-center">
+                                Quizleri çözerek puan topla, kazandığın puanları dükkandaki ödülleri almak için harca!
+                            </p>
+                        </div>
                     </div>
-                </div>
-            </div>
-
-            @* Card 4 *@
-            <div class="d-flex flex-column align-items-center position-relative m-3" style="z-index: 2; margin-top: 1rem !important">
-
-                <!-- Card content -->
-                <div class="card-secondary position-relative d-flex justify-content-center" style="width: 20rem; height: 20rem">
-                    <div class="w-75 align-content-center mb-5">
-                        <p class="title-regular text-light text-center">
-                            Zamana karşı yarış!
-                        </p>
-                        <p class="text-light text-center">
-                            Simülasyon modülü ile ister çalışma tekniği, ister sınav zamanlayıcısı ile kendini test et!
-                        </p>
+                    <div class="feature-card-mascot-container bottom">
+                        <img src="~/Images/2.png" alt="Mascot" class="feature-card-mascot" />
                     </div>
                 </div>
 
-                <!-- Overlapping Mascot -->
-                <div class=" d-flex justify-content-center" style="height: 7rem; width:20rem">
-                    <img src="~/Images/4.png" alt="Mascot"
-                         class="position-absolute"
-                         style=" top: 14rem; height: 15rem; z-index: 3;" />
+                <!-- Card 3 -->
+                <div class="feature-card">
+                    <div class="feature-card-mascot-container top">
+                        <img src="~/Images/3.png" alt="Mascot" class="feature-card-mascot" />
+                    </div>
+                    <div class="feature-card-blue">
+                        <div class="pb-3 ps-3 pe-3">
+                            <p class="title-regular text-light text-center mb-2">
+                                Zayıf konun kalmasın!
+                            </p>
+                            <p class="text-light text-center">
+                            Çözdüğün quizlerin analizleriyle zayıf konularını listele.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="feature-card">
+                    <div class="feature-card-orange">
+                        <div class="feature-card-text mt-5 pt-5 ps-3 pe-3">
+                            <p class="title-regular text-light text-center mb-2">
+                                Zamana karşı yarış!
+                            </p>
+                            <p class="text-light text-center">
+                                Simülasyon modülü ile ister çalışma tekniği, ister sınav zamanlayıcısı ile kendini test et!
+                            </p>
+                        </div>
+                    </div>
+                    <div class="feature-card-mascot-container bottom">
+                        <img src="~/Images/4.png" alt="Mascot" class="feature-card-mascot" />
+                    </div>
                 </div>
             </div>
         </div>
     </div>
     <!-- #endregion -->
     <!-- #region Join Us Section -->
-    <section class="bg-primary-accent py-5 text-light position-relative" style="background-color: var(--primary-accent); margin-bottom: -1rem; margin-top: -1rem; z-index: -1">
-        <div class="container d-flex flex-column flex-lg-row align-items-center justify-content-around">
-            <img src="~/Images/students.png" alt="Students" class="mb-4 mb-lg-0" style="max-height: 500px;" />
-            <div class="text-center text-lg-start">
+    <section class="join-section">
+        <div class="container d-flex flex-lg-row align-items-center justify-content-around">
+            <img src="~/Images/students.png" alt="Students" class="mb-4 mb-lg-0" />
+            <div class="text-lg-start">
                 <h2 class="title-large mb-4">Aramıza katılmaya hazır mısın?</h2>
                 <p class="mb-4">Hedefini bulutların üstünde tutuyorsan, EduPilot tam sana göre!</p>
-                <div class="d-flex gap-3 justify-content-center justify-content-lg-start">
-                    <a href="#" class="btn btn-light p-2">
-                        <img src="~/Images/app store.png" alt="App Store" style="height: 3rem;" />
+                <div class="d-flex gap-3 button-container justify-content-lg-start">
+                    <a href="#" class="store-button">
+                        <img src="~/Images/app store.png" alt="App Store" class="store-image" />
                     </a>
-                    <a href="#" class="btn btn-light p-2">
-                        <img src="~/Images/play store.png" alt="Play Store" style="height: 3rem;" />
+                    <a href="#" class="store-button">
+                        <img src="~/Images/play store.png" alt="Play Store" class="store-image" />
                     </a>
                 </div>
             </div>
@@ -136,32 +115,35 @@
     <!-- #region Discover EduPilot Business Section -->
     <section class="bg-card py-5" id="EduPilotBusiness">
         <div class="container">
-            <h2 class="title-large mb-5">EduPilot Business’i Keşfedin</h2>
+            <h2 class="title-large mb-5">EduPilot Business'i Keşfedin</h2>
 
-            <div class="row g-5">
-                <div class="col-md-6">
-                    <div class="card card-primary d-flex flex-row align-items-center justify-content-between h-100 p-3">
-                        <img src="~/Images/author.webp" class="img-fluid w-50" alt="Publisher" />
-                        <div class="ms-4 d-flex flex-column justify-content-between me-5 w-50">
+            <div class="row g-4">
+                <div class="col-lg-6">
+                    <div class="card-primary business-card">
+                        <img src="~/Images/author.webp" class="business-image" alt="Publisher" />
+                        <div class="business-content">
                             <p class="text-light fs-1 fw-bold">Yayınevi</p>
-                            <button class="button-secondary title-regular my-2" onclick="location.href='@Url.Action("Login", "Publisher")'">Giriş Yap</button>
-                            <button class="button-primary-accent title-regular" onclick="location.href='@Url.Action("Register", "Publisher")'">Kayıt Ol</button>
+                            <div>
+                                <button class="button-secondary title-regular w-100 my-2" onclick="location.href='@Url.Action("Login", "Publisher")'">Giriş Yap</button>
+                                <button class="button-primary-accent title-regular w-100" onclick="location.href='@Url.Action("Register", "Publisher")'">Kayıt Ol</button>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="col-md-6">
-                    <div class="card card-secondary d-flex flex-row align-items-center justify-content-between h-100 p-3">
-                        <div class="me-4 d-flex flex-column justify-content-between ms-5 w-50">
+                <div class="col-lg-6">
+                    <div class="card-secondary business-card">
+                        <div class="business-content reverse">
                             <p class="text-light fs-1 fw-bold">Kurumsal</p>
-                            <button class="button-primary title-regular my-2" onclick="location.href='@Url.Action("Login", "Institution")'">Giriş Yap</button>
-                            <button class="button-primary-accent title-regular" onclick="location.href='@Url.Action("Register", "Institution")'">Kayıt Ol</button>
+                            <div>
+                                <button class="button-primary title-regular w-100 my-2" onclick="location.href='@Url.Action("Login", "Institution")'">Giriş Yap</button>
+                                <button class="button-primary-accent title-regular w-100" onclick="location.href='@Url.Action("Register", "Institution")'">Kayıt Ol</button>
+                            </div>
                         </div>
-                        <img src="~/Images/teacher1.png" class="img-fluid w-50" alt="Institution" />
+                        <img src="~/Images/teacher1.png" class="business-image" alt="Institution" />
                     </div>
                 </div>
             </div>
-
         </div>
     </section>
     <!-- #endregion -->
