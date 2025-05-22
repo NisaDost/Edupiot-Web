@@ -110,32 +110,66 @@ namespace EduPilot.Web.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateProfile([FromBody] PublisherViewModel updated)
+        public async Task<IActionResult> UpdateProfile([FromForm] InstitutionViewModel updated)
         {
             try
             {
                 var institutionId = GetLoggedinInstitutionId();
                 var current = await GetInstitutionAsync(institutionId);
-                if (current == null) return BadRequest("Geçerli kullanıcı bulunamadı.");
 
-                var updatedInfo = new
-                {
-                    name = updated.Name,
-                    email = current.Email,
-                    address = updated.Address,
-                    website = updated.Website,
-                    logo = updated.Logo,
-                    currentPassword = updated.CurrentPassword,
-                    password = updated.NewPassword
-                };
+                if (current == null)
+                    return BadRequest("Geçerli kullanıcı bulunamadı.");
 
                 var client = GetApiClient();
-                var response = await client.PutAsJsonAsync($"institution/{institutionId}", updatedInfo);
-                return response.IsSuccessStatusCode ? Ok() : BadRequest("Profil güncellenemedi.");
+
+                // Create multipart form data content
+                using var formContent = new MultipartFormDataContent();
+
+                // Add text fields - match backend API expectations
+                if (!string.IsNullOrEmpty(updated.Name))
+                    formContent.Add(new StringContent(updated.Name), "Name");
+
+                formContent.Add(new StringContent(current.Email), "Email");
+
+                if (!string.IsNullOrEmpty(updated.Address))
+                    formContent.Add(new StringContent(updated.Address), "Address");
+
+                if (!string.IsNullOrEmpty(updated.Website))
+                    formContent.Add(new StringContent(updated.Website), "Website");
+
+                if (!string.IsNullOrEmpty(updated.Logo))
+                    formContent.Add(new StringContent(updated.Logo), "Logo");
+
+                // Backend expects "Password" field for current password verification
+                if (!string.IsNullOrEmpty(updated.CurrentPassword))
+                    formContent.Add(new StringContent(updated.CurrentPassword), "Password");
+
+                if (!string.IsNullOrEmpty(updated.NewPassword))
+                    formContent.Add(new StringContent(updated.NewPassword), "NewPassword");
+
+                // Backend expects "File" field for file upload
+                if (updated.LogoFile != null && updated.LogoFile.Length > 0)
+                {
+                    var fileContent = new StreamContent(updated.LogoFile.OpenReadStream());
+                    fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(updated.LogoFile.ContentType);
+                    formContent.Add(fileContent, "File", updated.LogoFile.FileName);
+                }
+
+                var response = await client.PutAsync($"institution/{institutionId}", formContent);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return Ok();
+                }
+                else
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    return BadRequest($"Profil güncellenemedi: {errorContent}");
+                }
             }
-            catch
+            catch (Exception ex)
             {
-                return StatusCode(500, "Güncelleme sırasında bir hata oluştu.");
+                return StatusCode(500, $"Güncelleme sırasında bir hata oluştu: {ex.Message}");
             }
         }
 

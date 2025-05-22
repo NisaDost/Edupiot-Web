@@ -26,7 +26,9 @@
                         </div>
                         <div class="col-12 col-md-6">
                             <label class="form-label fs-5">Web Sitesi</label>
-                            <p class="form-control-plaintext">@(string.IsNullOrEmpty(Model.Website) ? "Web sitesi bilgisi ekleyin" : Model.Website)</p>
+                            <a class="form-control-plaintext" href="@(string.IsNullOrEmpty(Model.Website) ? "#" : Model.Website)">
+                                @(string.IsNullOrEmpty(Model.Website) ? "Web sitesi bilgisi ekleyin" : Model.Website)
+</a>
                         </div>
                         <div class="col-12">
                             <label class="form-label fs-5">Adres</label>
@@ -37,7 +39,15 @@
 
                 <!-- Logo -->
                 <div class="text-center mt-4 mt-md-0 w-100 w-md-25">
-                    <img src="@Model.Logo" alt="Publisher Logo" class="img-fluid mb-2" style="max-width: 10rem;">
+
+                    @if (string.IsNullOrEmpty(Model.Logo))
+                    {
+                        <img src="~/Images/favicon.png" alt="Default Logo" class="img-fluid mb-2 rounded-circle" style="max-width: 10rem; border: 3px solid var(--secondary-color)">
+                    }
+                    else
+                    {
+                        <img src="@Model.Logo" alt="Publisher Logo" class="img-fluid mb-2 rounded-circle" style="max-width: 10rem; border: 3px solid var(--secondary-color)">
+                    }
                 </div>
             </div>
         </div>
@@ -80,7 +90,7 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label">E-Posta</label>
-                        <input type="email" class="form-control" value="@Model.Email" readonly />
+                        <input type="email" name="Email" class="form-control" value="@Model.Email" readonly />
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Web Sitesi</label>
@@ -91,9 +101,12 @@
                         <input type="text" name="Address" class="form-control" value="@Model.Address" />
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Logo (sadece dosya adı kaydedilir)</label>
-                        <input type="file" name="LogoFile" class="form-control" />
+                        <label class="form-label">Logo Yükle</label>
+                        <input type="file" name="LogoFile" class="form-control" accept="image/*" />
+                        <small class="form-text text-muted">Mevcut logo: @(string.IsNullOrEmpty(Model.Logo) ? "Yok" : "Var")</small>
                     </div>
+                    <!-- Hidden field for current logo path -->
+                    <input type="hidden" name="Logo" value="@Model.Logo" />
 
                     <!-- Parola Güncelleme -->
                     <hr />
@@ -119,51 +132,90 @@
 </div>
 
 @section Scripts {
-    <script>
-        $("#editProfileForm").on("submit", function (e) {
-            e.preventDefault();
-            const formData = new FormData(this);
+        <script>
+            $("#editProfileForm").on("submit", function (e) {
+                e.preventDefault();
+                const formData = new FormData(this);
 
-            const currentPassword = formData.get("CurrentPassword")?.trim();
-            const newPassword = formData.get("NewPassword")?.trim();
-            const confirmPassword = formData.get("ConfirmNewPassword")?.trim();
+                const currentPassword = formData.get("CurrentPassword")?.trim();
+                const newPassword = formData.get("NewPassword")?.trim(); // Back to NewPassword
+                const confirmPassword = formData.get("ConfirmNewPassword")?.trim();
+                const fileInput = document.querySelector('input[name="LogoFile"]'); // Updated field name
+                const hasFile = fileInput.files.length > 0;
 
-            const isPasswordChanged = newPassword || confirmPassword;
+                const isPasswordChanged = newPassword || confirmPassword;
 
-            if ((formData.get("Name") || formData.get("Website") || formData.get("Address")) && !currentPassword) {
-                alert("Mevcut parolanızı girmelisiniz.");
-                return;
-            }
-
-            if (isPasswordChanged) {
-                if (!newPassword || !confirmPassword) {
-                    alert("Yeni parolayı ve tekrarını eksiksiz girin.");
+                // Validation
+                if ((formData.get("Name") || formData.get("Website") || formData.get("Address") || hasFile) && !currentPassword) {
+                    alert("Profil bilgilerini güncellemek için mevcut parolanızı girmelisiniz.");
                     return;
                 }
-                if (newPassword.length < 8) {
-                    alert("Yeni parola en az 8 karakter olmalı.");
-                    return;
-                }
-                if (newPassword !== confirmPassword) {
-                    alert("Yeni parolalar uyuşmuyor.");
-                    return;
-                }
-            }
 
-            $.ajax({
-                url: "/Publisher/UpdateProfile",
-                type: "PUT",
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function () {
-                    alert("Profil güncellendi.");
-                    location.reload();
-                },
-                error: function (xhr) {
-                    alert("Güncelleme başarısız: " + xhr.responseText);
+                if (isPasswordChanged) {
+                    if (!currentPassword) {
+                        alert("Parola değiştirmek için mevcut parolanızı girmelisiniz.");
+                        return;
+                    }
+                    if (!newPassword || !confirmPassword) {
+                        alert("Yeni parolayı ve tekrarını eksiksiz girin.");
+                        return;
+                    }
+                    if (newPassword.length < 8) {
+                        alert("Yeni parola en az 8 karakter olmalı.");
+                        return;
+                    }
+                    if (newPassword !== confirmPassword) {
+                        alert("Yeni parolalar uyuşmuyor.");
+                        return;
+                    }
                 }
+
+                // Remove confirm password from form data as API doesn't expect it
+                formData.delete("ConfirmNewPassword");
+
+                // Log form data for debugging
+                console.log("Form data being sent:");
+                for (let [key, value] of formData.entries()) {
+                    if (key === "LogoFile") {
+                        console.log(key + ": " + (value.name || "No file"));
+                    } else {
+                        console.log(key + ": " + value);
+                    }
+                }
+
+                // Get the publisher ID for the URL
+                const publisherId = formData.get("Id");
+
+                // Remove ID from form data since it goes in the URL
+                formData.delete("Id");
+
+                $.ajax({
+                    url: "/Publisher/UpdateProfile", // Back to original URL since you're not using path parameter
+                    type: "PUT",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (response) {
+                        alert("Profil başarıyla güncellendi.");
+                        $("#editProfileModal").modal('hide');
+                        location.reload();
+                    },
+                    error: function (xhr) {
+                        console.error("Error details:", xhr);
+                        let errorMessage = "Güncelleme başarısız.";
+
+                        if (xhr.responseText) {
+                            try {
+                                const errorData = JSON.parse(xhr.responseText);
+                                errorMessage += " Detay: " + (errorData.message || xhr.responseText);
+                            } catch (e) {
+                                errorMessage += " Detay: " + xhr.responseText;
+                            }
+                        }
+
+                        alert(errorMessage);
+                    }
+                });
             });
-        });
-    </script>
+        </script>
 }

@@ -11,7 +11,13 @@ namespace EduPilot.Web.Models
         public string? Address { get; set; }
         public string? Logo { get; set; }
         public string? Website { get; set; }
-        public List<StudentDTO> Students { get; set; }
-        public List<SupervisorDTO> Supervisors { get; set; }
+        public List<StudentDTO> Students { get; set; } = new List<StudentDTO>();
+        public List<SupervisorDTO> Supervisors { get; set; } = new List<SupervisorDTO>();
+
+        public string? CurrentPassword { get; set; }
+        public string? NewPassword { get; set; }
+
+
+        public IFormFile? LogoFile { get; set; }
     }
 }

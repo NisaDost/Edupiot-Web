@@ -86,25 +86,47 @@ namespace EduPilot.Web.Controllers
                 var current = GetPublisher(publisherId);
                 if (current == null) return BadRequest("Geçerli kullanıcı bulunamadı.");
 
-                var updatedInfo = new
-                {
-                    name = updated.Name,
-                    email = current.Email,
-                    address = updated.Address == null ? String.Empty : updated.Address,
-                    website = updated.Website == null ? String.Empty : updated.Website,
-                    logo = updated.Logo,
-                    currentPassword = updated.CurrentPassword,
-                    password = updated.NewPassword
-                };
-
                 var client = GetApiClient();
-                var response = await client.PutAsJsonAsync($"publisher/{publisherId}", updatedInfo);
 
-                return response.IsSuccessStatusCode ? Ok() : BadRequest("Profil güncellenemedi.");
+                // Create multipart form data content
+                using var formContent = new MultipartFormDataContent();
+
+                // Add text fields
+                if (!string.IsNullOrEmpty(updated.Name))
+                    formContent.Add(new StringContent(updated.Name), "Name");
+
+                formContent.Add(new StringContent(current.Email), "Email");
+                formContent.Add(new StringContent(updated.Address ?? string.Empty), "Address");
+                formContent.Add(new StringContent(updated.Website ?? string.Empty), "Website");
+                formContent.Add(new StringContent(updated.Logo ?? string.Empty), "Logo");
+                formContent.Add(new StringContent(updated.CurrentPassword ?? string.Empty), "CurrentPassword");
+
+                if (!string.IsNullOrEmpty(updated.NewPassword))
+                    formContent.Add(new StringContent(updated.NewPassword), "Password");
+
+                // Handle file upload
+                if (updated.LogoFile != null && updated.LogoFile.Length > 0)
+                {
+                    var fileContent = new StreamContent(updated.LogoFile.OpenReadStream());
+                    fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(updated.LogoFile.ContentType);
+                    formContent.Add(fileContent, "File", updated.LogoFile.FileName);
+                }
+
+                var response = await client.PutAsync($"publisher/{publisherId}", formContent);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return Ok();
+                }
+                else
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    return BadRequest($"Profil güncellenemedi: {errorContent}");
+                }
             }
-            catch
+            catch (Exception ex)
             {
-                return StatusCode(500, "Profil güncellenirken hata oluştu.");
+                return StatusCode(500, $"Profil güncellenirken hata oluştu: {ex.Message}");
             }
         }
 

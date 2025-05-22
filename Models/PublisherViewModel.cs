@@ -15,5 +15,7 @@
 
         public int QuizCount { get; set; }
         public int QuestionCount { get; set; }
+
+        public IFormFile? LogoFile { get; set; }
     }
 }
