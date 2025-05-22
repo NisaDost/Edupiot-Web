@@ -1,33 +1,36 @@
-﻿<div style="background-color: var(--primary-accent); height: auto;">
-    <div class="sidebar accordion d-flex flex-column justify-content-between" id="sidebarAccordion">
+﻿<!-- Hamburger Button (Mobile Only) -->
+<nav class="navbar navbar-expand-lg navbar-dark d-lg-none bg-primary px-3 justify-content-center">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mobileSidebar" aria-controls="mobileSidebar" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+</nav>
 
-        <!-- Üst Alan -->
+<!-- Mobile Sidebar -->
+<div class="collapse d-lg-none sidebar" style="background-color:var(--primary-accent)" id="mobileSidebar">
+    <div class="accordion d-flex flex-column justify-content-between" id="sidebarAccordionMobile">
         <div>
             <div class="text-center my-4">
                 <p class="text-light fs-2 fw-bold mb-0">Yayınevi</p>
             </div>
 
-            <!-- Profil -->
             <div class="accordion-item bg-transparent border-0">
-                <h2 class="accordion-header" id="profileHeading">
+                <h2 class="accordion-header" id="profileHeadingMobile">
                     <a href="@Url.Action("Profile", "Publisher")" class="accordion-button collapsed bg-transparent text-light fw-semibold text-decoration-none">
                         Profil
                     </a>
                 </h2>
             </div>
-            
-            <!-- Yeni Soru Ekle -->
+
             <div class="accordion-item bg-transparent border-0">
-                <h2 class="accordion-header" id="profileHeading">
+                <h2 class="accordion-header" id="createQuizHeadingMobile">
                     <a href="@Url.Action("CreateQuiz", "Publisher")" class="accordion-button collapsed bg-transparent text-light fw-semibold text-decoration-none">
                         Yeni Quiz Oluştur
                     </a>
                 </h2>
             </div>
 
-            <!-- Sorularım -->
             <div class="accordion-item bg-transparent border-0">
-                <h2 class="accordion-header" id="classesHeading">
+                <h2 class="accordion-header" id="myQuizzesHeadingMobile">
                     <a href="@Url.Action("ListQuizzes", "Publisher")" class="accordion-button collapsed bg-transparent text-light fw-semibold text-decoration-none">
                         Quizlerim
                     </a>
@@ -35,12 +38,53 @@
             </div>
         </div>
 
-        <!-- Alt Alan -->
         <div class="mt-4">
+            <div class="accordion-item card-secondary border-0 p-0">
+                <h2 class="accordion-header" id="logoutHeadingMobile">
+                    <a href="@Url.Action("Logout", "Auth")" class="accordion-button collapsed bg-transparent text-light fw-semibold text-decoration-none">
+                        Çıkış Yap
+                    </a>
+                </h2>
+            </div>
+        </div>
+    </div>
+</div>
 
+<!-- Desktop Sidebar -->
+<div class="d-none d-lg-block">
+    <div class="sidebar accordion d-flex flex-column justify-content-between" id="sidebarAccordion" style="background-color: var(--primary-accent);">
+        <div>
+            <div class="text-center my-4">
+                <p class="text-light fs-2 fw-bold mb-0">Yayınevi</p>
+            </div>
 
-            <!-- Çıkış Yap -->
-            <div class="accordion-item card-secondary p-0 border-0">
+            <div class="accordion-item bg-transparent border-0">
+                <h2 class="accordion-header" id="profileHeading">
+                    <a href="@Url.Action("Profile", "Publisher")" class="accordion-button collapsed bg-transparent text-light fw-semibold text-decoration-none">
+                        Profil
+                    </a>
+                </h2>
+            </div>
+
+            <div class="accordion-item bg-transparent border-0">
+                <h2 class="accordion-header" id="createQuizHeading">
+                    <a href="@Url.Action("CreateQuiz", "Publisher")" class="accordion-button collapsed bg-transparent text-light fw-semibold text-decoration-none">
+                        Yeni Quiz Oluştur
+                    </a>
+                </h2>
+            </div>
+
+            <div class="accordion-item bg-transparent border-0">
+                <h2 class="accordion-header" id="myQuizzesHeading">
+                    <a href="@Url.Action("ListQuizzes", "Publisher")" class="accordion-button collapsed bg-transparent text-light fw-semibold text-decoration-none">
+                        Quizlerim
+                    </a>
+                </h2>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <div class="accordion-item card-secondary border-0 p-0">
                 <h2 class="accordion-header" id="logoutHeading">
                     <a href="@Url.Action("Logout", "Auth")" class="accordion-button collapsed bg-transparent text-light fw-semibold text-decoration-none">
                         Çıkış Yap
@@ -48,6 +92,5 @@
                 </h2>
             </div>
         </div>
-
     </div>
 </div>
