@@ -217,7 +217,8 @@ input {
 /* Main Content */
 .content {
     width: 100%;
-    margin: 1rem;
+    margin-top: 1rem;
+    margin-left: 1rem;
 }
 
 /* Hero Section */
@@ -344,10 +345,6 @@ img {
         margin-top: 0 !important;
     }
 
-    .content {
-        margin: 0.5rem;
-    }
-
     .feature-card {
         width: 220px;
         height: 250px;
@@ -366,11 +363,16 @@ img {
         margin: 60px auto;
     }
 
+    .content {
+        margin-left: 0;
+        margin-top: 1rem;
+    }
+
     .feature-cards-container {
         display: flex;
         flex-wrap: wrap;
         justify-content: center;
-        gap: 80px 20px;
+        gap: 40px 20px;
     }
 
     .business-card {
@@ -479,7 +481,7 @@ img {
             }
 
     .business-image {
-        width: 90%;
+        max-width: 90%;
     }
 
     .join-section {
@@ -489,4 +491,129 @@ img {
         .join-section h2 {
             font-size: 1.75rem;
         }
+}
+.student-card {
+    transition: all 0.3s ease;
+    border: 1px solid #e0e0e0 !important;
+}
+
+    .student-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+    }
+
+.student-info small {
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.student-info .badge {
+    font-size: 0.7rem;
+}
+
+/* Responsive Tablo Ýyileþtirmeleri */
+@media (max-width: 767.98px) {
+    .table-responsive {
+        font-size: 0.875rem;
+    }
+
+    .student-card {
+        margin-bottom: 1rem;
+    }
+}
+
+/* Alternatif: Küçük ekranlarda yatay scroll ile tablo */
+.table-scroll {
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+    .table-scroll::-webkit-scrollbar {
+        height: 8px;
+    }
+
+    .table-scroll::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 4px;
+    }
+
+    .table-scroll::-webkit-scrollbar-thumb {
+        background: var(--primary-color);
+        border-radius: 4px;
+    }
+
+        .table-scroll::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-accent);
+        }
+
+.desktop-table {
+    display: block;
+}
+
+.mobile-cards {
+    display: none;
+}
+
+/* Mobil için kart görünümü */
+@media (max-width: 768px) {
+    .desktop-table {
+        display: none;
+    }
+
+    .mobile-cards {
+        display: block;
+    }
+
+    .attendance-card {
+        background: white;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        margin-bottom: 15px;
+        padding: 15px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+        .attendance-card .card-header {
+            background-color: var(--primary-accent);
+            color: white;
+            margin: -15px -15px 15px -15px;
+            padding: 12px 15px;
+            border-radius: 7px 7px 0 0;
+            font-weight: bold;
+        }
+
+        .attendance-card .card-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+            .attendance-card .card-row:last-child {
+                border-bottom: none;
+            }
+
+        .attendance-card .card-label {
+            font-weight: 600;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .attendance-card .card-value {
+            font-size: 14px;
+            text-align: right;
+            max-width: 60%;
+            word-wrap: break-word;
+        }
+
+    .no-data-card {
+        background: white;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        padding: 30px;
+        text-align: center;
+        color: #666;
+    }
 }

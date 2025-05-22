@@ -6,18 +6,19 @@
     var grades = Model.Select(s => s.Grade).Distinct().OrderBy(g => g).ToList();
 }
 
-<div class="d-flex flex-row">
+<div class="d-flex flex-column flex-md-row">
     <partial name="_InstitutionSidebar" />
-    <div class="content">
+
+    <div class="content flex-fill p-3">
         <div class="bg-card">
 
             <h1 class="fw-bold">Sisteme Kayıtlı Öğrenci Listesi</h1>
 
             <!-- Filtreleme ve Ekleme Satırı -->
-            <div class="d-flex flex-row align-items-center justify-content-between mb-3">
-                <div class="d-flex align-items-center">
-                    <label for="gradeFilter" class="form-label me-2">Sınıf:</label>
-                    <select id="gradeFilter" class="form-select" style="width: 7rem">
+            <div class="row mb-3 gy-2 align-items-center">
+                <div class="col-12 col-md-4 d-flex flex-column flex-md-row align-items-start align-items-md-center">
+                    <label for="gradeFilter" class="form-label me-md-2 mb-1 mb-md-0">Sınıf:</label>
+                    <select id="gradeFilter" class="form-select w-50 w-md-auto">
                         <option value="">Tümü</option>
                         @foreach (var grade in grades)
                         {
@@ -25,15 +26,19 @@
                         }
                     </select>
                 </div>
-                <div class="d-flex flex-row align-items-center justify-content-end">
-                    <label for="studentmail" class="fs-5 pe-3 mb-0">Öğrenci E-Posta:</label>
-                    <input type="email" id="studentmail" name="studentmail" placeholder="ogrenci@mail.com" class="form-control me-2" style="width: 15rem" />
-                    <button class="btn btn-secondary" style="width: 7rem">Ekle</button>
+
+                <div class="col-12 col-md-8 d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-md-end">
+                    <label for="studentmail" class="form-label me-md-2 mb-1 mb-md-0">Öğrenci E-Posta:</label>
+                    <input type="email" id="studentmail" name="studentmail"
+                           placeholder="ogrenci@mail.com"
+                           class="form-control me-md-2 mb-2 mb-md-0 w-100 w-md-auto"
+                           style="max-width: 15rem;" />
+                    <button class="btn btn-secondary w-100 w-md-auto" style="max-width: 7rem">Ekle</button>
                 </div>
             </div>
 
-            <!-- Tablo -->
-            <div class="table-responsive">
+            <!-- Desktop Tablo Görünümü -->
+            <div class="table-responsive d-none d-md-block">
                 <table class="table table-bordered table-striped" id="studentTable">
                     <thead class="text-light" style="background-color: var(--primary-accent)">
                         <tr>
@@ -71,9 +76,7 @@
                                         @if (student.MugShot != null && student.MugShot.Any())
                                         {
                                             <span>
-                                                @* Put student image in a small circle *@
-                                                @student.MugShot
-
+                                                <img src="@student.MugShot" class="rounded-circle" alt="Foto" width="40" height="40" />
                                             </span>
                                             <a class="material-symbols-outlined text-decoration-none text-dark"
                                                href="@Url.Action("TakePhoto", "Institution", new { sId = student.StudentId, sName = student.FirstName + "_" + student.LastName })">
@@ -103,10 +106,98 @@
                 </table>
             </div>
 
+            <!-- Mobile Kart Görünümü -->
+            <div class="d-md-none" id="studentCards">
+                @if (Model != null && Model.Any())
+                {
+                    foreach (var student in Model)
+                    {
+                        <div class="student-card mb-3 p-3 border rounded shadow-sm bg-white" data-grade="@student.Grade">
+                            <div class="row align-items-center">
+                                <!-- Fotoğraf ve Temel Bilgiler -->
+                                <div class="col-4 text-center">
+                                    @if (student.MugShot != null && student.MugShot.Any())
+                                    {
+                                        <img src="@student.MugShot" class="rounded-circle mb-2" alt="Foto" width="60" height="60" />
+                                        <div>
+                                            <a class="material-symbols-outlined text-decoration-none text-dark fs-5"
+                                               href="@Url.Action("TakePhoto", "Institution", new { sId = student.StudentId, sName = student.FirstName + "_" + student.LastName })"
+                                               title="Fotoğrafı Yenile">
+                                                reset_image
+                                            </a>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="bg-light rounded-circle d-flex align-items-center justify-content-center mb-2"
+                                             style="width: 60px; height: 60px; margin: 0 auto;">
+                                            <span class="material-symbols-outlined text-muted">person</span>
+                                        </div>
+                                        <div>
+                                            <a class="material-symbols-outlined text-decoration-none text-primary fs-5"
+                                               href="@Url.Action("TakePhoto", "Institution", new { sId = student.StudentId, sName = student.FirstName + "_" + student.LastName })"
+                                               title="Fotoğraf Çek">
+                                                add_a_photo
+                                            </a>
+                                        </div>
+                                    }
+                                </div>
+                                <!-- Öğrenci Bilgileri -->
+                                <div class="col-8">
+                                    <div class="student-info">
+                                        <h6 class="mb-1 fw-bold text-primary">
+                                            @student.FirstName
+                                            @if (!string.IsNullOrEmpty(student.MiddleName))
+                                            {
+                                                @student.MiddleName
+                                            }
+                                            @student.LastName
+                                        </h6>
+                                        <div class="mb-1">
+                                            <small class="text-muted">Sıra No:</small>
+                                            <span class="fw-semibold">#@index</span>
+                                        </div>
+                                        <div class="mb-1">
+                                            <small class="text-muted">Sınıf:</small>
+                                            <span class="badge bg-primary">@student.Grade</span>
+                                        </div>
+                                        <div class="mb-1">
+                                            <small class="text-muted">Danışman:</small>
+                                            <div class="small">
+                                                @if (student.SupervisorName != null && student.SupervisorName.Any())
+                                                {
+                                                    @foreach (var supervisor in student.SupervisorName)
+                                                    {
+                                                        <span class="badge bg-secondary me-1">@supervisor</span>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted fst-italic">Kayıtlı danışman yok</span>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        index++;
+                    }
+                }
+                else
+                {
+                    <div class="text-center py-5">
+                        <div class="mb-3">
+                            <span class="material-symbols-outlined text-muted" style="font-size: 4rem;">school</span>
+                        </div>
+                        <h5 class="text-muted">Kayıtlı öğrenci bulunmamaktadır.</h5>
+                    </div>
+                }
+            </div>
+
         </div>
     </div>
 </div>
-
 @section Scripts {
     <script>
         // Ekleme

@@ -15,39 +15,38 @@
 }
 
 <div class="m-3">
-    <div class="d-flex flex-row" style="background-color: var(--primary-accent); border-radius: 20px">
-        <div class="card-primary-accent d-flex flex-column align-items-center justify-content-around w-50">
+    <div class="d-flex flex-column flex-md-row" style="background-color: var(--primary-accent); border-radius: 20px">
+        <div class="card-primary-accent d-flex flex-column align-items-center justify-content-around w-100 w-md-50 p-4">
             <div class="title-large text-light p-3">Yayınevi Kayıt</div>
 
             @* Uyarılar için boş div *@
 
-
-            <form asp-action="PublisherRegisterSubmit" asp-controller="Auth" method="post" class="w-75">
+            <form asp-action="PublisherRegisterSubmit" asp-controller="Auth" method="post" class="w-100 px-3">
                 @Html.AntiForgeryToken()
 
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <div id="client-validation-errors"></div>
 
-                <div class="d-flex flex-column mb-2">
+                <div class="mb-2">
                     <label asp-for="Name" class="text-light title-regular">Yayınevi Adı</label>
                     <input asp-for="Name" class="form-control" placeholder="EduPilot Yayınları" />
                     <span asp-validation-for="Name" class="text-danger"></span>
                 </div>
 
-                <div class="d-flex flex-column mb-2">
+                <div class="mb-2">
                     <label asp-for="Email" class="text-light title-regular">Yayınevi E-Posta</label>
                     <input asp-for="Email" type="email" class="form-control" placeholder="yayinevi@ornek.com" />
                     <span asp-validation-for="Email" class="text-danger"></span>
                 </div>
 
-                <div class="d-flex flex-column mb-2">
+                <div class="mb-2">
                     <label asp-for="Password" class="text-light title-regular">Parola</label>
                     <input asp-for="Password" type="password" class="form-control" placeholder="********" />
                     <span asp-validation-for="Password" class="text-danger"></span>
                 </div>
 
-                <div class="d-flex flex-column mb-2">
-                    <label for="PasswordConfirm"  class="text-light title-regular">Parola (Tekrar)</label>
+                <div class="mb-2">
+                    <label for="PasswordConfirm" class="text-light title-regular">Parola (Tekrar)</label>
                     <input name="PasswordConfirm" id="PasswordConfirm" type="password" class="form-control" placeholder="********" />
                 </div>
 
@@ -65,8 +64,8 @@
             </form>
         </div>
 
-        <div class="bg-card d-flex justify-content-center align-items-center w-50 p-5">
-            <img src="~/Images/author1.png" alt="Kayıt Görseli" style="max-height: 100%; max-width: 50%; object-fit: contain;" />
+        <div class="bg-card d-flex justify-content-center align-items-center w-100 w-md-50 p-4">
+            <img src="~/Images/author1.png" alt="Kayıt Görseli" class="img-fluid" style="max-height: 400px; object-fit: contain;" />
         </div>
     </div>
 </div>

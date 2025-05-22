@@ -4,15 +4,14 @@
     ViewData["Title"] = "Yoklama ve Duygu Durumu Listesi";
 }
 
-<div class="d-flex flex-row">
-
+<div class="d-flex flex-column flex-md-row">
     <partial name="_InstitutionSidebar" />
-
     <div class="content">
         <div class="bg-card">
-            <h1 class="fw-bold">Yoklama ve Duygu Durumu Listesi </h1>
+            <h1 class="fw-bold">Yoklama ve Duygu Durumu Listesi</h1>
 
-            <div class="table-responsive mt-5">
+            <!-- Masaüstü Tablo Görünümü -->
+            <div class="desktop-table table-responsive mt-5">
                 <table class="table table-bordered table-striped">
                     <thead class="text-light" style="background-color: var(--primary-accent)">
                         <tr>
@@ -46,8 +45,43 @@
                     </tbody>
                 </table>
             </div>
+
+            <!-- Mobil Kart Görünümü -->
+            <div class="mobile-cards mt-4">
+                @if (Model != null && Model.Any())
+                {
+                    @foreach (var attendance in Model)
+                    {
+                        <div class="attendance-card">
+                            <div class="card-header">
+                                @attendance.StudentName
+                            </div>
+                            <div class="card-row">
+                                <span class="card-label">Sınıfı:</span>
+                                <span class="card-value">@attendance.StudentGrade</span>
+                            </div>
+                            <div class="card-row">
+                                <span class="card-label">Ders Adı:</span>
+                                <span class="card-value">@attendance.LessonName</span>
+                            </div>
+                            <div class="card-row">
+                                <span class="card-label">Tarih:</span>
+                                <span class="card-value">@attendance.Date</span>
+                            </div>
+                            <div class="card-row">
+                                <span class="card-label">Duygu:</span>
+                                <span class="card-value">@attendance.Emotion</span>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="no-data-card">
+                        Yoklama kaydı bulunmamaktadır.
+                    </div>
+                }
+            </div>
         </div>
-
     </div>
-
 </div>

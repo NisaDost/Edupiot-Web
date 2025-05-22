@@ -2,16 +2,19 @@
 @{
     ViewData["Title"] = "Öğretmen Listesi";
 }
-<div class="d-flex flex-row">
+<div class="d-flex flex-column flex-md-row">
     <partial name="_InstitutionSidebar" />
     <div class="content">
         <div class="bg-card">
             <h1 class="fw-bold">Sisteme Kayıtlı Öğretmen Listesi</h1>
             <!-- Email giriş ve ekle butonu -->
-            <div class="d-flex flex-row align-items-center justify-content-end mb-3">
-                <label for="emailInput" class="fs-5 pe-3 mb-0">Öğretmen E-Posta:</label>
-                <input type="email" id="emailInput" class="form-control me-2" placeholder="Öğretmen E-posta" style="width: 15rem" required />
-                <button class="btn btn-secondary" style="width: 7rem" id="addEmailBtn">Ekle</button>
+
+            <div class="col-12 col-md-8 d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-md-end">
+                <label for="emailInput" class="form-label me-md-2 mb-1 mb-md-0">Öğretmen E-Posta:</label>
+                <input type="email" id="emailInput" placeholder="ogretmen@mail.com"
+                       class="form-control me-md-2 mb-2 mb-md-0 w-100 w-md-auto"
+                       style="max-width: 15rem;" required/>
+                <button class="btn btn-secondary w-100 w-md-auto" style="max-width: 7rem" id="addEmailBtn">Ekle</button>
             </div>
             <!-- Öğretmen tablosu -->
             <div class="table-responsive mt-4">

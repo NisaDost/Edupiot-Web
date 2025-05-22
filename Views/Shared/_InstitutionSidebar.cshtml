@@ -1,9 +1,77 @@
-﻿<div style="background-color: var(--primary-accent); height: auto;">
-    <div class="sidebar accordion d-flex flex-column justify-content-between" id="sidebarAccordion">
+﻿<!-- Hamburger Button -->
+<nav class="navbar navbar-expand-lg navbar-dark d-lg-none bg-primary px-3 justify-content-center">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mobileSidebar" aria-controls="mobileSidebar" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+</nav>
 
-        <!-- Üst Alan -->
+<!-- Mobile Sidebar -->
+<div class="collapse d-lg-none sidebar" style="background-color:var(--primary-accent)" id="mobileSidebar">
+    <div class="accordion d-flex flex-column justify-content-between" id="sidebarAccordionMobile">
         <div>
-            <!-- Profil -->
+            <div class="accordion-item bg-transparent border-0 mt-3">
+                <h2 class="accordion-header" id="profileHeadingMobile">
+                    <a href="@Url.Action("CurrentPlan", "Institution")" class="accordion-button collapsed bg-transparent text-light title-regular fw-semibold text-decoration-none">
+                        Mevcut Plan (Demo)
+                    </a>
+                </h2>
+            </div>
+
+            <div class="accordion-item bg-transparent border-0">
+                <h2 class="accordion-header" id="profileHeadingMobile">
+                    <a href="@Url.Action("Profile", "Institution")" class="accordion-button collapsed bg-transparent text-light fw-semibold text-decoration-none">
+                        Profil
+                    </a>
+                </h2>
+            </div>
+
+            <div class="accordion-item bg-transparent border-0">
+                <h2 class="accordion-header" id="studentsHeadingMobile">
+                    <a href="@Url.Action("StudentList", "Institution")" class="accordion-button collapsed bg-transparent text-light fw-semibold text-decoration-none">
+                        Öğrenci Listesi
+                    </a>
+                </h2>
+            </div>
+
+            <div class="accordion-item bg-transparent border-0">
+                <h2 class="accordion-header" id="teachersHeadingMobile">
+                    <a href="@Url.Action("SupervisorList", "Institution")" class="accordion-button collapsed bg-transparent text-light fw-semibold text-decoration-none">
+                        Öğretmen Listesi
+                    </a>
+                </h2>
+            </div>
+
+            <div class="accordion-item bg-transparent border-0">
+                <h2 class="accordion-header" id="attendanceHeadingMobile">
+                    <button class="accordion-button collapsed bg-transparent text-light fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAttendanceMobile" aria-expanded="false" aria-controls="collapseAttendanceMobile">
+                        Yoklama ve Duygu Analizi
+                    </button>
+                </h2>
+                <div id="collapseAttendanceMobile" class="accordion-collapse collapse accordion-primary" data-bs-parent="#sidebarAccordionMobile">
+                    <div class="accordion-body d-flex flex-column ps-4">
+                        <a href="@Url.Action("TakeAttendance", "Institution")" class="nav-link text-light">Yoklama Al</a>
+                        <a href="@Url.Action("AttendanceAndEmotionList", "Institution")" class="nav-link text-light">Yoklama ve Duygu Durumu Listesi</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <div class="accordion-item card-secondary border-0 p-0 border-0">
+                <h2 class="accordion-header" id="logoutHeadingMobile">
+                    <a href="@Url.Action("Index", "Home")" class="accordion-button collapsed bg-transparent text-light fw-semibold text-decoration-none">
+                        Çıkış Yap
+                    </a>
+                </h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Desktop Sidebar -->
+<div class="d-none d-lg-block">
+    <div class="sidebar accordion d-flex flex-column justify-content-between" id="sidebarAccordion">
+        <div>
             <div class="accordion-item bg-transparent border-0 mt-3">
                 <h2 class="accordion-header" id="profileHeading">
                     <a href="@Url.Action("CurrentPlan", "Institution")" class="accordion-button collapsed bg-transparent text-light title-regular fw-semibold text-decoration-none">
@@ -12,7 +80,6 @@
                 </h2>
             </div>
 
-            <!-- Profil -->
             <div class="accordion-item bg-transparent border-0">
                 <h2 class="accordion-header" id="profileHeading">
                     <a href="@Url.Action("Profile", "Institution")" class="accordion-button collapsed bg-transparent text-light fw-semibold text-decoration-none">
@@ -21,16 +88,14 @@
                 </h2>
             </div>
 
-            <!-- Öğrenciler -->
             <div class="accordion-item bg-transparent border-0">
-                <h2 class="accordion-header" id="teachersHeading">
+                <h2 class="accordion-header" id="studentsHeading">
                     <a href="@Url.Action("StudentList", "Institution")" class="accordion-button collapsed bg-transparent text-light fw-semibold text-decoration-none">
                         Öğrenci Listesi
                     </a>
                 </h2>
             </div>
 
-            <!-- Öğretmen Listesi -->
             <div class="accordion-item bg-transparent border-0">
                 <h2 class="accordion-header" id="teachersHeading">
                     <a href="@Url.Action("SupervisorList", "Institution")" class="accordion-button collapsed bg-transparent text-light fw-semibold text-decoration-none">
@@ -39,7 +104,6 @@
                 </h2>
             </div>
 
-            <!-- Yoklama ve Duygu Analizi -->
             <div class="accordion-item bg-transparent border-0">
                 <h2 class="accordion-header" id="attendanceHeading">
                     <button class="accordion-button collapsed bg-transparent text-light fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAttendance" aria-expanded="false" aria-controls="collapseAttendance">
@@ -53,13 +117,9 @@
                     </div>
                 </div>
             </div>
-
-
         </div>
 
-        <!-- Alt Alan -->
         <div class="mt-4">
-           <!-- Çıkış Yap -->
             <div class="accordion-item card-secondary border-0 p-0 border-0">
                 <h2 class="accordion-header" id="logoutHeading">
                     <a href="@Url.Action("Index", "Home")" class="accordion-button collapsed bg-transparent text-light fw-semibold text-decoration-none">
@@ -68,6 +128,5 @@
                 </h2>
             </div>
         </div>
-
     </div>
 </div>

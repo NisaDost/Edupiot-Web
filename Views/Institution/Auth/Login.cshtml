@@ -15,29 +15,30 @@
 }
 
 <div class="m-3">
-    <div class="d-flex flex-row" style="background-color: var(--secondary-color); border-radius: 20px">
+    <div class="d-flex flex-column flex-md-row" style="background-color: var(--secondary-color); border-radius: 20px">
 
-        <div class="bg-card d-flex justify-content-center w-50 p-5">
+        <div class="bg-card d-flex justify-content-center align-items-center w-100 w-md-50 p-4">
             <img src="~/Images/teacher2.png"
                  alt="kurumsal"
-                 style="max-height: 100%; max-width: 50%; object-fit: contain;" />
+                 class="img-fluid"
+                 style="max-height: 400px; object-fit: contain;" />
         </div>
 
-        <div class="card-secondary d-flex flex-column align-items-center justify-content-around w-50" style="min-height: auto">
+        <div class="card-secondary d-flex flex-column align-items-center justify-content-around w-100 w-md-50 p-4">
             <div class="title-large text-light p-3">Kurumsal Giriş</div>
 
-            <form asp-action="InstitutionLoginSubmit" asp-controller="Auth" method="post" class="w-75">
+            <form asp-action="InstitutionLoginSubmit" asp-controller="Auth" method="post" class="w-100 px-3">
                 @Html.AntiForgeryToken()
 
                 <div id="client-validation-errors"></div>
 
-                <div class="d-flex flex-column mb-2">
+                <div class="mb-2">
                     <label asp-for="Email" class="text-light title-regular">Kurumsal E-Posta</label>
                     <input asp-for="Email" type="email" class="form-control" placeholder="yayinevi@ornek.edu.tr" />
                     <span asp-validation-for="Email" class="text-danger"></span>
                 </div>
 
-                <div class="d-flex flex-column mb-2">
+                <div class="mb-2">
                     <label asp-for="Password" class="text-light title-regular">Parola</label>
                     <input asp-for="Password" type="password" class="form-control" placeholder="********" />
                     <span asp-validation-for="Password" class="text-danger"></span>
@@ -47,7 +48,6 @@
             </form>
 
         </div>
-
     </div>
 </div>
 
