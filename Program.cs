@@ -9,6 +9,7 @@ var config = builder.Configuration;
 var apiUsername = config.GetValue<string>("Authentication:Basic:Username");
 var apiPassword = config.GetValue<string>("Authentication:Basic:Password");
 var apiUrl = config.GetValue<string>("APIURL");
+var pythonApiUrl = config.GetValue<string>("PythonAPIURL");
 
 builder.Services.AddControllersWithViews();
 
@@ -21,7 +22,7 @@ builder.Services.AddHttpClient("EduPilotApi", client =>
 
 builder.Services.AddHttpClient("PythonApi", client =>
 {
-    client.BaseAddress = new Uri("http://127.0.0.1:5000/");
+    client.BaseAddress = new Uri(pythonApiUrl);
 });
 
 builder.Services.AddSession();
