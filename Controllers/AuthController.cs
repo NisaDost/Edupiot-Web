@@ -1,7 +1,6 @@
 ﻿using EduPilot.Web.Filters;
 using EduPilot.Web.DTOs;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
 
 namespace EduPilot.Web.Controllers
 {
