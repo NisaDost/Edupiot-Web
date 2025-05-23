@@ -255,40 +255,59 @@ namespace EduPilot.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SaveCapturedPhotoAsync([FromBody] ImageUploadModel model)
+        public async Task<IActionResult> SaveCapturedPhoto([FromForm] UpdateMugshotDTO mugshotDto,
+    [FromQuery] string studentId,
+    [FromQuery] string studentName,
+    [FromQuery] string studentLastName)
         {
             try
             {
-                if (string.IsNullOrEmpty(model.Image) || string.IsNullOrEmpty(model.FileName) || string.IsNullOrEmpty(model.StudentId))
-                    return BadRequest(new { message = "Eksik veri: image, filename veya studentId yok." });
+                var institutionId = GetLoggedinInstitutionId();
+                if (mugshotDto.Mugshot == null)
+                    return BadRequest(new { message = "Eksik veri." });
 
-                var fileName = model.FileName;
-                var studentId = model.StudentId;
-                var imageBytes = Convert.FromBase64String(model.Image);
+                // Create filename from student name and last name
+                var fileName = $"{studentName}.png";
 
+                // Save the file
                 var photoPath = Path.Combine(savePath, fileName);
-                await System.IO.File.WriteAllBytesAsync(photoPath, imageBytes);
+                using (var stream = new FileStream(photoPath, FileMode.Create))
+                {
+                    await mugshotDto.Mugshot.CopyToAsync(stream);
+                }
 
+                // Keep your existing Python API call unchanged
                 var pythonClient = GetPythonApiClient();
                 var encodeResponse = await pythonClient.GetAsync("encode_faces");
-
                 if (!encodeResponse.IsSuccessStatusCode)
                 {
                     var error = await encodeResponse.Content.ReadAsStringAsync();
                     return StatusCode(500, new { message = "Face encode hatası", error });
                 }
 
-                var updatedMugshot = new
-                {
-                    Mugshot = model.FileName
-                };
+                // Prepare multipart form data for the API call
+                var apiFormData = new MultipartFormDataContent();
 
+                // Add InstitutionId - make sure it's not null
+                if (!string.IsNullOrEmpty(institutionId))
+                {
+                    apiFormData.Add(new StringContent(institutionId), "InstitutionId");
+                }
+
+                // Read the saved file and add to form data
+                var fileBytes = await System.IO.File.ReadAllBytesAsync(photoPath);
+                var fileContent = new ByteArrayContent(fileBytes);
+                fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("image/png");
+                apiFormData.Add(fileContent, "Mugshot", fileName);
+
+                // Call the API with multipart/form-data
                 var appClient = GetApiClient();
-                var updateResponse = await appClient.PutAsJsonAsync($"students/{studentId}/mugshot", updatedMugshot);
+                var updateResponse = await appClient.PutAsync($"students/{studentId}/mugshot", apiFormData);
 
                 if (!updateResponse.IsSuccessStatusCode)
                 {
-                    return StatusCode(500, new { message = "Profil resmi güncellenemedi." });
+                    var responseContent = await updateResponse.Content.ReadAsStringAsync();
+                    return StatusCode(500, new { message = "Profil resmi güncellenemedi.", error = responseContent });
                 }
 
                 return Ok(new { message = $"Fotoğraf kaydedildi: {fileName}", filePath = photoPath });

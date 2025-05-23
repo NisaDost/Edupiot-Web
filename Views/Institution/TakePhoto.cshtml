@@ -2,6 +2,7 @@
     ViewData["Title"] = "Fotoğraf ile Yüz Tanıma Kayıt";
     var studentId = Context.Request.Query["sId"];
     var studentName = Context.Request.Query["sName"];
+    var studentLastName = Context.Request.Query["sLastName"];
 }
 
 <div class="d-flex flex-column flex-md-row">
@@ -52,79 +53,91 @@
 </div>
 
 @section Scripts {
-    <script>
-        const studentId = "@studentId";
-        const studentName = "@studentName";
+        <script>
+            const studentId = "@studentId";
+            const studentName = "@studentName";
+            const studentLastName = "@studentLastName";
 
-        const video = document.getElementById('video');
-        const canvas = document.getElementById('canvas');
-        const photo = document.getElementById('photo');
-        const startBtn = document.getElementById('startBtn');
-        const captureBtn = document.getElementById('captureBtn');
-        const uploadBtn = document.getElementById('uploadBtn');
-        const stopBtn = document.getElementById('stopBtn');
-        const instructions = document.getElementById('instructions');
+            const video = document.getElementById('video');
+            const canvas = document.getElementById('canvas');
+            const photo = document.getElementById('photo');
+            const startBtn = document.getElementById('startBtn');
+            const captureBtn = document.getElementById('captureBtn');
+            const uploadBtn = document.getElementById('uploadBtn');
+            const stopBtn = document.getElementById('stopBtn');
+            const instructions = document.getElementById('instructions');
 
-        let stream;
+            let stream;
 
-        startBtn.addEventListener('click', async () => {
-            try {
-                stream = await navigator.mediaDevices.getUserMedia({ video: true });
-                video.srcObject = stream;
-                video.style.display = "block";
-                captureBtn.style.display = "inline-block";
-                stopBtn.style.display = "inline-block";
-                instructions.style.display = "none";
-            } catch (err) {
-                alert("Kamera erişimi reddedildi.");
-                console.error(err);
-            }
-        });
-
-        stopBtn.addEventListener('click', () => {
-            if (stream) {
-                stream.getTracks().forEach(track => track.stop());
-                stream = null;
-            }
-            resetAll();
-        });
-
-        captureBtn.addEventListener('click', () => {
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-            const imageData = canvas.toDataURL('image/png');
-            photo.src = imageData;
-            photo.style.display = "block";
-            uploadBtn.style.display = "inline-block";
-        });
-
-        uploadBtn.addEventListener('click', async () => {
-            const imageBase64 = photo.src.split(',')[1];
-            const filename = `${studentName}.png`;
-
-            const res = await fetch('/Institution/SaveCapturedPhoto', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ Image: imageBase64, Filename: filename, StudentId: studentId })
+            startBtn.addEventListener('click', async () => {
+                try {
+                    stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                    video.srcObject = stream;
+                    video.style.display = "block";
+                    captureBtn.style.display = "inline-block";
+                    stopBtn.style.display = "inline-block";
+                    instructions.style.display = "none";
+                } catch (err) {
+                    alert("Kamera erişimi reddedildi.");
+                    console.error(err);
+                }
             });
 
-            const result = await res.json();
-            alert(result.message || "Fotoğraf kaydedildi.");
-            resetAll();
-        });
+            stopBtn.addEventListener('click', () => {
+                if (stream) {
+                    stream.getTracks().forEach(track => track.stop());
+                    stream = null;
+                }
+                resetAll();
+            });
 
-        function resetAll() {
-            if (stream) {
-                stream.getTracks().forEach(track => track.stop());
-                stream = null;
+            captureBtn.addEventListener('click', () => {
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                const imageData = canvas.toDataURL('image/png');
+                photo.src = imageData;
+                photo.style.display = "block";
+                uploadBtn.style.display = "inline-block";
+            });
+
+            uploadBtn.addEventListener('click', async () => {
+                try {
+                    // Convert canvas to blob
+                    canvas.toBlob(async (blob) => {
+                        const fileName = `${studentName}_${studentLastName}.png`;
+
+                        // Create FormData
+                        const formData = new FormData();
+                        formData.append('Mugshot', blob, fileName);
+
+                        // Send to controller with studentId as query parameter
+                        const res = await fetch(`/Institution/SaveCapturedPhoto?studentId=${encodeURIComponent(studentId)}&studentName=${encodeURIComponent(studentName)}&studentLastName=${encodeURIComponent(studentLastName)}`, {
+                            method: 'POST',
+                            body: formData
+                        });
+
+                        const result = await res.json();
+                        alert(result.message || "Fotoğraf kaydedildi.");
+                        resetAll();
+                    }, 'image/png');
+                } catch (error) {
+                    console.error('Upload error:', error);
+                    alert('Fotoğraf yüklenirken hata oluştu.');
+                }
+            });
+
+            function resetAll() {
+                if (stream) {
+                    stream.getTracks().forEach(track => track.stop());
+                    stream = null;
+                }
+                video.style.display = "none";
+                canvas.style.display = "none";
+                photo.style.display = "none";
+                captureBtn.style.display = "none";
+                uploadBtn.style.display = "none";
+                stopBtn.style.display = "none";
+                instructions.style.display = "block";
             }
-            video.style.display = "none";
-            canvas.style.display = "none";
-            photo.style.display = "none";
-            captureBtn.style.display = "none";
-            uploadBtn.style.display = "none";
-            stopBtn.style.display = "none";
-            instructions.style.display = "block";
-        }
-    </script>
+        </script>
 }
